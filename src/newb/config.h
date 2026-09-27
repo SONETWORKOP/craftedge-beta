@@ -215,12 +215,12 @@
 /* PBR block reflection (from "block reflection V3") - fragment-stage
    normal-mapped, TBN-distorted, Cook-Torrance mirror on smooth blocks */
 #define NL_PBR_BLOCK_REFL              // ON: enable V3-style PBR block reflection
-#define NL_PBR_ROUGHNESS 0.45          // higher = softer glint (low values cause speckles)
+#define NL_PBR_ROUGHNESS 0.15          // TEST-MAX: tez mirror (pehle 0.45)
 #define NL_PBR_METALLIC 0.0            // 0 keeps texture bright (V3 note)
-#define NL_PBR_F0 vec3(0.10,0.10,0.11) // subtle reflectance (V3 iron 0.56 was too hot)
+#define NL_PBR_F0 vec3(0.35,0.35,0.36) // TEST-MAX: strong reflectance (pehle 0.10)
 #define NL_PBR_SUNCOLOR vec3(1.0,0.95,0.85) // neutral white glint, not golden
-#define NL_PBR_SPEC_INTENSITY 0.25     // overall sun glint strength
-#define NL_PBR_SPEC_CLAMP 0.6          // caps GGX spikes -> kills golden fireflies
+#define NL_PBR_SPEC_INTENSITY 1.0      // TEST-MAX: tez glint (pehle 0.25)
+#define NL_PBR_SPEC_CLAMP 1.5          // TEST-MAX: glint cap khula (pehle 0.6)
 #define NL_PBR_NORMAL_STRENGTH 0.7     // bump strength (2.0 was too noisy)
 #define NL_PBR_RAIN_BOOST 1.4          // extra mirror strength when raining (wet ground)
 #define NL_PBR_ATLAS_TEXEL vec2(0.0009765625, 0.001953125) // 1024x512 terrain atlas
