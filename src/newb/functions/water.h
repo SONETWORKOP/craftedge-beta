@@ -140,16 +140,16 @@ vec4 nlWater(
     }
   #endif
 
-  // torch light reflection
-  float tc = 0.5+0.5*sin(16.0*reflDir.x)*sin(16.0*reflDir.z);
-  waterRefl += torchColor*NL_TORCHLIGHT_INTENSITY*lit.x*tc*tc;
+  // torch light reflection (soft - tez freq se vertex aliasing hota tha)
+  float tc = 0.5+0.5*sin(6.0*reflDir.x)*sin(6.0*reflDir.z);
+  waterRefl += torchColor*NL_TORCHLIGHT_INTENSITY*lit.x*tc;
 
   // splash foam chamak (ss wali safed rings) - reflection me mix
   #ifdef NL_WATER_SPLASH
     waterRefl += splash*NL_WATER_SPLASH_INTENSITY*(0.35 + 0.65*lit.y);
   #endif
 
-  // sharp sun glitter path (pretty sparkle: tight core + soft halo)
+  // sun glitter (soft single lobe - pow 600*2.0 se blocky white pixels aate the)
   #if defined(NL_SUNLIGHT_INTENSITY)
     vec3 sunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
     vec3 halfVector = sunDir + viewDir;
@@ -157,13 +157,15 @@ vec4 nlWater(
     vec3 halfDir = halfLengthSq > 0.000001 ? halfVector/sqrt(halfLengthSq) : nrm;
     float specAngle = max(dot(nrm, halfDir), 0.0);
     #ifdef NL_WATER_GLITTER
-      float specHighlight = pow(specAngle, 600.0)*2.0 + pow(specAngle, 90.0)*0.22;
+      float specHighlight = pow(specAngle, 220.0)*0.9;
       specHighlight *= NL_WATER_GLITTER;
     #else
       float specHighlight = pow(specAngle, 256.0);
     #endif
     specHighlight *= lit.y;
     waterRefl += specHighlight*NL_SUNLIGHT_INTENSITY*sunLightTint(env.dayFactor, env.rainFactor);
+    // blowout rok: paani me hi clamp taaki safed pixel na phatein
+    waterRefl = min(waterRefl, vec3_splat(2.5));
   #endif
 
   // mask sky reflection under shade
