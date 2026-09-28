@@ -60,9 +60,9 @@ void main() {
       }
     }
 
-    // procedural vibrant clouds (cheap, no texture)
-    #ifdef NL_SKY_CLOUDS
-      if (!env.underwater && viewDir.y > 0.001) {
+    // procedural vibrant clouds - math-only (no textures), har platform pe chalta hai.
+    // check.txt conversion: saare clouds Sky me, mesh/texture dependency khatm.
+    if (!env.underwater && viewDir.y > 0.001) {
         float scale = 0.8 / viewDir.y;
         float cloudA = nlVibrantClouds(viewDir.xz*scale, 0.004*scale, v_underwaterRainTimeDay.z);
         cloudA *= smoothstep(0.05, 0.35, viewDir.y);   // horizon fade
@@ -88,22 +88,6 @@ void main() {
         skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
       #endif
-    #else
-      // Low (NO_REFLECTIONS): dome clean - box-mesh ESTN clouds cover karte
-      // hain (double-draw nahi). Baaki sab rounded dome.
-      #ifndef NO_REFLECTIONS
-      // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
-      // replacement for the old blocky box clouds
-      if (!env.underwater && viewDir.y > 0.001) {
-        float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
-        vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
-        clouds.rgb = mix(clouds.rgb, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
-        float opacity = smoothstep(0.1, 0.3, viewDir.y);
-        float cloudMask = clouds.a * 0.5 * opacity;
-        skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
-      }
-      #endif
-    #endif
 
     skyColor = colorCorrection(skyColor);
 
