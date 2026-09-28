@@ -63,6 +63,27 @@ float nlRainSplash(vec2 worldXZ, float t) {
 }
 #endif
 
+// ---- Clear pretty water: smooth swell + fine chop (naya wave code) ----
+// badi smooth lehren (2 direction) + chhoti chop, sasta (sirf sin/cos)
+vec2 nlWaterSwell(vec2 p, float t) {
+  float s = t*NL_WATER_WAVE_SPEED;
+  vec2 g = vec2(
+    sin(p.x*0.9 + s*1.4)*0.45 + sin((p.x + p.y)*0.55 - s*1.0)*0.30,
+    cos(p.y*1.0 - s*1.2)*0.45 + cos((p.x - p.y)*0.5 + s*0.9)*0.30
+  );
+  g.x += sin(p.y*2.7 + s*2.3)*0.18 + sin((p.x - p.y)*3.1 + s*2.0)*0.12;
+  g.y += cos(p.x*2.4 - s*2.2)*0.18 + cos((p.x + p.y)*3.3 - s*1.8)*0.12;
+  return g;
+}
+
+float nlWaterHeight(vec2 p, float t) {
+  float s = t*NL_WATER_WAVE_SPEED;
+  return sin(p.x*0.9 + s*1.4)*0.35
+       + sin((p.x + p.y)*0.55 - s*1.0)*0.25
+       + cos(p.y*1.0 - s*1.2)*0.35
+       + sin(p.y*2.7 + s*2.3)*0.12;
+}
+
 vec4 nlWater(
   inout vec4 color, inout vec3 wPos, nl_skycolor skycol, nl_environment env, vec4 COLOR, vec3 viewDir,
   vec3 cPos, vec3 tiledCpos, vec3 gPos, vec3 CAMERA_POS, vec3 light, vec3 torchColor, vec2 lit,
@@ -70,6 +91,8 @@ vec4 nlWater(
 ) {
 
   vec2 bump = vec2_splat(movingNoise2D(gPos.xz + gPos.yy, NL_WATER_WAVE_SPEED*t, 0.6));
+  // naya smooth swell (bump ke saath mix taaki reflection sundar toote)
+  vec2 swell = nlWaterSwell(gPos.xz, t);
 
   // splash rings (gallery ss) - sirf top plane, paas me hi (perf)
   float splash = 0.0;
@@ -83,7 +106,7 @@ vec4 nlWater(
 
   vec3 nrm;
   if (fractCposY > 0.0) { // top plane
-    nrm.xz = bump*NL_WATER_BUMP;
+    nrm.xz = (bump*0.55 + swell*0.65)*NL_WATER_BUMP*1.15;
     #ifdef NL_WATER_SPLASH
       nrm.xz += (splash - 0.25)*NL_WATER_SPLASH_NORMAL;
     #endif
@@ -126,14 +149,20 @@ vec4 nlWater(
     waterRefl += splash*NL_WATER_SPLASH_INTENSITY*(0.35 + 0.65*lit.y);
   #endif
 
-  // sharp sun specular highlight (lightweight Blinn-Phong, avoids full BRDF cost)
+  // sharp sun glitter path (pretty sparkle: tight core + soft halo)
   #if defined(NL_SUNLIGHT_INTENSITY)
     vec3 sunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
     vec3 halfVector = sunDir + viewDir;
     float halfLengthSq = dot(halfVector, halfVector);
     vec3 halfDir = halfLengthSq > 0.000001 ? halfVector/sqrt(halfLengthSq) : nrm;
     float specAngle = max(dot(nrm, halfDir), 0.0);
-    float specHighlight = pow(specAngle, 256.0)*lit.y;
+    #ifdef NL_WATER_GLITTER
+      float specHighlight = pow(specAngle, 600.0)*2.0 + pow(specAngle, 90.0)*0.22;
+      specHighlight *= NL_WATER_GLITTER;
+    #else
+      float specHighlight = pow(specAngle, 256.0);
+    #endif
+    specHighlight *= lit.y;
     waterRefl += specHighlight*NL_SUNLIGHT_INTENSITY*sunLightTint(env.dayFactor, env.rainFactor);
   #endif
 
@@ -148,16 +177,16 @@ vec4 nlWater(
   #endif
 
   cosR = abs(cosR);
-  // realistic water fresnel base reflectance (~0.02) instead of glass-like 0.07
+  // clear water: fresnel base 0.02, milky base hataya (0.22->0.16), edge halka
   float fresnel = calculateFresnel(cosR, 0.02);
   float opacity = 1.0-cosR;
 
-  color.rgb *= 0.22*NL_WATER_TINT*(1.0-0.8*fresnel);
-  color.a = mix(COLOR.a*NL_WATER_TRANSPARENCY, 1.0, opacity*opacity);
+  color.rgb *= 0.16*NL_WATER_TINT*(1.0-0.65*fresnel);
+  color.a = mix(COLOR.a*NL_WATER_TRANSPARENCY, 1.0, opacity*opacity*0.85);
 
   #ifdef NL_WATER_WAVE
-    if (camDist < 14.0) {
-      wPos.y -= 0.5*(bump.x+0.5)*NL_WATER_BUMP;
+    if (camDist < 16.0) {
+      wPos.y += nlWaterHeight(gPos.xz, t)*NL_WATER_BUMP*0.55;
     }
   #endif
 

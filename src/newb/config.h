@@ -107,11 +107,11 @@
 #define NL_WAVE_SPEED 2.8
 #define NL_WAVE_RANGE 14.0
 
-/* Water - vivid, realistic reflections */
-#define NL_WATER_TRANSPARENCY 0.94      // clearer, less murky water
-#define NL_WATER_BUMP 0.28              // stronger ripples -> sharper reflection detail
-#define NL_WATER_WAVE_SPEED  0.6        // calmer, more natural wave motion
-#define NL_WATER_TEX_OPACITY 0.18       // let reflections read through more than texture
+/* Water - clear pretty water + smooth waves */
+#define NL_WATER_TRANSPARENCY 0.72      // clear: neeche tak dikhe (pehle 0.94 milky tha)
+#define NL_WATER_BUMP 0.32              // smooth swell + fine chop
+#define NL_WATER_WAVE_SPEED  0.85       // thoda lively leher
+#define NL_WATER_TEX_OPACITY 0.07       // milky texture hataya (pehle 0.18)
 #define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
 #define NL_WATER_SUN_QUAD_TAN 0.1283    // tan of half the sun quad angular size (35*NL_SUN_SIZE/300)
 #define NL_WATER_MOON_QUAD_TAN 0.1167   // tan of half the moon quad angular size (35*NL_MOON_SIZE/300)
@@ -121,7 +121,8 @@
 #define NL_WATER_CLOUD_REFL_RIPPLE 0.012 // very subtle swell drift (0.0 = dead-flat mirror)
 #define NL_WATER_WAVE
 //#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
-#define NL_WATER_TINT vec3(0.28,0.7,0.88)  // slightly deeper, more natural blue-green
+#define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
+#define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
 
 /* Water splash - gallery ss (Screenshot_20260927) jaisi rain ripple rings */
 #define NL_WATER_SPLASH
