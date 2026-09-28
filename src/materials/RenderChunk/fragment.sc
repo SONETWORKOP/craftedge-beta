@@ -1,4 +1,4 @@
-$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
+$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon, v_shadowData
 
 #include <bgfx_shader.sh>
 SAMPLER2D_AUTOREG(s_NoiseTexture);
@@ -179,6 +179,24 @@ void main() {
   // tone.txt: sRGB -> linear after vertex color (replaces diffuse*diffuse)
   diffuse.rgb = sRGBtoLinear(diffuse.rgb);
   diffuse.rgb += glow;
+
+  // --- player shadow (Download/player shadows port) ---
+  // v_position = camera-relative worldPos, v_shadowData = (time, horizontalMotion)
+  // sirf opaque zameen par (paani nahi), paas me hi taaki shape crisp rahe
+  #ifdef NL_PLAYER_SHADOW
+    if (v_extra.b < 0.9) {
+      float pShadow = nlPlayerShadow(v_position, v_shadowData.x, v_shadowData.y);
+      float pDist = length(v_position.xz);
+      float pFade = clamp(1.0 - pDist/12.0, 0.0, 1.0);
+      pShadow *= pFade;
+      diffuse.rgb *= (1.0 - pShadow*NL_PLAYER_SHADOW_INTENSITY);
+      diffuse.rgb = mix(
+        diffuse.rgb,
+        diffuse.rgb*NL_PLAYER_SHADOW_COLOR*2.0 + NL_PLAYER_SHADOW_COLOR*0.08,
+        pShadow*NL_PLAYER_SHADOW_INTENSITY*0.45
+      );
+    }
+  #endif
 
   if (v_extra.b > 0.9) {
     diffuse.rgb += v_refl.rgb*v_refl.a;

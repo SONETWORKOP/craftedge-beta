@@ -2,7 +2,7 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
+$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon, v_shadowData
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -13,6 +13,7 @@ uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
 uniform vec4 TimeOfDay;
 uniform vec4 CameraPosition;
+uniform vec4 LastCameraPosition;
 
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_LightMapTexture);
@@ -213,6 +214,16 @@ void main() {
   // (v_reflSun.y), so the sun leaves the water the moment it visually sets.
   v_reflSun = vec4(env.sunDir, env.dayFactor);
   v_sunMoon = vec4(env.moonDir, env.underwater ? 1.0 : 0.0);
+
+  // --- player shadow (Download/player shadows port) ---
+  // v_position upar worldPos (camera-relative) hai, yahi nlPlayerShadow ka wPos hai.
+  // time + horizontal motion fragment me silhouette + walk anim ke liye.
+  #ifdef NL_PLAYER_SHADOW
+    vec3 cameraDelta = CameraPosition.xyz - LastCameraPosition.xyz;
+    v_shadowData = vec2(ViewPositionAndTime.w, length(cameraDelta.xz));
+  #else
+    v_shadowData = vec2(0.0, 0.0);
+  #endif
 
   #else
 

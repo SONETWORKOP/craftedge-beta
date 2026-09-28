@@ -14,6 +14,31 @@ float calculateFresnel(float cosR, float r0) {
   return r0 + (1.0-r0)*a2*a2*a;
 }
 
+#ifdef NL_WATER_SPLASH
+// gallery ss (Screenshot_20260927_212950) jaisi barish splash rings.
+// har cell me ek random drop, expanding patla ring + halka inner fill.
+float nlSplashRing(vec2 uv, float t) {
+  vec2 cell = floor(uv);
+  vec2 f = fract(uv);
+  float rnd = rand(cell);
+  if (rnd < 0.30) return 0.0;
+  float phase = fract(rnd*7.31 + t*0.55);
+  vec2 center = vec2(rand(cell + 7.13), rand(cell + 3.71))*0.6 + 0.2;
+  float d = length(f - center);
+  float radius = phase*0.42;
+  float w = 0.028 + 0.028*phase;
+  float ring = (1.0 - smoothstep(0.0, w, abs(d - radius)))*(1.0 - phase);
+  float fill = (1.0 - smoothstep(radius - 0.15, radius, d))*(1.0 - phase)*0.30;
+  return (ring + fill)*smoothstep(0.30, 0.55, rnd);
+}
+
+float nlWaterSplash(vec2 xz, float t) {
+  float s1 = nlSplashRing(xz*NL_WATER_SPLASH_SCALE, t*NL_WATER_SPLASH_SPEED);
+  float s2 = nlSplashRing(xz*NL_WATER_SPLASH_SCALE*1.7 + 13.7, t*NL_WATER_SPLASH_SPEED*1.3 + 0.37);
+  return s1*0.70 + s2*0.50;
+}
+#endif
+
 vec4 nlWater(
   inout vec4 color, inout vec3 wPos, nl_skycolor skycol, nl_environment env, vec4 COLOR, vec3 viewDir,
   vec3 cPos, vec3 tiledCpos, vec3 gPos, vec3 CAMERA_POS, vec3 light, vec3 torchColor, vec2 lit,
@@ -22,9 +47,22 @@ vec4 nlWater(
 
   vec2 bump = vec2_splat(movingNoise2D(gPos.xz + gPos.yy, NL_WATER_WAVE_SPEED*t, 0.6));
 
+  // splash rings (gallery ss) - sirf top plane, paas me hi (perf)
+  float splash = 0.0;
+  #ifdef NL_WATER_SPLASH
+    if (fractCposY > 0.0 && camDist < 20.0) {
+      splash = nlWaterSplash(gPos.xz, t);
+      splash *= clamp(1.0 - camDist/20.0, 0.0, 1.0);
+      splash *= 0.35 + NL_WATER_SPLASH_RAIN_BOOST*env.rainFactor;
+    }
+  #endif
+
   vec3 nrm;
   if (fractCposY > 0.0) { // top plane
     nrm.xz = bump*NL_WATER_BUMP;
+    #ifdef NL_WATER_SPLASH
+      nrm.xz += (splash - 0.25)*NL_WATER_SPLASH_NORMAL;
+    #endif
     nrm.y = -1.0;
     /*if (fractCposY>0.8 || fractCposY<0.9) { // flat plane
     } else { // slanted plane and highly slanted plane
@@ -58,6 +96,11 @@ vec4 nlWater(
   // torch light reflection
   float tc = 0.5+0.5*sin(16.0*reflDir.x)*sin(16.0*reflDir.z);
   waterRefl += torchColor*NL_TORCHLIGHT_INTENSITY*lit.x*tc*tc;
+
+  // splash foam chamak (ss wali safed rings) - reflection me mix
+  #ifdef NL_WATER_SPLASH
+    waterRefl += splash*NL_WATER_SPLASH_INTENSITY*(0.35 + 0.65*lit.y);
+  #endif
 
   // sharp sun specular highlight (lightweight Blinn-Phong, avoids full BRDF cost)
   #if defined(NL_SUNLIGHT_INTENSITY)
