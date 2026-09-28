@@ -24,18 +24,6 @@
 //#define NL_BLINKING_TORCH
 #define NL_CLOUD_SHADOW
 
-/* Player shadow - Download/player shadows port (fake blob silhouette under player) */
-//#define NL_PLAYER_SHADOW              // OFF: user ne hatane ko bola
-#define NL_PLAYER_SHADOW_INTENSITY 0.82
-#define NL_PLAYER_SHADOW_FOCUS 0.04
-#define NL_PLAYER_SHADOW_COLOR vec3(0.30, 0.32, 0.35)
-#define NL_PLAYER_SHADOW_ANIMATION
-#define NL_PLAYER_SHADOW_ANIMATION_SPEED 6.0
-#define NL_PLAYER_SHADOW_LEG_SWING 0.40
-#define NL_PLAYER_SHADOW_HAND_SWING 0.10
-#define NL_PLAYER_SHADOW_MOTION_START 0.003
-#define NL_PLAYER_SHADOW_MOTION_END 0.045
-
 /* Ambient */
 #define NL_NETHER_AMBIENT vec3(3.0,2.16,1.89)
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
@@ -139,7 +127,7 @@
 #define NL_WATER_SPLASH
 #define NL_WATER_SPLASH_SCALE 1.4       // cell density (zyada = chhoti rings, ss me badi rings isliye 1.4)
 #define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
-#define NL_WATER_SPLASH_INTENSITY 0.75  // halka kiya (pehle 1.25 tez tha)
+#define NL_WATER_SPLASH_INTENSITY 1.25  // pehle jaisi tez value restore
 #define NL_WATER_SPLASH_NORMAL 0.35     // normal hilna (reflection tootna)
 #define NL_WATER_SPLASH_RAIN_BOOST 1.0  // barish me extra tez (0 = hamesha same)
 
@@ -290,7 +278,6 @@
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
   #undef NL_PBR_BLOCK_REFL
-  #undef NL_PLAYER_SHADOW
   #undef NL_WATER_SPLASH
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
