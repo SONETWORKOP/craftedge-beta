@@ -259,6 +259,25 @@ void main() {
         diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*bodyVisible;
       }
     #endif
+
+    // ---- RAIN SPLASH rings (gallery ss) - FRAGMENT per-pixel, isliye saaf dikhega ----
+    // vertex wala splash sparse chunks me dab jata hai, yeh har pixel par banta hai.
+    #ifdef NL_WATER_SPLASH
+      {
+        vec3 splashWorld = v_position + CameraPosition.xyz;
+        float splashDist = length(v_position.xz);
+        float splashFade = clamp(1.0 - splashDist/24.0, 0.0, 1.0);
+        if (splashFade > 0.002) {
+          float rainF = v_reflPbr.w;
+          // normal me halka, barish me tez (ss jaisa dekhne ke liye hamesha thoda)
+          float splashAmp = 0.55 + 1.6*rainF;
+          float sp = nlRainSplash(splashWorld.xz, ViewPositionAndTime.w);
+          // safed-neeli foam chamak, lit ke saath taaki raat me andha na kare
+          float dayLight = clamp(v_reflSun.w*0.5 + 0.5, 0.25, 1.0);
+          diffuse.rgb += sp*splashFade*splashAmp*NL_WATER_SPLASH_INTENSITY*vec3(0.75, 0.88, 1.0)*dayLight;
+        }
+      }
+    #endif
   } else if (v_refl.a > 0.0) {
     // reflective effect - only on xz plane (ground / flat smooth blocks)
     float dy = abs(dFdy(v_extra.g));
@@ -297,6 +316,24 @@ void main() {
       #endif
     }
   }
+
+  // ---- GROUND rain splash (zameen par barish ki chhintein) ----
+  // sirf barish me, flat upar-mukh zameen par, paas me. Paani wala upar hai.
+  #ifdef NL_WATER_SPLASH
+    if (v_extra.b < 0.9) {
+      float grain = v_reflPbr.w;
+      if (grain > 0.02) {
+        vec3 gWorld = v_position + CameraPosition.xyz;
+        float gDist = length(v_position.xz);
+        float gFade = clamp(1.0 - gDist/22.0, 0.0, 1.0);
+        float flatM = 1.0 - smoothstep(0.0002, 0.0012, abs(dFdy(v_extra.g)));
+        if (gFade*flatM > 0.003) {
+          float gsp = nlRainSplash(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
+          diffuse.rgb += gsp*gFade*grain*flatM*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.7, 0.82, 0.95);
+        }
+      }
+    }
+  #endif
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 

@@ -16,7 +16,8 @@ float calculateFresnel(float cosR, float r0) {
 
 #ifdef NL_WATER_SPLASH
 // gallery ss (Screenshot_20260927_212950) jaisi barish splash rings.
-// har cell me ek random drop, expanding patla ring + halka inner fill.
+// VERTEX version (halka normal hilana) + FRAGMENT version (saaf dikhne wali rings).
+// Fragment wala hi asli dikhta hai kyuki chunk vertex sparse hote hain.
 float nlSplashRing(vec2 uv, float t) {
   vec2 cell = floor(uv);
   vec2 f = fract(uv);
@@ -36,6 +37,29 @@ float nlWaterSplash(vec2 xz, float t) {
   float s1 = nlSplashRing(xz*NL_WATER_SPLASH_SCALE, t*NL_WATER_SPLASH_SPEED);
   float s2 = nlSplashRing(xz*NL_WATER_SPLASH_SCALE*1.7 + 13.7, t*NL_WATER_SPLASH_SPEED*1.3 + 0.37);
   return s1*0.70 + s2*0.50;
+}
+
+// ---- FRAGMENT per-pixel rain splash (yeh wala screen par dikhega) ----
+float nlRainSplashLayer(vec2 uv, float t, float speed) {
+  vec2 cell = floor(uv);
+  vec2 f = fract(uv);
+  float h = fract(sin(dot(cell, vec2(127.1, 311.7)))*43758.5453);
+  if (h < 0.35) return 0.0;
+  float phase = fract(h*13.73 + t*speed*(0.7 + h*0.6));
+  vec2 center = vec2(fract(h*91.17), fract(h*47.31))*0.5 + 0.25;
+  float d = length(f - center);
+  float radius = phase*0.45;
+  float ringW = 0.035 + 0.045*phase;
+  float ring = (1.0 - smoothstep(0.0, ringW, abs(d - radius)));
+  ring *= (1.0 - phase)*(1.0 - phase);
+  float drop = (1.0 - smoothstep(0.0, 0.09, d))*(1.0 - phase)*0.9;
+  return (ring*1.0 + drop)*smoothstep(0.35, 0.55, h);
+}
+
+float nlRainSplash(vec2 worldXZ, float t) {
+  float s1 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE, t, NL_WATER_SPLASH_SPEED);
+  float s2 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE*1.73 + 17.3, t + 0.43, NL_WATER_SPLASH_SPEED*1.35);
+  return s1*0.85 + s2*0.65;
 }
 #endif
 

@@ -137,9 +137,9 @@
 
 /* Water splash - gallery ss (Screenshot_20260927) jaisi rain ripple rings */
 #define NL_WATER_SPLASH
-#define NL_WATER_SPLASH_SCALE 1.6       // cell density (zyada = chhoti rings)
-#define NL_WATER_SPLASH_SPEED 1.2       // ring expand speed
-#define NL_WATER_SPLASH_INTENSITY 0.55  // safed foam chamak
+#define NL_WATER_SPLASH_SCALE 1.4       // cell density (zyada = chhoti rings, ss me badi rings isliye 1.4)
+#define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
+#define NL_WATER_SPLASH_INTENSITY 1.25  // safed foam chamak (fragment me saaf dikhe)
 #define NL_WATER_SPLASH_NORMAL 0.35     // normal hilna (reflection tootna)
 #define NL_WATER_SPLASH_RAIN_BOOST 1.0  // barish me extra tez (0 = hamesha same)
 
