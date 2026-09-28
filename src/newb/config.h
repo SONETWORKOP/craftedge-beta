@@ -25,7 +25,7 @@
 #define NL_CLOUD_SHADOW
 
 /* Player shadow - Download/player shadows port (fake blob silhouette under player) */
-#define NL_PLAYER_SHADOW
+//#define NL_PLAYER_SHADOW              // OFF: user ne hatane ko bola
 #define NL_PLAYER_SHADOW_INTENSITY 0.82
 #define NL_PLAYER_SHADOW_FOCUS 0.04
 #define NL_PLAYER_SHADOW_COLOR vec3(0.30, 0.32, 0.35)
@@ -139,7 +139,7 @@
 #define NL_WATER_SPLASH
 #define NL_WATER_SPLASH_SCALE 1.4       // cell density (zyada = chhoti rings, ss me badi rings isliye 1.4)
 #define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
-#define NL_WATER_SPLASH_INTENSITY 1.25  // safed foam chamak (fragment me saaf dikhe)
+#define NL_WATER_SPLASH_INTENSITY 0.75  // halka kiya (pehle 1.25 tez tha)
 #define NL_WATER_SPLASH_NORMAL 0.35     // normal hilna (reflection tootna)
 #define NL_WATER_SPLASH_RAIN_BOOST 1.0  // barish me extra tez (0 = hamesha same)
 
