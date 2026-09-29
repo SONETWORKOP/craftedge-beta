@@ -175,6 +175,14 @@
 #define NL_CLOUD2_SHAPE vec2(0.5, 0.4)
 #define NL_CLOUD2_DENSITY 25.0
 #define NL_CLOUD2_VELOCITY 0.8
+#define NL_CLOUD2_LAYER2_OFFSET 143.0
+#define NL_CLOUD2_LAYER2_THICKNESS 2.5
+#define NL_CLOUD2_LAYER2_RAIN_THICKNESS 3.0
+#define NL_CLOUD2_LAYER2_STEPS 3
+#define NL_CLOUD2_LAYER2_SCALE vec2(0.03, 0.03)
+#define NL_CLOUD2_LAYER2_SHAPE vec2(0.5, 0.4)
+#define NL_CLOUD2_LAYER2_DENSITY 25.0
+#define NL_CLOUD2_LAYER2_VELOCITY 0.8
 
 /* Realistic cloud */
 #define NL_CLOUD3_SCALE vec2(0.03, 0.03)
@@ -263,22 +271,6 @@
   // The cheap textured sun/moon disc and the ground/block reflections stay,
   // so Medium sits between High and Low.
   #define NL_NO_WATER_CLOUD_AURORA_REFL
-
-  // Medium rounded clouds (user settings) - Sky dome inhe use karta hai
-  #undef NL_CLOUD2_THICKNESS
-  #define NL_CLOUD2_THICKNESS 3.5
-  #undef NL_CLOUD2_RAIN_THICKNESS
-  #define NL_CLOUD2_RAIN_THICKNESS 3.5
-  #undef NL_CLOUD2_STEPS
-  #define NL_CLOUD2_STEPS 16
-  #undef NL_CLOUD2_SCALE
-  #define NL_CLOUD2_SCALE vec2(0.033, 0.033)
-  #undef NL_CLOUD2_SHAPE
-  #define NL_CLOUD2_SHAPE vec2(0.70, 0.70)
-  #undef NL_CLOUD2_DENSITY
-  #define NL_CLOUD2_DENSITY 90.0
-  #undef NL_CLOUD2_VELOCITY
-  #define NL_CLOUD2_VELOCITY 0.6
 #endif
 
 #ifdef LITE
