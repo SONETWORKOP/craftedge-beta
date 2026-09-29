@@ -76,13 +76,14 @@ vec4 waterCloudReflection(
     vec2 domeUV = reflDir.xz*domeScale + depthShift*0.0025 + wobble;
     float mask = nlVibrantClouds(domeUV, 0.004*domeScale, t);
     mask *= smoothstep(0.05, 0.35, reflDir.y)*NL_SKY_CLOUD_OPACITY;
-    clouds = vec4(mix(nlVibrantCloudColor(dayFactor, sunLightTint(dayFactor, rain)), NL_NIGHT_CLOUD_COL, nlNightF(dayFactor)), mask);
+    clouds = vec4(nlVibrantCloudColor(dayFactor, sunLightTint(dayFactor, rain), rain), mask);
   #else
     // raymarched rounded clouds (same function the sky uses), so the water
     // mirror lines up with the sky's RoundedClouds exactly
     float jitter = fract(sin(dot(reflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
     clouds = nlRoundedClouds(reflDir, t, jitter);
-    clouds.rgb = mix(clouds.rgb, NL_NIGHT_CLOUD_COL, nlNightF(dayFactor));
+    // sky-following tint (sunset/raat/barish) - aasmaan jaisa mirror
+    clouds.rgb = nlSkyCloudTint(clouds.rgb, dayFactor, rain);
   #endif
 
   // the night sky's textured aurora - sampled on the same reflected ray as
