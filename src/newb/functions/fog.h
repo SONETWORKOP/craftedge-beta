@@ -65,6 +65,42 @@ vec3 nlGodRayTint(vec3 FOG_COLOR) {
   return mix(dayRayTint, dawnRayTint, dawnDusk);
 }
 
+// ---- Fragment godrays (realistic sun shafts, beta) ----
+// viewDirS = surface->camera, sunDir = real suraj dir, sunUp = suraj upar (0/1).
+// cone: suraj ki taraf dekhne par tez; bands: animated dhaariyan;
+// barish me band; door kohre me tez. Underwater gate caller kare.
+float nlGodRayFrag(
+  vec3 viewDirS, vec3 sunDir, float sunUp, highp float t,
+  float rainFactor, float dayFactor, float fogAmt
+) {
+  float cone = pow(clamp(dot(-viewDirS, sunDir), 0.0, 1.0), 4.0);
+  if (cone < 0.003) return 0.0;
+  // suraj-axis basis taaki dhaariyan ghumein nahi
+  vec3 upRef = abs(sunDir.y) > 0.9 ? vec3(1.0,0.0,0.0) : vec3(0.0,1.0,0.0);
+  vec3 bu = normalize(cross(sunDir, upRef));
+  vec3 bv = cross(sunDir, bu);
+  float u = dot(viewDirS, bu);
+  float v = dot(viewDirS, bv);
+  float bands = 0.5 + 0.5*sin(u*46.0 + v*39.0 + t*0.7)*sin(u*31.0 - v*44.0 - t*0.5);
+  bands = smoothstep(0.30, 0.92, bands);
+  float dawnDusk = clamp(1.0 - abs(dayFactor)*2.0, 0.0, 1.0);
+  dawnDusk *= dawnDusk;
+  float timeAmt = (0.22 + 0.78*dawnDusk)*sunUp;
+  float distFade = smoothstep(0.03, 0.45, fogAmt);
+  float rainOff = 1.0 - clamp(rainFactor, 0.0, 1.0);
+  return cone*(0.30 + 0.70*bands)*timeAmt*distFade*rainOff;
+}
+
+// sunset/sunrise tint: yellow <-> pink-purple animated, din me warm white
+vec3 nlGodRayTintFrag(vec3 viewDirS, float dayFactor, highp float t) {
+  float dawnDusk = clamp(1.0 - abs(dayFactor)*2.0, 0.0, 1.0);
+  dawnDusk *= dawnDusk;
+  vec3 dayTint = vec3(1.0, 0.95, 0.78);
+  float hueShift = 0.5 + 0.5*sin(t*0.35 + viewDirS.x*9.0 + viewDirS.y*7.0);
+  vec3 duskTint = mix(vec3(1.0, 0.70, 0.28), vec3(0.88, 0.45, 0.80), hueShift);
+  return mix(dayTint, duskTint, dawnDusk);
+}
+
 // ---- fog.txt port (Download/fog.txt) ----
 // Sunset glow cue 0..1 from fog color (godrays wali same trick).
 float nlSunsetGlow(vec3 fogColor) {
