@@ -40,7 +40,9 @@ float nlWaterSplash(vec2 xz, float t) {
 }
 
 // ---- FRAGMENT per-pixel rain splash (yeh wala screen par dikhega) ----
-float nlRainSplashLayer(vec2 uv, float t, float speed) {
+// dropAmt: 1.0 = ring + bright drop (paani), 0.0 = sirf soft ring (zameen,
+// taaki safed pixel dots na banen)
+float nlRainSplashLayer(vec2 uv, float t, float speed, float dropAmt) {
   vec2 cell = floor(uv);
   vec2 f = fract(uv);
   float h = fract(sin(dot(cell, vec2(127.1, 311.7)))*43758.5453);
@@ -52,13 +54,20 @@ float nlRainSplashLayer(vec2 uv, float t, float speed) {
   float ringW = 0.035 + 0.045*phase;
   float ring = (1.0 - smoothstep(0.0, ringW, abs(d - radius)));
   ring *= (1.0 - phase)*(1.0 - phase);
-  float drop = (1.0 - smoothstep(0.0, 0.09, d))*(1.0 - phase)*0.9;
+  float drop = (1.0 - smoothstep(0.0, 0.09, d))*(1.0 - phase)*0.9*dropAmt;
   return (ring*1.0 + drop)*smoothstep(0.35, 0.55, h);
 }
 
 float nlRainSplash(vec2 worldXZ, float t) {
-  float s1 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE, t, NL_WATER_SPLASH_SPEED);
-  float s2 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE*1.73 + 17.3, t + 0.43, NL_WATER_SPLASH_SPEED*1.35);
+  float s1 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE, t, NL_WATER_SPLASH_SPEED, 1.0);
+  float s2 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE*1.73 + 17.3, t + 0.43, NL_WATER_SPLASH_SPEED*1.35, 1.0);
+  return s1*0.85 + s2*0.65;
+}
+
+// zameen wala: sirf soft rings, bright drop nahi (white pixel fix)
+float nlRainSplashGround(vec2 worldXZ, float t) {
+  float s1 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE, t, NL_WATER_SPLASH_SPEED, 0.0);
+  float s2 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE*1.73 + 17.3, t + 0.43, NL_WATER_SPLASH_SPEED*1.35, 0.0);
   return s1*0.85 + s2*0.65;
 }
 #endif

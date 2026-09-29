@@ -300,8 +300,10 @@ void main() {
   }
 
   // ---- GROUND rain splash (zameen par barish ki chhintein) ----
-  // sirf barish me, flat upar-mukh zameen par, paas me. Paani wala upar hai.
+  // white-pixel fix: sirf OPAQUE thos zameen (pattiyan/ALPHA_TEST par nahi),
+  // sirf soft rings (bright drop nahi), roshni ke hisaab se dheema (raat me halka)
   #ifdef NL_WATER_SPLASH
+  #ifndef ALPHA_TEST
     if (v_extra.b < 0.9) {
       float grain = v_reflPbr.w;
       if (grain > 0.02) {
@@ -309,12 +311,18 @@ void main() {
         float gDist = length(v_position.xz);
         float gFade = clamp(1.0 - gDist/22.0, 0.0, 1.0);
         float flatM = 1.0 - smoothstep(0.0002, 0.0012, abs(dFdy(v_extra.g)));
-        if (gFade*flatM > 0.003) {
-          float gsp = nlRainSplash(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
-          diffuse.rgb += gsp*gFade*grain*flatM*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.7, 0.82, 0.95);
+        // hari ghaas/patti par nahi
+        float vegGreen = diffuse.g - max(diffuse.r, diffuse.b);
+        float vegM = 1.0 - smoothstep(0.015, 0.09, vegGreen);
+        // raat/andhere me dheema (lightmap sky light ke saath)
+        float gLight = clamp(v_lightmapUV.y*1.4, 0.12, 1.0);
+        if (gFade*flatM*vegM > 0.003) {
+          float gsp = nlRainSplashGround(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
+          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.35*vec3(0.7, 0.82, 0.95);
         }
       }
     }
+  #endif
   #endif
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
