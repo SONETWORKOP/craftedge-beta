@@ -123,8 +123,9 @@ void main() {
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
       }
-      #endif
-    #endif
+      #endif // MEDIUM
+      #endif // NO_REFLECTIONS
+    #endif // NL_SKY_CLOUDS
 
     skyColor = colorCorrection(skyColor);
 
