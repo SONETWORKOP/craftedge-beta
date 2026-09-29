@@ -99,9 +99,22 @@ void main() {
       // Low (NO_REFLECTIONS): dome clean - box-mesh ESTN clouds cover karte
       // hain (double-draw nahi). Baaki sab rounded dome.
       #ifndef NO_REFLECTIONS
-      // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
-      // replacement for the old blocky box clouds
+      // MEDIUM: original newb rounded clouds (stock NL_CLOUD2_* settings) -
+      // raymarched, sky-rang me range hue
+      #ifdef MEDIUM
       if (!env.underwater && viewDir.y > 0.001) {
+        vec4 medClouds = renderCloudsRounded(
+          viewDir, CameraPosition.xyz, env.rainFactor, v_underwaterRainTimeDay.z,
+          skycol.horizon, skycol.zenith,
+          NL_CLOUD2_STEPS, NL_CLOUD2_THICKNESS, NL_CLOUD2_RAIN_THICKNESS,
+          NL_CLOUD2_VELOCITY, NL_CLOUD2_SCALE, NL_CLOUD2_DENSITY, NL_CLOUD2_SHAPE
+        );
+        medClouds.rgb = nlSkyCloudTint(medClouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+        float medOp = smoothstep(0.05, 0.3, viewDir.y);
+        skyColor.rgb = mix(skyColor.rgb, medClouds.rgb, clamp(medClouds.a*medOp, 0.0, 1.0));
+      }
+      // default (High): texture rounded dome
+      #else
         float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
         // POORA sky-rang + dark: sunset narangi, raat gehra, barish grey
