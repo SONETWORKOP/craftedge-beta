@@ -326,14 +326,13 @@ float cloudDf(vec3 pos, float rain, vec2 boxiness) {
   return n;
 }
 
-// Download/rounded clouds.txt wali (Medium me lagti hai, purani hatayi).
-// steps fixed 5.0 andar (suggested), step-displace + denser alpha.
 vec4 renderCloudsRounded(
-    vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol, const float thickness, const float thickness_rain, const float speed,
+    vec3 vDir, vec3 vPos, float rain, float time, vec3 horizonCol, vec3 zenithCol,
+    const int steps, const float thickness, const float thickness_rain, const float speed,
     const vec2 scale, const float density, const vec2 boxiness
 ) {
-  float height = 9.0*mix(thickness, thickness_rain, rain);
-  float stepsf = 5.0;
+  float height = 7.0*mix(thickness, thickness_rain, rain);
+  float stepsf = float(steps);
 
   // scaled ray offset
   vec3 deltaP;
@@ -347,28 +346,28 @@ vec4 renderCloudsRounded(
   pos += deltaP;
 
   deltaP /= -stepsf;
-  pos += deltaP * hash(vPos.xz + time); // Displace Clouds' Step
 
   // alpha, gradient
-  vec2 d = vec2(0.0,0.5);
-  for (int i=1; i<=int(stepsf); i++) {
+  vec2 d = vec2(0.0,1.0);
+  for (int i=1; i<=steps; i++) {
     float m = cloudDf(pos, rain, boxiness);
     d.x += m;
     d.y = mix(d.y, pos.y, m);
     pos += deltaP;
   }
-  d.x *= smoothstep(0.7, 1.0, d.x);
+  d.x *= smoothstep(0.03, 0.1, d.x);
   d.x /= (stepsf/density) + d.x;
 
   if (vPos.y < 0.0) { // view from top
     d.y = 1.0 - d.y;
   }
 
-  vec4 col = vec4(horizonCol + zenithCol, d.x);
-  // NOTE: txt me smoothstep(1.0,0.1) ulta tha (undefined) - same look, defined order
-  col.rgb = mix(col.rgb, mix(col.rgb,zenithCol,1.0), 1.0 - smoothstep(0.1,1.0,d.y));
-  col.rgb += dot(col.rgb, vec3(0.3,0.4,0.3))*d.y*d.y;
-  col.rgb *= 1.0 - 0.8*rain;
+  // realistic cloud colors - white/grey with depth
+  vec3 cloudTop = vec3(0.92, 0.95, 1.0);
+  vec3 cloudBottom = mix(vec3(0.5, 0.55, 0.65), horizonCol * 0.6, 0.3);
+  vec4 col = vec4(mix(cloudBottom, cloudTop, d.y), d.x);
+  col.rgb += dot(col.rgb, vec3(0.12,0.1,0.08))*d.y*d.y;
+  col.rgb *= 1.0 - 0.75*rain;
   return col;
 }
 

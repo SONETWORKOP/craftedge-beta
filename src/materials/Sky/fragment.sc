@@ -106,7 +106,7 @@ void main() {
         vec4 medClouds = renderCloudsRounded(
           viewDir, CameraPosition.xyz, env.rainFactor, v_underwaterRainTimeDay.z,
           skycol.horizon, skycol.zenith,
-          NL_CLOUD2_THICKNESS, NL_CLOUD2_RAIN_THICKNESS,
+          NL_CLOUD2_STEPS, NL_CLOUD2_THICKNESS, NL_CLOUD2_RAIN_THICKNESS,
           NL_CLOUD2_VELOCITY, NL_CLOUD2_SCALE, NL_CLOUD2_DENSITY, NL_CLOUD2_SHAPE
         );
         medClouds.rgb = nlSkyCloudTint(medClouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
