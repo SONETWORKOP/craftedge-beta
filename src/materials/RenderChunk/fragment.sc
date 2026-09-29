@@ -20,8 +20,8 @@ uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
 uniform vec4 MoonPhase;
 
-// (Water cloud-mirror HATAYA - beta: paani me clouds reflection nahi chahiye.
-// Sun/moon disc + aurora mirror neeche waise hi rahenge.)
+// (Water cloud-mirror HATAYA - beta: paani me clouds reflection nahi.
+// Sirf aurora aks + sun/moon disc mirror main() me rahenge.)
 
 /*
   Real textured sun/moon mirror on water.
@@ -108,7 +108,32 @@ void main() {
       wenv.fogCol = FogColor.rgb;
 
       // cloud-mirror HATAYA (beta) - paani me clouds reflection nahi.
-      // Sun/moon disc mirror neeche waise hi rahega.
+      // Sirf AURORA ka aks + sun/moon disc mirror rahega.
+      // (Medium subpack me ye bhi band - perf ke liye.)
+      #ifndef NL_NO_WATER_CLOUD_AURORA_REFL
+      #ifdef NL_AURORA_REFLECTION
+        {
+          vec3 aurV = normalize(v_reflPbr.xyz);
+          vec3 aurReflDir = vec3(-aurV.x, aurV.y, -aurV.z);
+          if (aurReflDir.y > 0.004) {
+            float aurVdotU = clamp(aurReflDir.y, 0.0, 1.0);
+            float aurNight = 1.0 - smoothstep(-0.02, 0.32, wenv.dayFactor);
+            if (aurNight > 0.001 && aurVdotU > 0.15) {
+              float aurDither = fract(sin(dot(aurReflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
+              vec3 aurora = NL_AURORA_TEX*aurNight*nlAuroraBorealis(
+                aurReflDir, aurVdotU, aurDither, wenv.rainFactor, CameraPosition.xz, ViewPositionAndTime.w
+              );
+              #ifdef NL_WATER_AURORA_MIRROR
+                float auroraAmt = NL_WATER_AURORA_MIRROR;
+              #else
+                float auroraAmt = 0.55;
+              #endif
+              diffuse.rgb += aurora*auroraAmt;
+            }
+          }
+        }
+      #endif
+      #endif
 
       // real textured sun/moon mirror on water (same flat-mirror ray as the
       // clouds). v_reflSun.xyz is the real sun dir, v_sunMoon.xyz the real

@@ -119,6 +119,7 @@
 #define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy cloud samplers
 #define NL_WATER_CLOUD_REFLECTION_DEPTH 2.0 // clouds appear this many blocks below the surface
 #define NL_WATER_CLOUD_REFL_RIPPLE 0.012 // very subtle swell drift (0.0 = dead-flat mirror)
+#define NL_WATER_AURORA_MIRROR 0.55     // paani me aurora aks kitna tez (clouds nahi, sirf aurora)
 #define NL_WATER_WAVE
 //#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
