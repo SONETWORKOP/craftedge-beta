@@ -115,6 +115,9 @@ void main() {
       }
       // default (High): texture rounded dome
       #else
+      // raymarched rounded clouds (RoundedClouds from cloud.txt), the default
+      // replacement for the old blocky box clouds
+      if (!env.underwater && viewDir.y > 0.001) {
         float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
         // POORA sky-rang + dark: sunset narangi, raat gehra, barish grey
