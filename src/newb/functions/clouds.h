@@ -312,7 +312,9 @@ float cloudDf(vec3 pos, float rain, vec2 boxiness) {
   u *= u*(3.0 - 2.0*u);
 
   vec4 r = vec4(rand(p0), rand(p0+vec2(1.0,0.0)), rand(p0+vec2(1.0,1.0)), rand(p0+vec2(0.0,1.0)));
-  r = smoothstep(0.1001+0.2*rain, 0.1+0.2*rain*rain, r); // rain transition
+  // rain transition - NOTE: purana code smoothstep() ulta tha (edge0>edge1 =
+  // undefined behavior, kuch GPU par poore badal gayab). Same look, defined order.
+  r = 1.0 - smoothstep(0.1+0.2*rain*rain, 0.1001+0.2*rain, r);
 
   float n = mix(mix(r.x,r.y,u.x), mix(r.w,r.z,u.x), u.y);
 
