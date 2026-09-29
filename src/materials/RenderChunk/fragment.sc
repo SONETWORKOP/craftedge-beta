@@ -318,7 +318,7 @@ void main() {
         float gLight = clamp(v_lightmapUV.y*1.4, 0.12, 1.0);
         if (gFade*flatM*vegM > 0.003) {
           float gsp = nlRainSplashGround(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
-          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.35*vec3(0.7, 0.82, 0.95);
+          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.7, 0.82, 0.95);
         }
       }
     }

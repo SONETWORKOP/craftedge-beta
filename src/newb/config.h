@@ -124,8 +124,8 @@
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
 #define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
 
-/* Water splash - gallery ss (Screenshot_20260927) jaisi rain ripple rings */
-#define NL_WATER_SPLASH
+/* Water splash - TEST ke liye poora OFF (white pixel check) */
+//#define NL_WATER_SPLASH
 #define NL_WATER_SPLASH_SCALE 1.4       // cell density (zyada = chhoti rings, ss me badi rings isliye 1.4)
 #define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
 #define NL_WATER_SPLASH_INTENSITY 1.25  // pehle jaisi tez value restore
