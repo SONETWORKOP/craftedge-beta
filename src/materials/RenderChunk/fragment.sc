@@ -254,22 +254,6 @@ void main() {
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
 
-  // ---- Fragment godrays (sun-facing shafts: suraj ki taraf tez, side fade,
-  // barish me band, door kohre me tez, sunset yellow/pink-purple) ----
-  #if defined(NL_GODRAY) && defined(NL_FOG)
-    if (v_sunMoon.w < 0.5) {
-      float godI = nlGodRayFrag(
-        v_reflPbr.xyz, v_reflSun.xyz,
-        smoothstep(-0.05, 0.15, v_reflSun.y),
-        ViewPositionAndTime.w, v_reflPbr.w, v_reflSun.w, v_fog.a
-      );
-      if (godI > 0.001) {
-        vec3 godTint = nlGodRayTintFrag(v_reflPbr.xyz, v_reflSun.w, ViewPositionAndTime.w);
-        diffuse.rgb += godTint*(godI*NL_GODRAY*0.35);
-      }
-    }
-  #endif
-
   // water.txt (Download/water.txt): underwater extinction, tonemap se pehle.
   // v_sunMoon.w = camera underwater flag (vertex packs it), v_extra.b = water pixels.
   if (v_sunMoon.w > 0.5) {

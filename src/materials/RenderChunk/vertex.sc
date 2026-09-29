@@ -130,7 +130,11 @@ void main() {
   // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
   // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
   fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.35, 0.55), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
-  // (Vertex godrays HATAYE - fragment wale realistic shafts lagte hain neeche.)
+  #if defined(NL_GODRAY) && defined(NL_FOG)
+    float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
+    fogColor.rgb = mix(fogColor.rgb, nlGodRayTint(FogColor.rgb), godRayAmount);
+    fogColor.a = mix(fogColor.a, 1.0, godRayAmount);
+  #endif
 
   if (env.nether) {
     // blend fog with void color
