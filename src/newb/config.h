@@ -29,7 +29,7 @@
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
 /* Sun/moon - vivid but natural */
-#define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.75,0.25)   // brighter warm orange sunrise light
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.68,0.45)   // pinkish dawn light (blocks par gulabi jhalak)
 #define NL_NOON_SUNLIGHT_COL   vec3(1.15,0.98,0.80)    // warm golden noon - same brightness (was 1.1,1.0,0.85)
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.05,0.12,0.32)  // cyan-tinted moonlight
 
@@ -58,12 +58,12 @@
 
 /* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
 #define NL_ATMO 0.35
-#define NL_ATMO_SUNSET vec3(1.4,0.55,0.20)  // sunset orange kiss
+#define NL_ATMO_SUNSET vec3(1.45,0.48,0.52)  // pink kiss (pehle orange tha)
 
-/* Sky colors - warm realistic sky */
-#define NL_DAWN_ZENITH_COL   vec3(0.45,0.30,0.50)     // warm twilight purple (less pink)
-#define NL_DAWN_HORIZON_COL  vec3(3.2,0.85,0.20)      // golden orange sunrise
-#define NL_DAWN_EDGE_COL     vec3(3.8,1.5,0.45)       // warm golden edge (brighter)
+/* Sky colors - pink-purple dawn, warm realistic sky */
+#define NL_DAWN_ZENITH_COL   vec3(0.52,0.27,0.66)     // purple twilight (pehle kam pink tha)
+#define NL_DAWN_HORIZON_COL  vec3(3.1,0.62,0.95)      // pink-orange sunrise (pehle golden tha)
+#define NL_DAWN_EDGE_COL     vec3(3.6,1.05,1.15)      // pink-gold edge
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
@@ -120,7 +120,7 @@
 #define NL_WATER_CLOUD_REFLECTION_DEPTH 2.0 // clouds appear this many blocks below the surface
 #define NL_WATER_CLOUD_REFL_RIPPLE 0.012 // very subtle swell drift (0.0 = dead-flat mirror)
 #define NL_WATER_AURORA_MIRROR 0.55     // paani me aurora aks kitna tez (clouds nahi, sirf aurora)
-#define NL_WATER_WAVE
+//#define NL_WATER_WAVE                // OFF: water wave band (flat paani)
 //#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
 #define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
