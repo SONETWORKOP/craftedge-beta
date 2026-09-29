@@ -138,22 +138,22 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   // warm halo around sun
   float sunHalo = pow(sunAngle, 12.0);
 
-  // dawn warming: at sunrise/sunset the sun's own light travels through more
-  // atmosphere, so the disc/glow/halo shift from white-yellow toward gold-orange
+  // dawn pinking: sunrise/sunset me suraj ki roshni pink-white ho jati hai
+  // (reference image jaisa) - din me yellow-white rehta hai
   float sunWarm = 0.6*dawnFactor;
 
-  // yellow-white sun core -> warm gold at dawn (drop green & blue, keep red)
-  vec3 sunCore = vec3(1.5, 1.4 - 0.5*sunWarm, 1.0 - 0.6*sunWarm) * sunDisc;
-  // warm yellow glow -> deeper orange at dawn
-  vec3 sunGlowCol = mix(vec3(1.4, 1.0, 0.3), vec3(1.6, 0.85, 0.22), sunWarm) * sunGlow * 0.45;
+  // yellow-white sun core -> pink-white at dawn
+  vec3 sunCore = vec3(1.5, 1.4 - 0.35*sunWarm, 1.0 - 0.15*sunWarm) * sunDisc;
+  // warm yellow glow -> pink-orange at dawn
+  vec3 sunGlowCol = mix(vec3(1.4, 1.0, 0.3), vec3(1.7, 0.8, 0.7), sunWarm) * sunGlow * 0.45;
   // atmospheric yellow scatter - strong during day
   vec3 sunScatterCol = vec3(1.2, 0.85, 0.2) * sunScatter * 0.15 * dayBrightness;
-  // warm halo -> golden-orange at dawn
-  vec3 sunHaloCol = mix(vec3(1.3, 0.9, 0.35), vec3(1.55, 0.78, 0.28), sunWarm) * sunHalo * 0.22;
+  // warm halo -> pink at dawn
+  vec3 sunHaloCol = mix(vec3(1.3, 0.9, 0.35), vec3(1.65, 0.75, 0.75), sunWarm) * sunHalo * 0.22;
 
-  // sunrise/sunset - extra orange scatter. use dawnFactor^2 so this warm halo
+  // sunrise/sunset - extra pink-orange scatter. use dawnFactor^2 so this warm halo
   // stays tied to true twilight and doesn't leak orange onto the daytime sun
-  vec3 dawnScatter = vec3(3.0, 0.85, 0.15) * sunScatter * 0.35 * dawnFactor*dawnFactor;
+  vec3 dawnScatter = vec3(3.0, 0.9, 0.6) * sunScatter * 0.35 * dawnFactor*dawnFactor;
 
   vec3 sunLight = (sunCore + sunGlowCol + sunScatterCol + sunHaloCol + dawnScatter);
   // fade out sun contribution below horizon (smooth, avoids hard pop at sunset)
