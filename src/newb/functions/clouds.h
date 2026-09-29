@@ -17,14 +17,18 @@ float nlDuskF(float dayFactor) {
   return d*d*(1.0 - nightF);
 }
 
-// sky-following cloud tint: din=safed, sunset=narangi-gulabi (ATMO palette),
-// raat=gehra neela + dark, barish=grey. NL_CLOUD_SKY_TINT off par purana
-// night-mix behavior (taaki subpack override tootey nahi).
-vec3 nlSkyCloudTint(vec3 cloudCol, float dayFactor, float rainFactor) {
+// sky-following cloud tint: POORA rang sky-horizon se (din=safed-neela,
+// sunset=narangi-gulabi, raat=gehra neela+dark, barish=grey).
+// skyDye = skycol.horizon (din/dusk/raat/barish pehle se mixed).
+// NL_CLOUD_SKY_TINT off par purana night-mix behavior.
+vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFactor) {
   #ifdef NL_CLOUD_SKY_TINT
     float nightF = 1.0 - smoothstep(-0.08, 0.12, dayFactor);
     float duskF = nlDuskF(dayFactor);
-    // sunset kiss
+    // poora dye: badal aasmaan ka hue pakde
+    vec3 dye = skyDye*1.15 + vec3_splat(0.22);
+    vec3 col = cloudCol*dye;
+    // sunset extra kiss (ATMO palette)
     #ifdef NL_ATMO_SUNSET
       vec3 duskCol = NL_ATMO_SUNSET*1.35 + vec3(0.28, 0.10, 0.10);
     #else
@@ -35,10 +39,10 @@ vec3 nlSkyCloudTint(vec3 cloudCol, float dayFactor, float rainFactor) {
     #else
       float duskAmt = 0.8;
     #endif
-    vec3 col = mix(cloudCol, cloudCol*duskCol*0.9 + duskCol*0.22, duskF*duskAmt);
-    // raat: config cyan + overall dark (chamke nahi)
-    col = mix(col, NL_NIGHT_CLOUD_COL, nightF*NL_NIGHT_CLOUD_BLEND);
-    col *= 1.0 - 0.45*nightF;
+    col = mix(col, cloudCol*duskCol*0.9 + duskCol*0.22, duskF*duskAmt);
+    // raat: config cyan + tez dark (chamke nahi)
+    col = mix(col, NL_NIGHT_CLOUD_COL*0.7, nightF*NL_NIGHT_CLOUD_BLEND);
+    col *= 1.0 - 0.62*nightF;
     // barish: grey + dark
     float lum = dot(col, vec3(0.299, 0.587, 0.114));
     col = mix(col, vec3_splat(lum)*vec3(0.72, 0.76, 0.82), rainFactor*0.7);
@@ -203,11 +207,11 @@ float nlVibrantClouds(vec2 uv, float px, highp float time) {
 }
 
 // sunTint comes from sunLightTint() (lighting.h is included after this header)
-// ab sky-following: sunset kiss + raat + barish andar (tint func me)
-vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint, float rainFactor) {
+// sky-following: din ujala, sunset kiss, raat dark, barish grey (tint func me)
+vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint, vec3 skyDye, float rainFactor) {
   vec3 col = vec3_splat(1.1)*mix(0.35, 1.0, clamp(dayFactor+0.25, 0.0, 1.0));
   col *= (0.7+0.5*sunTint);
-  return nlSkyCloudTint(col, dayFactor, rainFactor);
+  return nlSkyCloudTint(col, skyDye, dayFactor, rainFactor);
 }
 
 // soft multi-octave value noise (fBm) - smooth amorphous cloud shapes.
