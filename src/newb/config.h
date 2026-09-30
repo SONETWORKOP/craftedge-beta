@@ -125,22 +125,6 @@
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
 #define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
 
-/* Water splash - MAIN pack wala (rings + halke drops), DARK BLUE */
-#define NL_WATER_SPLASH
-#define NL_WATER_SPLASH_SCALE 1.4       // cell density
-#define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
-#define NL_WATER_SPLASH_INTENSITY 1.25  // foam chamak
-#define NL_WATER_SPLASH_NORMAL 0.35     // normal hilna (half rakha, safe)
-#define NL_WATER_SPLASH_RAIN_BOOST 1.0  // barish tez factor
-
-/* Snowfall puffs - barf girne par naram safed daag + twinkle */
-#define NL_SNOW_SPLASH
-#define NL_SNOW_SPLASH_INTENSITY 0.55  // dikhe (pehle 0.4 halka tha)
-
-/* Fireflies (jugnu) - raat me udte chamkile dots, barish/underwater band */
-#define NL_FIREFLY
-#define NL_FIREFLY_INTENSITY 1.1       // peela-hara glow tez
-
 /* Underwater */
 #define NL_UNDERWATER_BRIGHTNESS 0.85
 #define NL_CAUSTIC_INTENSITY 2.1
@@ -295,9 +279,6 @@
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
   #undef NL_PBR_BLOCK_REFL
-  #undef NL_WATER_SPLASH
-  #undef NL_SNOW_SPLASH
-  #undef NL_FIREFLY
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
   #define NL_AURORA_TEX_LAYERS 5

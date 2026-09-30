@@ -14,86 +14,6 @@ float calculateFresnel(float cosR, float r0) {
   return r0 + (1.0-r0)*a2*a2*a;
 }
 
-#ifdef NL_WATER_SPLASH
-// MAIN pack wala splash system (rings + soft drops), DARK BLUE.
-// drops halke rakhe + guards (white-pixel safe). RAIN-ONLY, underwater band.
-float nlSplashRing(vec2 uv, float t) {
-  vec2 cell = floor(uv);
-  vec2 f = fract(uv);
-  float rnd = rand(cell);
-  if (rnd < 0.30) return 0.0;
-  float phase = fract(rnd*7.31 + t*0.55);
-  vec2 center = vec2(rand(cell + 7.13), rand(cell + 3.71))*0.6 + 0.2;
-  float d = length(f - center);
-  float radius = phase*0.42;
-  float w = 0.028 + 0.028*phase;
-  float ring = (1.0 - smoothstep(0.0, w, abs(d - radius)))*(1.0 - phase);
-  float fill = (1.0 - smoothstep(radius - 0.15, radius, d))*(1.0 - phase)*0.30;
-  return (ring + fill)*smoothstep(0.30, 0.55, rnd);
-}
-
-float nlWaterSplash(vec2 xz, float t) {
-  float s1 = nlSplashRing(xz*NL_WATER_SPLASH_SCALE, t*NL_WATER_SPLASH_SPEED);
-  float s2 = nlSplashRing(xz*NL_WATER_SPLASH_SCALE*1.7 + 13.7, t*NL_WATER_SPLASH_SPEED*1.3 + 0.37);
-  return min(s1*0.70 + s2*0.50, 1.4);
-}
-
-// fragment rings + HALKE drops (dropAmt se control). Paani 0.6, zameen 0.0.
-float nlRainSplashLayer(vec2 uv, float t, float speed, float dropAmt) {
-  vec2 cell = floor(uv);
-  vec2 f = fract(uv);
-  float h = fract(sin(dot(cell, vec2(127.1, 311.7)))*43758.5453);
-  if (h < 0.35) return 0.0;
-  float phase = fract(h*13.73 + t*speed*(0.7 + h*0.6));
-  vec2 center = vec2(fract(h*91.17), fract(h*47.31))*0.5 + 0.25;
-  float d = length(f - center);
-  float radius = phase*0.45;
-  float ringW = 0.035 + 0.045*phase;
-  float ring = (1.0 - smoothstep(0.0, ringW, abs(d - radius)));
-  ring *= (1.0 - phase)*(1.0 - phase);
-  float drop = (1.0 - smoothstep(0.0, 0.09, d))*(1.0 - phase)*0.55*dropAmt;
-  return min((ring*1.0 + drop)*smoothstep(0.35, 0.55, h), 1.4);
-}
-
-float nlRainSplash(vec2 worldXZ, float t) {
-  float s1 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE, t, NL_WATER_SPLASH_SPEED, 0.6);
-  float s2 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE*1.73 + 17.3, t + 0.43, NL_WATER_SPLASH_SPEED*1.35, 0.6);
-  return min(s1*0.85 + s2*0.65, 1.4);
-}
-
-// zameen: sirf rings, drops nahi
-float nlRainSplashGround(vec2 worldXZ, float t) {
-  float s1 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE, t, NL_WATER_SPLASH_SPEED, 0.0);
-  float s2 = nlRainSplashLayer(worldXZ*NL_WATER_SPLASH_SCALE*1.73 + 17.3, t + 0.43, NL_WATER_SPLASH_SPEED*1.35, 0.0);
-  return min(s1*0.85 + s2*0.65, 1.4);
-}
-#endif
-
-#ifdef NL_SNOW_SPLASH
-// snowfall puffs - dheeme naram safed daag + halki twinkle, rings nahi.
-// barf girne (precipitation) par zameen/paani par.
-float nlSnowPuffLayer(vec2 uv, float t, float speed) {
-  vec2 cell = floor(uv);
-  vec2 f = fract(uv);
-  float h = fract(sin(dot(cell, vec2(269.5, 183.3)))*43758.5453);
-  if (h < 0.32) return 0.0;
-  float phase = fract(h*7.31 + t*speed*(0.35 + h*0.3));
-  vec2 center = vec2(fract(h*53.7), fract(h*91.3))*0.55 + 0.225;
-  float d = length(f - center);
-  float grow = 0.07 + phase*0.22;
-  float puff = 1.0 - smoothstep(0.0, grow, d);
-  puff *= (1.0 - phase*0.7);
-  float twinkle = 0.75 + 0.25*sin(t*2.2 + h*40.0);
-  return puff*twinkle*smoothstep(0.32, 0.52, h);
-}
-
-float nlSnowSplash(vec2 worldXZ, float t) {
-  float s1 = nlSnowPuffLayer(worldXZ*1.1, t, 0.8);
-  float s2 = nlSnowPuffLayer(worldXZ*1.1*1.7 + 7.7, t + 0.9, 1.0);
-  return min(s1*0.85 + s2*0.65, 1.3);
-}
-#endif
-
 // ---- Clear pretty water: smooth swell + fine chop (naya wave code) ----
 // badi smooth lehren (2 direction) + chhoti chop, sasta (sirf sin/cos)
 vec2 nlWaterSwell(vec2 p, float t) {
@@ -125,23 +45,9 @@ vec4 nlWater(
   // naya smooth swell (bump ke saath mix taaki reflection sundar toote)
   vec2 swell = nlWaterSwell(gPos.xz, t);
 
-  // vertex splash (main pack wala) - RAIN-ONLY, underwater band
-  float splash = 0.0;
-  #ifdef NL_WATER_SPLASH
-    if (fractCposY > 0.0 && camDist < 20.0 && !env.underwater) {
-      float vRainGate = smoothstep(0.02, 0.25, env.rainFactor);
-      splash = nlWaterSplash(gPos.xz, t);
-      splash *= clamp(1.0 - camDist/20.0, 0.0, 1.0);
-      splash *= vRainGate*(0.6 + NL_WATER_SPLASH_RAIN_BOOST)*env.rainFactor;
-    }
-  #endif
-
   vec3 nrm;
   if (fractCposY > 0.0) { // top plane
     nrm.xz = (bump*0.55 + swell*0.65)*NL_WATER_BUMP*1.15;
-    #ifdef NL_WATER_SPLASH
-      nrm.xz += splash*NL_WATER_SPLASH_NORMAL*0.5;
-    #endif
     nrm.y = -1.0;
     /*if (fractCposY>0.8 || fractCposY<0.9) { // flat plane
     } else { // slanted plane and highly slanted plane
@@ -172,11 +78,6 @@ vec4 nlWater(
   // torch light reflection (soft - tez freq se vertex aliasing hota tha)
   float tc = 0.5+0.5*sin(6.0*reflDir.x)*sin(6.0*reflDir.z);
   waterRefl += torchColor*NL_TORCHLIGHT_INTENSITY*lit.x*tc;
-
-  // splash foam - DARK BLUE (RAIN-ONLY, splash gate ke andar)
-  #ifdef NL_WATER_SPLASH
-    waterRefl += splash*NL_WATER_SPLASH_INTENSITY*(0.35 + 0.65*lit.y)*vec3(0.45, 0.62, 1.0);
-  #endif
 
   // sun glitter (soft single lobe - pow 600*2.0 se blocky white pixels aate the)
   #if defined(NL_SUNLIGHT_INTENSITY)
