@@ -169,8 +169,7 @@ void main() {
       }
     #endif
 
-    // ---- BLUE rain ripples (new style) - sirf barish, underwater band ----
-    // drops nahi (wahi white-pixel banate the), soft rings + cap, fragment only
+    // ---- DARK BLUE rain ripples (main pack wala) - sirf barish, underwater band ----
     #ifdef NL_WATER_SPLASH
       {
         vec3 splashWorld = v_position + CameraPosition.xyz;
@@ -178,9 +177,11 @@ void main() {
         float splashFade = clamp(1.0 - splashDist/24.0, 0.0, 1.0);
         float rainGate = smoothstep(0.02, 0.25, v_reflPbr.w);
         if (splashFade*rainGate > 0.002 && v_sunMoon.w < 0.5) {
-          float sp = nlBlueSplash(splashWorld.xz, ViewPositionAndTime.w);
+          float rainF = v_reflPbr.w;
+          float splashAmp = 2.0*rainF*rainGate;
+          float sp = nlRainSplash(splashWorld.xz, ViewPositionAndTime.w);
           float dayLight = clamp(v_reflSun.w*0.5 + 0.5, 0.25, 1.0);
-          diffuse.rgb += sp*splashFade*rainGate*NL_WATER_SPLASH_INTENSITY*vec3(0.42, 0.70, 1.0)*dayLight;
+          diffuse.rgb += sp*splashFade*splashAmp*NL_WATER_SPLASH_INTENSITY*vec3(0.22, 0.48, 0.95)*dayLight;
         }
       }
     #endif
@@ -239,8 +240,7 @@ void main() {
     }
   }
 
-  // ---- GROUND blue ripples + SNOW puffs (new style) ----
-  // sirf OPAQUE thos zameen (pattiyan nahi), roshni-scaled, underwater band
+  // ---- GROUND dark-blue ripples + SNOW puffs ----
   #ifdef NL_WATER_SPLASH
   #ifndef ALPHA_TEST
     if (v_extra.b < 0.9 && v_sunMoon.w < 0.5) {
@@ -254,8 +254,8 @@ void main() {
         float vegM = 1.0 - smoothstep(0.015, 0.09, vegGreen);
         float gLight = clamp(v_lightmapUV.y*1.4, 0.12, 1.0);
         if (gFade*flatM*vegM > 0.003) {
-          float gsp = nlBlueSplash(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
-          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.5*vec3(0.50, 0.72, 1.0);
+          float gsp = nlRainSplashGround(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
+          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.5*vec3(0.28, 0.52, 0.95);
         }
       }
     }
@@ -265,7 +265,8 @@ void main() {
   #ifndef ALPHA_TEST
     if (v_extra.b < 0.9 && v_sunMoon.w < 0.5) {
       float snowFall = v_reflPbr.w;
-      if (snowFall > 0.02) {
+      float snowGate = smoothstep(0.01, 0.15, snowFall);
+      if (snowGate > 0.002) {
         vec3 sWorld = v_position + CameraPosition.xyz;
         float sDist = length(v_position.xz);
         float sFade = clamp(1.0 - sDist/20.0, 0.0, 1.0);
@@ -275,11 +276,36 @@ void main() {
         float sLight = clamp(v_lightmapUV.y*1.4, 0.15, 1.0);
         if (sFade*sFlat*sVegM > 0.003) {
           float ssp = nlSnowSplash(sWorld.xz*1.1 + 3.1, ViewPositionAndTime.w*0.9);
-          diffuse.rgb += ssp*sFade*snowFall*sFlat*sVegM*sLight*NL_SNOW_SPLASH_INTENSITY*vec3(0.88, 0.93, 1.0);
+          diffuse.rgb += ssp*sFade*snowGate*sFlat*sVegM*sLight*NL_SNOW_SPLASH_INTENSITY*vec3(0.88, 0.93, 1.0);
         }
       }
     }
   #endif
+  #endif
+  // ---- FIREFLIES (jugnu) - raat me udte chamkile dots, barish me band ----
+  #ifdef NL_FIREFLY
+    if (v_extra.b < 0.9 && v_sunMoon.w < 0.5) {
+      float nightF = 1.0 - smoothstep(-0.08, 0.15, v_reflSun.w);
+      float dryF = 1.0 - clamp(v_reflPbr.w, 0.0, 1.0);
+      float fDist = length(v_position.xz);
+      float fFade = clamp(1.0 - fDist/14.0, 0.0, 1.0);
+      if (nightF*dryF*fFade > 0.01) {
+        vec3 fWorld = v_position + CameraPosition.xyz;
+        float ft = ViewPositionAndTime.w;
+        vec2 fuv = fWorld.xz*0.8 + vec2(ft*0.35, sin(ft*0.5 + fWorld.x*0.2)*0.35);
+        vec2 fcell = floor(fuv);
+        vec2 ff = fract(fuv);
+        float fh = rand(fcell);
+        if (fh > 0.72) {
+          vec2 fc = vec2(fract(fh*57.0), fract(fh*23.0));
+          vec2 drift = 0.22*vec2(sin(ft*(0.9 + fh) + fh*20.0), cos(ft*(0.7 + fh*0.6) + fh*13.0));
+          float fd = length(ff - fc - drift);
+          float fdot = 1.0 - smoothstep(0.0, 0.055, fd);
+          float blink = 0.35 + 0.65*pow(0.5 + 0.5*sin(ft*(1.2 + fh*1.5) + fh*50.0), 2.0);
+          diffuse.rgb += fdot*blink*nightF*dryF*fFade*NL_FIREFLY_INTENSITY*vec3(0.62, 1.0, 0.28);
+        }
+      }
+    }
   #endif
 
   diffuse.rgb = mix(diffuse.rgb, v_fog.rgb, v_fog.a);
