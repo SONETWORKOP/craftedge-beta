@@ -125,13 +125,15 @@
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
 #define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
 
-/* Water splash - TEST ke liye poora OFF (white pixel check) */
-//#define NL_WATER_SPLASH
-#define NL_WATER_SPLASH_SCALE 1.4       // cell density (zyada = chhoti rings, ss me badi rings isliye 1.4)
-#define NL_WATER_SPLASH_SPEED 1.1       // ring expand speed
-#define NL_WATER_SPLASH_INTENSITY 1.25  // pehle jaisi tez value restore
-#define NL_WATER_SPLASH_NORMAL 0.35     // normal hilna (reflection tootna)
-#define NL_WATER_SPLASH_RAIN_BOOST 1.0  // barish me extra tez (0 = hamesha same)
+/* Water splash - NEW STYLE blue ripples (drops nahi, white-pixel safe) */
+#define NL_WATER_SPLASH
+#define NL_WATER_SPLASH_SCALE 1.2       // cell density
+#define NL_WATER_SPLASH_SPEED 1.0       // ring expand speed
+#define NL_WATER_SPLASH_INTENSITY 1.0   // neele foam chamak
+
+/* Snowfall puffs - barf girne par naram safed daag + twinkle */
+#define NL_SNOW_SPLASH
+#define NL_SNOW_SPLASH_INTENSITY 0.4   // halka (zyada safed na lage)
 
 /* Underwater */
 #define NL_UNDERWATER_BRIGHTNESS 0.85
@@ -288,6 +290,7 @@
   #undef NL_ENTITY_EDGE_HIGHLIGHT
   #undef NL_PBR_BLOCK_REFL
   #undef NL_WATER_SPLASH
+  #undef NL_SNOW_SPLASH
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
   #define NL_AURORA_TEX_LAYERS 5

@@ -169,21 +169,34 @@ void main() {
       }
     #endif
 
-    // ---- RAIN SPLASH rings (gallery ss) - FRAGMENT per-pixel, isliye saaf dikhega ----
-    // vertex wala splash sparse chunks me dab jata hai, yeh har pixel par banta hai.
+    // ---- BLUE rain ripples (new style) - sirf barish, underwater band ----
+    // drops nahi (wahi white-pixel banate the), soft rings + cap, fragment only
     #ifdef NL_WATER_SPLASH
       {
         vec3 splashWorld = v_position + CameraPosition.xyz;
         float splashDist = length(v_position.xz);
         float splashFade = clamp(1.0 - splashDist/24.0, 0.0, 1.0);
-        if (splashFade > 0.002) {
-          float rainF = v_reflPbr.w;
-          // normal me halka, barish me tez (ss jaisa dekhne ke liye hamesha thoda)
-          float splashAmp = 0.55 + 1.6*rainF;
-          float sp = nlRainSplash(splashWorld.xz, ViewPositionAndTime.w);
-          // safed-neeli foam chamak, lit ke saath taaki raat me andha na kare
+        float rainGate = smoothstep(0.02, 0.25, v_reflPbr.w);
+        if (splashFade*rainGate > 0.002 && v_sunMoon.w < 0.5) {
+          float sp = nlBlueSplash(splashWorld.xz, ViewPositionAndTime.w);
           float dayLight = clamp(v_reflSun.w*0.5 + 0.5, 0.25, 1.0);
-          diffuse.rgb += sp*splashFade*splashAmp*NL_WATER_SPLASH_INTENSITY*vec3(0.75, 0.88, 1.0)*dayLight;
+          diffuse.rgb += sp*splashFade*rainGate*NL_WATER_SPLASH_INTENSITY*vec3(0.42, 0.70, 1.0)*dayLight;
+        }
+      }
+    #endif
+    // ---- SNOWFALL puffs (new) - barf girne par naram safed daag ----
+    #ifdef NL_SNOW_SPLASH
+      {
+        float snowGate = smoothstep(0.02, 0.25, v_reflPbr.w);
+        if (snowGate > 0.002 && v_sunMoon.w < 0.5) {
+          vec3 snowWorld = v_position + CameraPosition.xyz;
+          float snowDist = length(v_position.xz);
+          float snowFade = clamp(1.0 - snowDist/22.0, 0.0, 1.0);
+          if (snowFade > 0.002) {
+            float ssp = nlSnowSplash(snowWorld.xz, ViewPositionAndTime.w);
+            float snowLight = clamp(v_reflSun.w*0.5 + 0.5, 0.30, 1.0);
+            diffuse.rgb += ssp*snowFade*snowGate*NL_SNOW_SPLASH_INTENSITY*vec3(0.88, 0.93, 1.0)*snowLight;
+          }
         }
       }
     #endif
@@ -226,26 +239,43 @@ void main() {
     }
   }
 
-  // ---- GROUND rain splash (zameen par barish ki chhintein) ----
-  // white-pixel fix: sirf OPAQUE thos zameen (pattiyan/ALPHA_TEST par nahi),
-  // sirf soft rings (bright drop nahi), roshni ke hisaab se dheema (raat me halka)
+  // ---- GROUND blue ripples + SNOW puffs (new style) ----
+  // sirf OPAQUE thos zameen (pattiyan nahi), roshni-scaled, underwater band
   #ifdef NL_WATER_SPLASH
   #ifndef ALPHA_TEST
-    if (v_extra.b < 0.9) {
+    if (v_extra.b < 0.9 && v_sunMoon.w < 0.5) {
       float grain = v_reflPbr.w;
       if (grain > 0.02) {
         vec3 gWorld = v_position + CameraPosition.xyz;
         float gDist = length(v_position.xz);
         float gFade = clamp(1.0 - gDist/22.0, 0.0, 1.0);
         float flatM = 1.0 - smoothstep(0.0002, 0.0012, abs(dFdy(v_extra.g)));
-        // hari ghaas/patti par nahi
         float vegGreen = diffuse.g - max(diffuse.r, diffuse.b);
         float vegM = 1.0 - smoothstep(0.015, 0.09, vegGreen);
-        // raat/andhere me dheema (lightmap sky light ke saath)
         float gLight = clamp(v_lightmapUV.y*1.4, 0.12, 1.0);
         if (gFade*flatM*vegM > 0.003) {
-          float gsp = nlRainSplashGround(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
-          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.6*vec3(0.7, 0.82, 0.95);
+          float gsp = nlBlueSplash(gWorld.xz*1.25 + 7.7, ViewPositionAndTime.w*1.15);
+          diffuse.rgb += gsp*gFade*grain*flatM*vegM*gLight*NL_WATER_SPLASH_INTENSITY*0.5*vec3(0.50, 0.72, 1.0);
+        }
+      }
+    }
+  #endif
+  #endif
+  #ifdef NL_SNOW_SPLASH
+  #ifndef ALPHA_TEST
+    if (v_extra.b < 0.9 && v_sunMoon.w < 0.5) {
+      float snowFall = v_reflPbr.w;
+      if (snowFall > 0.02) {
+        vec3 sWorld = v_position + CameraPosition.xyz;
+        float sDist = length(v_position.xz);
+        float sFade = clamp(1.0 - sDist/20.0, 0.0, 1.0);
+        float sFlat = 1.0 - smoothstep(0.0002, 0.0012, abs(dFdy(v_extra.g)));
+        float sVeg = diffuse.g - max(diffuse.r, diffuse.b);
+        float sVegM = 1.0 - smoothstep(0.015, 0.09, sVeg);
+        float sLight = clamp(v_lightmapUV.y*1.4, 0.15, 1.0);
+        if (sFade*sFlat*sVegM > 0.003) {
+          float ssp = nlSnowSplash(sWorld.xz*1.1 + 3.1, ViewPositionAndTime.w*0.9);
+          diffuse.rgb += ssp*sFade*snowFall*sFlat*sVegM*sLight*NL_SNOW_SPLASH_INTENSITY*vec3(0.88, 0.93, 1.0);
         }
       }
     }
