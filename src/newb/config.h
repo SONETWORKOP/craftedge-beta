@@ -80,8 +80,8 @@
 #define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.30,0.52,0.90)     // rainy sky-blue upar
 #define NL_RAIN_HORIZON_COL  vec3(0.55,0.75,1.00)     // rainy sky-blue neeche
-#define NL_END_ZENITH_COL    vec3(0.10,0.005,0.20)
-#define NL_END_HORIZON_COL   vec3(0.42,0.03,0.62)
+#define NL_END_ZENITH_COL    vec3(0.20,0.003,0.26)
+#define NL_END_HORIZON_COL   vec3(0.78,0.025,0.85)
 
 /* End black hole */
 #define NL_END_BLACK_HOLE
