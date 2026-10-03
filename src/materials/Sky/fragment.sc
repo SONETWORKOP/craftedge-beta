@@ -10,6 +10,8 @@
   // shared aurora function in newb/functions/clouds.h (included by main.sh)
   // can sample it in both the Sky dome and the RenderChunk water mirror.
   SAMPLER2D_AUTOREG(s_NoiseVoxel);
+  // real-cloud noise (y.png) - REALISTIC_CLOUDS subpack ke liye
+  SAMPLER2D_AUTOREG(s_RealCloudNoise);
   #define NL_ROUNDED_CLOUDS
   #define NL_AURORA_REFLECTION
   #include <newb/main.sh>
@@ -60,6 +62,17 @@ void main() {
       }
     }
 
+    // REALISTIC_CLOUDS subpack: y.png noise-texture wale 8-layer badal.
+    // Chunne par baaki dome-clouds nahi bante (double-draw nahi).
+    #ifdef REALISTIC_CLOUDS
+      if (!env.underwater && viewDir.y > 0.001) {
+        vec3 rcSun = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
+        vec4 rc = nlRealClouds(viewDir, rcSun, v_underwaterRainTimeDay.z);
+        rc.rgb = nlSkyCloudTint(rc.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+        float rcOp = smoothstep(0.03, 0.3, viewDir.y);
+        skyColor.rgb = mix(skyColor.rgb, rc.rgb, clamp(rc.a*rcOp, 0.0, 1.0));
+      }
+    #else
     // procedural vibrant clouds (cheap, no texture)
     #ifdef NL_SKY_CLOUDS
       if (!env.underwater && viewDir.y > 0.001) {
@@ -129,6 +142,7 @@ void main() {
       #endif // MEDIUM
       #endif // NO_REFLECTIONS
     #endif // NL_SKY_CLOUDS
+    #endif // REALISTIC_CLOUDS
 
     skyColor = colorCorrection(skyColor);
 

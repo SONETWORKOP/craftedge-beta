@@ -132,8 +132,10 @@
 #define NL_UNDERWATER_STREAKS 1.1
 #define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0)
 
-/* Sky-following clouds - aasmaan ke hisaab se rang: din safed, sunset narangi,
-   raat gehra neela, barish grey (Sky dome + paani mirror dono par) */
+/* Realistic texture clouds (Download/realist Clouds.txt + y.png) */
+#define NL_REAL_CLOUD_SCALE 0.5       // plane project scale (txt wala)
+
+/* Sky-following clouds - din/sunset/raat/barish rang (Sky dome + mirror) */
 #define NL_CLOUD_SKY_TINT
 #define NL_CLOUD_DUSK_STRENGTH 0.8     // sunset narangi kitni tez (0 = band)
 

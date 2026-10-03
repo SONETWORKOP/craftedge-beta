@@ -475,6 +475,61 @@ vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
 }
 #endif
 
+// ---- Realistic texture clouds (Download/realist Clouds.txt + y.png) ----
+// Sirf REALISTIC_CLOUDS subpack (Sky) me chalta hai. s_RealCloudNoise sampler
+// Sky fragment + buffers/RealCloudNoise.json se aata hai.
+#ifdef REALISTIC_CLOUDS
+float nlRealNoise(vec2 pos) {
+  return texture2D(s_RealCloudNoise, pos*0.02).r;
+}
+
+float nlRealFbm(vec2 pos, float pDens, float fTime) {
+  float sum = 0.0;
+  float sDens = 0.9;
+  pos += fTime*0.002;
+  for (int i = 0; i < 3; i++) {
+    sum += nlRealNoise(pos)*sDens*pDens;
+    sDens *= 0.75;
+    pos *= 2.0;
+    pos += fTime*0.05;
+  }
+  float cloud = 1.0 - sum;
+  cloud = cloud*1.80;
+  cloud += 0.12;
+  cloud = smoothstep(0.12, 0.72, cloud);
+  cloud = pow(cloud, 0.72);
+  return clamp(cloud, 0.0, 1.0);
+}
+
+// 8-layer plane clouds, suraj-glow ke saath. rgb = cloud rang, a = coverage.
+vec4 nlRealClouds(vec3 vdir, vec3 sunDir, highp float t) {
+  vec3 horC = vec3(1.0);
+  vec3 zenC = vec3(0.6, 0.7, 0.8);
+  vec3 skyC = mix(vec3(0.5), vec3(0.1, 0.3, 0.7), abs(vdir.y));
+  skyC += 0.2*pow(max(dot(sunDir, vdir), 0.0), 16.0);
+
+  float acc = 0.0;
+  if (vdir.y > 0.0) {
+    vec2 cloudP = (vdir.xz/max(vdir.y, 0.01))*NL_REAL_CLOUD_SCALE;
+    float sDens = 1.5;
+    vec3 cloDirC = horC*1.5;
+    vec3 cloAmbC = mix(vec3(dot(zenC, vec3(0.299, 0.587, 0.114))), zenC, 0.7);
+    for (int i = 0; i < 8; i++) {
+      float cloudM = nlRealFbm(cloudP, sDens, t);
+      cloudM = saturate(cloudM*1.15);
+      cloDirC = mix(cloDirC, cloAmbC, 0.2);
+      float h = smoothstep(0.0, 0.4, vdir.y);
+      float cloudAmount = saturate(cloudM*h*1.15);
+      skyC = mix(skyC, cloDirC, cloudAmount);
+      acc = max(acc, cloudAmount);
+      sDens += (i <= 4) ? -0.1 : 0.1;
+      cloudP -= cloudP*0.045;
+    }
+  }
+  return vec4(skyC, acc);
+}
+#endif
+
 // aurora is rendered on clouds layer
 #ifdef NL_AURORA
 vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
