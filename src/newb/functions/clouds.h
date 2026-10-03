@@ -475,60 +475,55 @@ vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
 }
 #endif
 
-// ---- Realistic texture clouds (Download/realist Clouds.txt + y.png) ----
-// Sirf REALISTIC_CLOUDS subpack (Sky) me chalta hai. Sampler yahin declare
-// hai taaki vertex stage me bhi (jahan main.sh include hota hai) compile ho -
-// bgfx me unused sampler harmless hai, REG har stage me milta hai.
+// ---- Realistic volumetric clouds (Download/shadertoy_cloud_shader.txt) ----
+// Sirf REALISTIC_CLOUDS subpack. 3D value-noise 2D texture se (z-slice trick),
+// 20-step march + sun-scatter lighting. Sampler guard ke andar (vertex-safe).
 #ifdef REALISTIC_CLOUDS
-SAMPLER2D_AUTOREG(s_RealCloudNoise);
-float nlRealNoise(vec2 pos) {
-  return texture2D(s_RealCloudNoise, pos*0.02).r;
+SAMPLER2D_AUTOREG(s_STCloudNoise);
+float nlSTNoise(vec3 x) {
+  vec3 p = floor(x);
+  vec3 f = fract(x);
+  f = f*f*(3.0 - 2.0*f);
+  vec2 uv = (p.xy + vec2(37.0, 17.0)*p.z) + f.xy;
+  vec2 rg = textureLod(s_STCloudNoise, (uv + 0.5)/96.0, 0.0).yx;
+  return mix(rg.x, rg.y, f.z);
 }
 
-float nlRealFbm(vec2 pos, float pDens, float fTime) {
-  float sum = 0.0;
-  float sDens = 0.9;
-  pos += fTime*0.002;
-  for (int i = 0; i < 3; i++) {
-    sum += nlRealNoise(pos)*sDens*pDens;
-    sDens *= 0.75;
-    pos *= 2.0;
-    pos += fTime*0.05;
-  }
-  float cloud = 1.0 - sum;
-  cloud = cloud*1.80;
-  cloud += 0.12;
-  cloud = smoothstep(0.12, 0.72, cloud);
-  cloud = pow(cloud, 0.72);
-  return clamp(cloud, 0.0, 1.0);
+float nlSTDensity(vec3 p, float t) {
+  float h = (p.y - NL_ST_CLOUD_BOTTOM)/(NL_ST_CLOUD_TOP - NL_ST_CLOUD_BOTTOM);
+  float shape = smoothstep(0.0, 0.2, h)*(1.0 - smoothstep(0.5, 1.0, h));
+  vec3 q = p*0.02 + vec3(t*NL_ST_CLOUD_SPEED*0.01, 0.0, 0.0);
+  float n = nlSTNoise(q)*0.65 + nlSTNoise(q*2.3)*0.25 + nlSTNoise(q*5.1)*0.1;
+  return clamp((n - (1.0 - NL_ST_CLOUD_COVERAGE))*shape*4.0, 0.0, 1.0);
 }
 
-// 8-layer plane clouds, suraj-glow ke saath. rgb = cloud rang, a = coverage.
-vec4 nlRealClouds(vec3 vdir, vec3 sunDir, highp float t) {
-  vec3 horC = vec3(1.0);
-  vec3 zenC = vec3(0.6, 0.7, 0.8);
-  vec3 skyC = mix(vec3(0.5), vec3(0.1, 0.3, 0.7), abs(vdir.y));
-  skyC += 0.2*pow(max(dot(sunDir, vdir), 0.0), 16.0);
-
-  float acc = 0.0;
-  if (vdir.y > 0.0) {
-    vec2 cloudP = (vdir.xz/max(vdir.y, 0.01))*NL_REAL_CLOUD_SCALE;
-    float sDens = 1.5;
-    vec3 cloDirC = horC*1.5;
-    vec3 cloAmbC = mix(vec3(dot(zenC, vec3(0.299, 0.587, 0.114))), zenC, 0.7);
-    for (int i = 0; i < 8; i++) {
-      float cloudM = nlRealFbm(cloudP, sDens, t);
-      cloudM = saturate(cloudM*1.15);
-      cloDirC = mix(cloDirC, cloAmbC, 0.2);
-      float h = smoothstep(0.0, 0.4, vdir.y);
-      float cloudAmount = saturate(cloudM*h*1.15);
-      skyC = mix(skyC, cloDirC, cloudAmount);
-      acc = max(acc, cloudAmount);
-      sDens += (i <= 4) ? -0.1 : 0.1;
-      cloudP -= cloudP*0.045;
+// rgb = lit cloud, a = coverage (horizon fade andar)
+vec4 nlSTClouds(vec3 vdir, vec3 sunDir, highp float t) {
+  float sd = max(dot(vdir, sunDir), 0.0);
+  float t0 = NL_ST_CLOUD_BOTTOM/max(vdir.y, 0.01);
+  float t1 = NL_ST_CLOUD_TOP/max(vdir.y, 0.01);
+  float dt = (t1 - t0)/float(NL_ST_CLOUD_STEPS);
+  float jitter = fract(sin(dot(vdir.xy, vec2(12.9898, 78.233)))*43758.5453);
+  float tt = t0 + dt*jitter;
+  float T = 1.0;
+  vec3 acc = vec3(0.0);
+  for (int i = 0; i < NL_ST_CLOUD_STEPS; i++) {
+    vec3 p = vdir*tt;
+    float d = nlSTDensity(p, t);
+    if (d > 0.01) {
+      float l = nlSTDensity(p + sunDir*12.0, t);
+      float light = exp(-l*2.5);
+      vec3 c = mix(vec3(0.45, 0.52, 0.65), vec3(1.0, 0.97, 0.9), light);
+      c += vec3(1.0, 0.9, 0.7)*pow(sd, 6.0)*light*0.3;
+      float a = 1.0 - exp(-d*dt*0.08);
+      acc += c*a*T;
+      T *= 1.0 - a;
+      if (T < 0.03) break;
     }
+    tt += dt;
   }
-  return vec4(skyC, acc);
+  float fade = smoothstep(NL_ST_HORIZON_START, NL_ST_HORIZON_END, vdir.y);
+  return vec4(acc, (1.0 - T)*fade);
 }
 #endif
 

@@ -1,5 +1,5 @@
 {
-  "name": "RealCloudNoise",
+  "name": "STCloudNoise",
   "reg1": 9,
   "reg2": 9,
   "type": "texture2D",
@@ -9,7 +9,7 @@
   "default_texture": "",
   "unordered_access": false,
   "always_one": 1,
-  "texture_path": "textures/newb/realclouds",
+  "texture_path": "textures/newb/stcloudnoise",
   "sampler_state": {
     "filter": "Bilinear",
     "wrapping": "Repeat"

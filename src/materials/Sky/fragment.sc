@@ -64,11 +64,10 @@ void main() {
     // Chunne par baaki dome-clouds nahi bante (double-draw nahi).
     #ifdef REALISTIC_CLOUDS
       if (!env.underwater && viewDir.y > 0.001) {
-        vec3 rcSun = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
-        vec4 rc = nlRealClouds(viewDir, rcSun, v_underwaterRainTimeDay.z);
-        rc.rgb = nlSkyCloudTint(rc.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
-        float rcOp = smoothstep(0.03, 0.3, viewDir.y);
-        skyColor.rgb = mix(skyColor.rgb, rc.rgb, clamp(rc.a*rcOp, 0.0, 1.0));
+        vec3 stSun = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
+        vec4 stc = nlSTClouds(viewDir, stSun, v_underwaterRainTimeDay.z);
+        stc.rgb = nlSkyCloudTint(stc.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+        skyColor.rgb = mix(skyColor.rgb, stc.rgb, clamp(stc.a, 0.0, 1.0));
       }
     #else
     // procedural vibrant clouds (cheap, no texture)
