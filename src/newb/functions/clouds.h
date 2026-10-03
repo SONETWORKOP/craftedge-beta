@@ -476,9 +476,11 @@ vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
 #endif
 
 // ---- Realistic texture clouds (Download/realist Clouds.txt + y.png) ----
-// Sirf REALISTIC_CLOUDS subpack (Sky) me chalta hai. s_RealCloudNoise sampler
-// Sky fragment + buffers/RealCloudNoise.json se aata hai.
+// Sirf REALISTIC_CLOUDS subpack (Sky) me chalta hai. Sampler yahin declare
+// hai taaki vertex stage me bhi (jahan main.sh include hota hai) compile ho -
+// bgfx me unused sampler harmless hai, REG har stage me milta hai.
 #ifdef REALISTIC_CLOUDS
+SAMPLER2D_AUTOREG(s_RealCloudNoise);
 float nlRealNoise(vec2 pos) {
   return texture2D(s_RealCloudNoise, pos*0.02).r;
 }

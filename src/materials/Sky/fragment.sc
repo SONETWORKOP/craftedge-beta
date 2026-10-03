@@ -10,8 +10,6 @@
   // shared aurora function in newb/functions/clouds.h (included by main.sh)
   // can sample it in both the Sky dome and the RenderChunk water mirror.
   SAMPLER2D_AUTOREG(s_NoiseVoxel);
-  // real-cloud noise (y.png) - REALISTIC_CLOUDS subpack ke liye
-  SAMPLER2D_AUTOREG(s_RealCloudNoise);
   #define NL_ROUNDED_CLOUDS
   #define NL_AURORA_REFLECTION
   #include <newb/main.sh>
