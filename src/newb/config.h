@@ -132,14 +132,8 @@
 #define NL_UNDERWATER_STREAKS 1.1
 #define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0)
 
-/* Realistic volumetric clouds (Download/shadertoy_cloud_shader.txt + iChannel0.png) */
-#define NL_ST_CLOUD_STEPS 20          // march steps (perf knob)
-#define NL_ST_CLOUD_BOTTOM 80.0
-#define NL_ST_CLOUD_TOP 140.0
-#define NL_ST_CLOUD_COVERAGE 0.5      // kitna aasmaan dhaka
-#define NL_ST_CLOUD_SPEED 2.0         // drift
-#define NL_ST_HORIZON_START 0.03
-#define NL_ST_HORIZON_END 0.25
+/* Realistic texture clouds (Download/realist Clouds.txt + y.png) */
+#define NL_REAL_CLOUD_SCALE 0.5       // plane project scale (txt wala)
 
 /* Sky-following clouds - din/sunset/raat/barish rang (Sky dome + mirror) */
 #define NL_CLOUD_SKY_TINT
