@@ -307,4 +307,12 @@
   #define NL_NO_WATER_CLOUD_REFL
 #endif
 
+/* Shader-editor pixelated clouds (Download/clouds) - new subpack EDITOR_CLOUDS.
+   Mesh Clouds material par chalta hai (NL_CLOUD_TYPE 2 path), Sky dome clean
+   rehta hai taaki double-draw na ho. */
+#ifdef EDITOR_CLOUDS
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 2
+#endif
+
 #endif

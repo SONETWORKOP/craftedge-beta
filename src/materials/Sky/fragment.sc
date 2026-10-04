@@ -60,6 +60,9 @@ void main() {
       }
     }
 
+    // EDITOR_CLOUDS subpack: dome clean - mesh shader-editor clouds cover
+    // karte hain (double-draw nahi, NO_REFLECTIONS jaisa).
+    #ifndef EDITOR_CLOUDS
     // REALISTIC_CLOUDS subpack: y.png noise-texture wale 8-layer badal.
     // Chunne par baaki dome-clouds nahi bante (double-draw nahi).
     #ifdef REALISTIC_CLOUDS
@@ -141,6 +144,7 @@ void main() {
       #endif // NO_REFLECTIONS
     #endif // NL_SKY_CLOUDS
     #endif // REALISTIC_CLOUDS
+    #endif // EDITOR_CLOUDS
 
     skyColor = colorCorrection(skyColor);
 

@@ -56,6 +56,15 @@ Noise-texture (y.png) 8-layer realistic clouds on the sky.
 '''
 
 [[subpack]]
+define = "EDITOR_CLOUDS"
+materials = ["Clouds", "Sky"]
+description = '''
+Shader Editor Clouds
+Pixelated shader-editor (Download/clouds) mesh clouds.
+Sky dome clean rehta hai.
+'''
+
+[[subpack]]
 define = "DEFAULT"
 materials = []
 description = '''
