@@ -22,8 +22,10 @@
   // (nlAuroraBorealis) so the water mirror in RenderChunk draws the exact
   // same shape.
   #ifdef EDITOR_CLOUDS
-  // shader-editor-clouds.txt (Shadertoy volumetric) - Sky-dome port.
-  // Original: resolution/time/touch + gl_FragCoord. Yahan: viewDir + time.
+  // heavy.txt FULL CODE PORT (Download/heavy.txt 117 lines, STEPS 12) - Sky-dome version.
+  // heavy.txt Shadertoy original: resolution/time/touch + gl_FragCoord + sky-gradient + sun + 12-step volumetric.
+  // Yahan 1:1 port: hash13/vnoise/density/raymarch/sun-shadow/horizon-fade same, sirf rd=viewDir, t=dome-time,
+  // sky=nlRenderSky (Minecraft din/sunset/raat/barish), jitter=rd.xy (dome me fragCoord nahi).
   #define EDITOR_STEPS 12
   #define EDITOR_CB 80.0
   #define EDITOR_CT 140.0
@@ -104,8 +106,11 @@ void main() {
     }
 
     #ifdef EDITOR_CLOUDS
-    // shader-editor-clouds.txt volumetric (12-step raymarch).
-    // rd = viewDir, sun = env sun/moon, time = dome time.
+    // heavy.txt main() FULL PORT - 12-step raymarch + sun-shadow + horizon-fade.
+    // heavy.txt: rd from uv, sun fixed, sky-gradient + pow(sd,32)*0.6, t0/t1 with max(rd.y,0.02), jitter fragCoord,
+    // d>0.01, l=density(p+sun*12), light=exp(-l*2.5), c=mix(dark,bright,light)+sun*pow(sd,6)*light*0.3,
+    // a=1-exp(-d*dt*0.08), T break 0.03, fade smoothstep(0.03,0.25), col=mix(col,acc+sky*T,fade).
+    // Yahan: rd=viewDir, sun=sunDir/moonDir, t=dome-time, sky=nlRenderSky, jitter=rd.xy. Baaki 1:1.
     if (!env.underwater && viewDir.y > 0.001) {
       vec3 rd = viewDir;
       vec3 sunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
