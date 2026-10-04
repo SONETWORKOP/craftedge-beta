@@ -124,8 +124,8 @@ void main() {
         float d = editorDensity(p, t);
         if (d > 0.01) {
           float l = editorDensity(p + sunDir * 12.0, t);
-          float light = exp(-l * 1.6);
-          vec3 c = mix(vec3(0.58, 0.64, 0.75), vec3(1.05, 1.0, 0.94), light);
+          float light = exp(-l * 2.5);
+          vec3 c = mix(vec3(0.45, 0.52, 0.65), vec3(1.0, 0.97, 0.9), light);
           c += vec3(1.0, 0.9, 0.7) * pow(max(sd, 0.001), 6.0) * light * 0.3;
           float a = 1.0 - exp(-d * dt * 0.08);
           acc += c * a * T;
@@ -136,9 +136,6 @@ void main() {
       }
       // Minecraft sky-rang me dhalo: din/sunset/raat/barish
       acc = nlSkyCloudTint(acc, skycol.horizon, env.dayFactor, env.rainFactor);
-      float dayL = clamp(env.dayFactor * 0.5 + 0.5, 0.0, 1.0);
-      acc *= 0.35 + 0.65 * dayL;
-      acc *= 1.0 - 0.35 * env.rainFactor;
       vec3 vol = acc + skyColor.rgb * T;
       float fade = smoothstep(EDITOR_H0, EDITOR_H1, rd.y);
       skyColor.rgb = mix(skyColor.rgb, vol, fade);
