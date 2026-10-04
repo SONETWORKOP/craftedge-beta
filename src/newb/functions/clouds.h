@@ -481,8 +481,6 @@ vec4 nlRoundedClouds(vec3 viewDir, float time, float jitter) {
 // bgfx me unused sampler harmless hai, REG har stage me milta hai.
 #ifdef REALISTIC_CLOUDS
 SAMPLER2D_AUTOREG(s_RealCloudNoise);
-// Download/realist Clouds-1.txt wala simple version + y.jpg noise.
-// (txt ka saturate = clamp 0..0.9, waisa hi rakha.)
 float nlRealNoise(vec2 pos) {
   return texture2D(s_RealCloudNoise, pos*0.02).r;
 }
@@ -497,7 +495,12 @@ float nlRealFbm(vec2 pos, float pDens, float fTime) {
     pos *= 2.0;
     pos += fTime*0.05;
   }
-  return clamp(1.0 - sum, 0.0, 0.9);
+  float cloud = 1.0 - sum;
+  cloud = cloud*1.80;
+  cloud += 0.12;
+  cloud = smoothstep(0.12, 0.72, cloud);
+  cloud = pow(cloud, 0.72);
+  return clamp(cloud, 0.0, 1.0);
 }
 
 // 8-layer plane clouds, suraj-glow ke saath. rgb = cloud rang, a = coverage.
@@ -515,9 +518,10 @@ vec4 nlRealClouds(vec3 vdir, vec3 sunDir, highp float t) {
     vec3 cloAmbC = mix(vec3(dot(zenC, vec3(0.299, 0.587, 0.114))), zenC, 0.7);
     for (int i = 0; i < 8; i++) {
       float cloudM = nlRealFbm(cloudP, sDens, t);
+      cloudM = saturate(cloudM*1.15);
       cloDirC = mix(cloDirC, cloAmbC, 0.2);
       float h = smoothstep(0.0, 0.4, vdir.y);
-      float cloudAmount = clamp(cloudM*h, 0.0, 1.0);
+      float cloudAmount = saturate(cloudM*h*1.15);
       skyC = mix(skyC, cloDirC, cloudAmount);
       acc = max(acc, cloudAmount);
       sDens += (i <= 4) ? -0.1 : 0.1;
