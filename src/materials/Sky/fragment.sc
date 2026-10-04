@@ -22,18 +22,19 @@
   // (nlAuroraBorealis) so the water mirror in RenderChunk draws the exact
   // same shape.
   #ifdef EDITOR_CLOUDS
-  // heavy.txt FULL CODE PORT (Download/heavy.txt 117 lines, STEPS 12) - Sky-dome version.
-  // heavy.txt Shadertoy original: resolution/time/touch + gl_FragCoord + sky-gradient + sun + 12-step volumetric.
-  // Yahan 1:1 port: hash13/vnoise/density/raymarch/sun-shadow/horizon-fade same, sirf rd=viewDir, t=dome-time,
+  // ok.txt FULL CODE PORT (Download/ok.txt 102 lines, STEPS 5) - Sky-dome version.
+  // ok.txt Shadertoy original: resolution/time/touch + gl_FragCoord + sky-gradient + sun + 5-step volumetric.
+  // Yahan 1:1 port: hash13/vnoise/density/raymarch/light/horizon-fade same, sirf rd=viewDir, t=dome-time,
   // sky=nlRenderSky (Minecraft din/sunset/raat/barish), jitter=rd.xy (dome me fragCoord nahi).
-  #define EDITOR_STEPS 12
+  #define EDITOR_STEPS 5
   #define EDITOR_CB 80.0
   #define EDITOR_CT 140.0
   #define EDITOR_COV 0.5
   #define EDITOR_SPEED 2.0
-  #define EDITOR_H0 0.03
-  #define EDITOR_H1 0.25
+  #define EDITOR_H0 0.06
+  #define EDITOR_H1 0.32
   float editorHash13(vec3 p) {
+    p = mod(p, 50.0);
     p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
     p *= 17.0;
     return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
@@ -42,7 +43,7 @@
     vec3 p = floor(x);
     vec3 f = fract(x);
     f = f * f * (3.0 - 2.0 * f);
-    float n000 = editorHash13(p + vec3(0.0, 0.0, 0.0));
+    float n000 = editorHash13(p);
     float n100 = editorHash13(p + vec3(1.0, 0.0, 0.0));
     float n010 = editorHash13(p + vec3(0.0, 1.0, 0.0));
     float n110 = editorHash13(p + vec3(1.0, 1.0, 0.0));
@@ -50,19 +51,14 @@
     float n101 = editorHash13(p + vec3(1.0, 0.0, 1.0));
     float n011 = editorHash13(p + vec3(0.0, 1.0, 1.0));
     float n111 = editorHash13(p + vec3(1.0, 1.0, 1.0));
-    float nx00 = mix(n000, n100, f.x);
-    float nx10 = mix(n010, n110, f.x);
-    float nx01 = mix(n001, n101, f.x);
-    float nx11 = mix(n011, n111, f.x);
-    float nxy0 = mix(nx00, nx10, f.y);
-    float nxy1 = mix(nx01, nx11, f.y);
-    return mix(nxy0, nxy1, f.z);
+    return mix(mix(mix(n000, n100, f.x), mix(n010, n110, f.x), f.y),
+               mix(mix(n001, n101, f.x), mix(n011, n111, f.x), f.y), f.z);
   }
   float editorDensity(vec3 p, float t) {
     float h = (p.y - EDITOR_CB) / (EDITOR_CT - EDITOR_CB);
     float shape = smoothstep(0.0, 0.2, h) * (1.0 - smoothstep(0.5, 1.0, h));
     vec3 q = p * 0.02 + vec3(t * EDITOR_SPEED * 0.01, 0.0, 0.0);
-    float n = editorVNoise(q) * 0.65 + editorVNoise(q * 2.3) * 0.25 + editorVNoise(q * 5.1) * 0.1;
+    float n = editorVNoise(q) * 0.68 + editorVNoise(q * 2.4 + vec3(3.1, 1.7, 5.3)) * 0.32;
     return clamp((n - (1.0 - EDITOR_COV)) * shape * 4.0, 0.0, 1.0);
   }
   #endif
@@ -106,36 +102,35 @@ void main() {
     }
 
     #ifdef EDITOR_CLOUDS
-    // heavy.txt main() FULL PORT - 12-step raymarch + sun-shadow + horizon-fade.
-    // heavy.txt: rd from uv, sun fixed, sky-gradient + pow(sd,32)*0.6, t0/t1 with max(rd.y,0.02), jitter fragCoord,
-    // d>0.01, l=density(p+sun*12), light=exp(-l*2.5), c=mix(dark,bright,light)+sun*pow(sd,6)*light*0.3,
-    // a=1-exp(-d*dt*0.08), T break 0.03, fade smoothstep(0.03,0.25), col=mix(col,acc+sky*T,fade).
+    // ok.txt main() FULL PORT - 5-step raymarch + horizon-fade.
+    // ok.txt: rd from uv, sun fixed, sky-gradient + pow(sd,32)*0.6, t0/t1 with max(rd.y,0.08), jitter fragCoord,
+    // d>0.02, light=exp(-d*2.2), c=mix(dark,bright,light)+sun*pow(sd,6)*(0.25+0.35*light),
+    // a=1-exp(-d*dt*0.08), T break 0.04, fade smoothstep(0.06,0.32), col=mix(col,acc+sky*T,fade).
     // Yahan: rd=viewDir, sun=sunDir/moonDir, t=dome-time, sky=nlRenderSky, jitter=rd.xy. Baaki 1:1.
-    if (!env.underwater && viewDir.y > 0.001) {
+    if (!env.underwater && viewDir.y > EDITOR_H0 * 0.5) {
       vec3 rd = viewDir;
       vec3 sunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
       float sd = max(dot(rd, sunDir), 0.0);
       float t = v_underwaterRainTimeDay.z;
-      float t0 = EDITOR_CB / max(rd.y, 0.02);
-      float t1 = EDITOR_CT / max(rd.y, 0.02);
+      float t0 = EDITOR_CB / max(rd.y, 0.08);
+      float t1 = EDITOR_CT / max(rd.y, 0.08);
       float dt = (t1 - t0) / float(EDITOR_STEPS);
       float jitter = fract(sin(dot(rd.xy, vec2(12.9898, 78.233))) * 43758.5453);
       float marchT = t0 + dt * jitter;
       float T = 1.0;
       vec3 acc = vec3(0.0);
-      for (int i = 0; i < 12; i++) {
+      for (int i = 0; i < 5; i++) {
         if (i >= EDITOR_STEPS) break;
         vec3 p = rd * marchT;
         float d = editorDensity(p, t);
-        if (d > 0.01) {
-          float l = editorDensity(p + sunDir * 12.0, t);
-          float light = exp(-l * 2.5);
+        if (d > 0.02) {
+          float light = exp(-d * 2.2);
           vec3 c = mix(vec3(0.45, 0.52, 0.65), vec3(1.0, 0.97, 0.9), light);
-          c += vec3(1.0, 0.9, 0.7) * pow(max(sd, 0.001), 6.0) * light * 0.3;
+          c += vec3(1.0, 0.9, 0.7) * pow(max(sd, 0.001), 6.0) * (0.25 + 0.35 * light);
           float a = 1.0 - exp(-d * dt * 0.08);
           acc += c * a * T;
           T *= 1.0 - a;
-          if (T < 0.03) break;
+          if (T < 0.04) break;
         }
         marchT += dt;
       }
