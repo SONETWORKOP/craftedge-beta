@@ -21,6 +21,49 @@
   // the aurora borealis curtain lives in newb/functions/clouds.h
   // (nlAuroraBorealis) so the water mirror in RenderChunk draws the exact
   // same shape.
+  #ifdef EDITOR_CLOUDS
+  // shader-editor-clouds.txt (Shadertoy volumetric) - Sky-dome port.
+  // Original: resolution/time/touch + gl_FragCoord. Yahan: viewDir + time.
+  #define EDITOR_STEPS 12
+  #define EDITOR_CB 80.0
+  #define EDITOR_CT 140.0
+  #define EDITOR_COV 0.5
+  #define EDITOR_SPEED 2.0
+  #define EDITOR_H0 0.03
+  #define EDITOR_H1 0.25
+  float editorHash13(vec3 p) {
+    p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
+    p *= 17.0;
+    return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+  }
+  float editorVNoise(vec3 x) {
+    vec3 p = floor(x);
+    vec3 f = fract(x);
+    f = f * f * (3.0 - 2.0 * f);
+    float n000 = editorHash13(p + vec3(0.0, 0.0, 0.0));
+    float n100 = editorHash13(p + vec3(1.0, 0.0, 0.0));
+    float n010 = editorHash13(p + vec3(0.0, 1.0, 0.0));
+    float n110 = editorHash13(p + vec3(1.0, 1.0, 0.0));
+    float n001 = editorHash13(p + vec3(0.0, 0.0, 1.0));
+    float n101 = editorHash13(p + vec3(1.0, 0.0, 1.0));
+    float n011 = editorHash13(p + vec3(0.0, 1.0, 1.0));
+    float n111 = editorHash13(p + vec3(1.0, 1.0, 1.0));
+    float nx00 = mix(n000, n100, f.x);
+    float nx10 = mix(n010, n110, f.x);
+    float nx01 = mix(n001, n101, f.x);
+    float nx11 = mix(n011, n111, f.x);
+    float nxy0 = mix(nx00, nx10, f.y);
+    float nxy1 = mix(nx01, nx11, f.y);
+    return mix(nxy0, nxy1, f.z);
+  }
+  float editorDensity(vec3 p, float t) {
+    float h = (p.y - EDITOR_CB) / (EDITOR_CT - EDITOR_CB);
+    float shape = smoothstep(0.0, 0.2, h) * (1.0 - smoothstep(0.5, 1.0, h));
+    vec3 q = p * 0.02 + vec3(t * EDITOR_SPEED * 0.01, 0.0, 0.0);
+    float n = editorVNoise(q) * 0.65 + editorVNoise(q * 2.3) * 0.25 + editorVNoise(q * 5.1) * 0.1;
+    return clamp((n - (1.0 - EDITOR_COV)) * shape * 4.0, 0.0, 1.0);
+  }
+  #endif
 #endif
 
 void main() {
@@ -60,9 +103,45 @@ void main() {
       }
     }
 
-    // EDITOR_CLOUDS subpack: dome clean - mesh shader-editor clouds cover
-    // karte hain (double-draw nahi, NO_REFLECTIONS jaisa).
-    #ifndef EDITOR_CLOUDS
+    #ifdef EDITOR_CLOUDS
+    // shader-editor-clouds.txt volumetric (12-step raymarch).
+    // rd = viewDir, sun = env sun/moon, time = dome time.
+    if (!env.underwater && viewDir.y > 0.001) {
+      vec3 rd = viewDir;
+      vec3 sunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
+      float sd = max(dot(rd, sunDir), 0.0);
+      float t = v_underwaterRainTimeDay.z;
+      float t0 = EDITOR_CB / max(rd.y, 0.02);
+      float t1 = EDITOR_CT / max(rd.y, 0.02);
+      float dt = (t1 - t0) / float(EDITOR_STEPS);
+      float jitter = fract(sin(dot(rd.xy, vec2(12.9898, 78.233))) * 43758.5453);
+      float marchT = t0 + dt * jitter;
+      float T = 1.0;
+      vec3 acc = vec3(0.0);
+      for (int i = 0; i < 12; i++) {
+        if (i >= EDITOR_STEPS) break;
+        vec3 p = rd * marchT;
+        float d = editorDensity(p, t);
+        if (d > 0.01) {
+          float l = editorDensity(p + sunDir * 12.0, t);
+          float light = exp(-l * 2.5);
+          vec3 c = mix(vec3(0.45, 0.52, 0.65), vec3(1.0, 0.97, 0.9), light);
+          c += vec3(1.0, 0.9, 0.7) * pow(max(sd, 0.001), 6.0) * light * 0.3;
+          float a = 1.0 - exp(-d * dt * 0.08);
+          acc += c * a * T;
+          T *= 1.0 - a;
+          if (T < 0.03) break;
+        }
+        marchT += dt;
+      }
+      // Minecraft sky-rang me dhalo: din/sunset/raat/barish
+      acc = nlSkyCloudTint(acc, skycol.horizon, env.dayFactor, env.rainFactor);
+      vec3 vol = acc + skyColor.rgb * T;
+      float fade = smoothstep(EDITOR_H0, EDITOR_H1, rd.y);
+      skyColor.rgb = mix(skyColor.rgb, vol, fade);
+    }
+    #else
+    // EDITOR_CLOUDS off: neeche wale dome-clouds
     // REALISTIC_CLOUDS subpack: y.png noise-texture wale 8-layer badal.
     // Chunne par baaki dome-clouds nahi bante (double-draw nahi).
     #ifdef REALISTIC_CLOUDS

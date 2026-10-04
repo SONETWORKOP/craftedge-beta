@@ -60,8 +60,7 @@ define = "EDITOR_CLOUDS"
 materials = ["Clouds", "Sky"]
 description = '''
 Shader Editor Clouds
-Pixelated shader-editor (Download/clouds) mesh clouds.
-Sky dome clean rehta hai.
+Volumetric raymarch (shader-editor-clouds.txt) sky-dome clouds.
 '''
 
 [[subpack]]
