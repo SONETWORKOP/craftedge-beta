@@ -7,9 +7,9 @@
   Tuned for punchy, saturated colors with natural lighting and soft shadows.
 */
 
-/* Color correction - Newb original (pack default) */
-#define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
-#define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
+/* Color correction - 13-type tonemap collection (Download/tonemap.h) */
+#define NL_TONEMAP_TYPE 9              // 9 = Khronos PBR Neutral (test)
+#define NL_GAMMA 1.2                   // 1-4 legacy + 5-13 file ka gamma tail
 #define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
 #define NL_SATURATION 1.0                // vivid pink sunset ke liye (pehle 0.82)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
