@@ -9,8 +9,8 @@
 
 /* Color correction - 13-type tonemap collection (Download/tonemap.h) */
 #define NL_TONEMAP_TYPE 6              // 6 = filmic (Hable)
-#define NL_GAMMA 1.2                   // 1-4 legacy + 5-13 file ka gamma tail
-#define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
+#define NL_GAMMA 1.0                   // filmic khud 2.2 encode karta hai - tail double-encode OFF
+#define NL_EXPOSURE 0.65               // purana TONE_ACES_SCALE 0.65 jaisa brightness match
 #define NL_SATURATION 1.0                // vivid pink sunset ke liye (pehle 0.82)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
 #define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // original subtle (cinematic grade ab tonemap.h me)
