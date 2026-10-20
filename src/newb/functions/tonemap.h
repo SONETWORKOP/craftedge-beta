@@ -8,6 +8,9 @@ vec3 sRGBtoLinear(vec3 sRGB) {
   return max(mix(sRGB / 12.92, pow(0.947867*sRGB + 0.0521327, vec3_splat(2.4)), step(0.04045, sRGB)), 0.0);
 }
 
+// ---- purana tone.txt se tuned shadow lift (60+ test ke baad normal brightness) ----
+#define TONE_SHADOW_LIFT 0.03
+
 #if NL_TONEMAP_TYPE ==                                                         \
     5 // https://github.com/TheRealMJP/BakingLab/blob/master/BakingLab/ACES.hlsl
 vec3 ACESInput(vec3 c) {
@@ -207,6 +210,9 @@ vec3 colorCorrection(vec3 col) {
 
   // gamma correction
   col = pow(col, vec3_splat(1.0 / NL_GAMMA));
+
+  // purana tone.txt ka tuned shadow lift (60+ test wali value)
+  col += TONE_SHADOW_LIFT * (vec3_splat(1.0) - col);
 
 #ifdef NL_SATURATION
   col = mix(vec3_splat(luminance(col)), col, NL_SATURATION);
