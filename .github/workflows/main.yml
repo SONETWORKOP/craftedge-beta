@@ -19,8 +19,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Cache build environment
+        uses: actions/cache@v4
+        with:
+          key: env-files-linux-laz
+          path: |
+            ${{ github.workspace }}/tool/data
+
       - name: Setup build environment
-        run: ./build.sh setup
+        run: ./build.sh setup || (echo "setup retry 1..." && sleep 30 && ./build.sh setup) || (echo "setup retry 2..." && sleep 60 && ./build.sh setup)
 
       - name: Build shader pack
         run: ./build.sh pack -p android
