@@ -8,7 +8,7 @@
 */
 
 /* Color correction - 13-type tonemap collection (Download/tonemap.h) */
-#define NL_TONEMAP_TYPE 9              // 9 = Khronos PBR Neutral (test)
+#define NL_TONEMAP_TYPE 6              // 6 = filmic (Hable)
 #define NL_GAMMA 1.2                   // 1-4 legacy + 5-13 file ka gamma tail
 #define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
 #define NL_SATURATION 1.0                // vivid pink sunset ke liye (pehle 0.82)
