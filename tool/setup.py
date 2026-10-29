@@ -151,7 +151,7 @@ def run(args):
             _download_file(
                 NS_DEV_MAT_SRC_URL,
                 mat_filename,
-                "src-materials-1.26.50.zip",
+                "src-materials-1.26.51.zip",
                 NS_DEV_MAT_SRC_SHA256,
             )
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
