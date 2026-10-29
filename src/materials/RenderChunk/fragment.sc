@@ -92,6 +92,22 @@ void main() {
   diffuse.rgb += glow;
 
   if (v_extra.b > 0.9) {
+    // hsbe water per-pixel (hsbe fragment jesa exact) - flat top-plane par
+    bool hsbeWaterDone = false;
+    #if defined(NL_HSPE_WATER) && defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))
+      float waterFlat = abs(dFdx(v_extra.g)) + abs(dFdy(v_extra.g));
+      if (waterFlat < 0.0004) {
+        nl_environment hwenv = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogAndDistanceControl.xyz);
+        if (!hwenv.underwater && !hwenv.nether) {
+          vec4 wr = nlHspeWaterPixel(hwenv, v_position.xyz, CameraPosition.xyz, ViewPositionAndTime.xyz, v_lightmapUV, ViewPositionAndTime.w);
+          diffuse.rgb += wr.rgb;
+          diffuse.a = wr.a;
+          hsbeWaterDone = true;
+        }
+      }
+    #endif
+
+    if (!hsbeWaterDone) {
     diffuse.rgb += v_refl.rgb*v_refl.a;
 
     #ifndef NL_NO_WATER_CLOUD_REFL
@@ -168,6 +184,7 @@ void main() {
         diffuse.rgb += sunTex*sunCol*NL_WATER_SUN_DISC*bodyVisible;
       }
     #endif
+    }
   } else if (v_refl.a > 0.0) {
     // reflective effect - only on xz plane (ground / flat smooth blocks)
     float dy = abs(dFdy(v_extra.g));

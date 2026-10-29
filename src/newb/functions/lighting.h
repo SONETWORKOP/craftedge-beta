@@ -12,13 +12,9 @@ vec3 sunLightTint(float dayFactor, float rain) {
   float dawnFactor = 1.0-dayFactor*dayFactor;
   dawnFactor *= dawnFactor*dawnFactor;
   dawnFactor *= mix(1.0, dawnFactor*dawnFactor, nightFactor);
-  // warm yellow noon light with orange sunrise transition
   vec3 tint = mix(NL_NOON_SUNLIGHT_COL, NL_NIGHT_MOONLIGHT_COL, nightFactor);
   tint = mix(tint, NL_DAWN_SUNLIGHT_COL, dawnFactor);
   tint = mix(tint, vec3_splat(dot(tint, vec3_splat(0.33))), rain);
-  // add warm yellow tint during day
-  float dayBright = max(dayFactor, 0.0);
-  tint = mix(tint, tint * vec3(1.05, 0.98, 0.85), dayBright * 0.3);
   return tint;
 }
 
@@ -45,6 +41,19 @@ vec3 nlLighting(
   #endif
 
   vec3 torchLight = torchColor*torchAttenuation;
+
+  // hspe torch
+  bool hspeOn = false;
+  vec3 hspeLight = vec3(0.0, 0.0, 0.0);
+  vec3 hspeShadow = vec3(0.0, 0.0, 0.0);
+  #ifdef NL_HSPE_LIGHT
+    if (!(env.nether || env.end || env.underwater)) {
+      hspeOn = true;
+      vec3 hspeTorch;
+      nlHspeLightColors(env, uv1.y, hspeLight, hspeShadow, hspeTorch);
+      torchLight = hspeTorch*(NL_TORCHLIGHT_INTENSITY*uv1.x*uv1.x*uv1.x);
+    }
+  #endif
   float gameBrightness = texelFetch(tex, ivec2(0,0), 0).g;
   float lum = 0.0;
 
@@ -70,40 +79,51 @@ vec3 nlLighting(
     sunLightAttenuation = mix(1.0, sunLightAttenuation*sunLightAttenuation, dawnFactor);
     sunLightAttenuation *= 1.0-0.4*env.rainFactor;
 
-    // shadow cast by sun light - BSL-like deep, sharp shadows
+    // shadow cast by sun light
     float shadow = step(0.93, uv1.y);
-    // sharpen the sun/shade terminator so lit->shadow transition is crisp
-    float litSharp = smoothstep(0.35, 0.75, lit.y);
-    shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.5*NL_SHADOW_INTENSITY*nightIntensity))*litSharp);
-    shadow *= shade > 0.8 ? 1.0 : 0.65;
-    #ifdef NL_CLOUD_SHADOW
-      // shadow cast by simple clouds
+    shadow = max(shadow, (1.0 - NL_SHADOW_INTENSITY + (0.6*NL_SHADOW_INTENSITY*nightIntensity))*lit.y);
+    shadow *= shade > 0.8 ? 1.0 : 0.8;
+    #if defined(NL_CLOUD_SHADOW) && (NL_CLOUD_TYPE == 1 || NL_CLOUD_TYPE == 2)
       vec3 mainLightDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
       vec3 gPos = wPos + CAMERA_POS;
       float cloudRelativeHeight = gPos.y-187.0;
-      float lightDirY = mainLightDir.y >= 0.0 ? max(mainLightDir.y, 0.01) : min(mainLightDir.y, -0.01);
-      vec2 projectionOffset = cloudRelativeHeight*mainLightDir.xz/lightDirY;
-      projectionOffset = clamp(projectionOffset, -vec2_splat(4096.0), vec2_splat(4096.0));
+      vec2 projectionOffset = cloudRelativeHeight*mainLightDir.xz/mainLightDir.y;
       vec2 projectedPos = gPos.xz + projectionOffset;
       float cloudFade = smoothstep(1.0, 0.5, length(0.002*(wPos.xz + projectionOffset)));
-      cloudFade *= smoothstep(0.02, 0.12, abs(mainLightDir.y));
       cloudFade *= (1.0-dawnFactor*dawnFactor)*clamp(-0.12*(cloudRelativeHeight-7.0), 0.0, 1.0);
-      // tighter smoothstep = crisper cloud shadow edges, darker core
-      shadow *= 0.15 + 0.85*smoothstep(0.5, 0.15, cloudNoise2D(projectedPos*NL_CLOUD1_SCALE, t, env.rainFactor)*cloudFade);
+      float cmask;
+      #if NL_CLOUD_TYPE == 1
+        // shadow cast by simple clouds
+        cmask = cloudNoise2D(projectedPos*NL_CLOUD1_SCALE, t, env.rainFactor)*cloudFade;
+      #elif NL_CLOUD_TYPE == 2
+        // shadow cast by rounded clouds  
+        projectedPos = NL_CLOUD2_SCALE * (projectedPos + vec2(1.0, 0.5) * (t * NL_CLOUD2_VELOCITY));
+        cmask = cloudDf(vec3(projectedPos.x, 0.5, projectedPos.y), env.rainFactor, NL_CLOUD2_SHAPE)*cloudFade;
+      #endif
+      shadow *= 0.3 + 0.7*smoothstep(0.6, 0.0, cmask);
     #endif
 
-    // direct light from top - BSL-like strong directional
-    light = (NL_SUNLIGHT_INTENSITY*shadow*sunLightAttenuation)*sunLightTint(env.dayFactor, env.rainFactor);
+    if (hspeOn) {
+      // hspe light and shadow
+      light = mix(hspeShadow, hspeLight, clamp(shadow*sunLightAttenuation, 0.0, 1.0));
+    } else {
+      // direct light from top
+      light = (NL_SUNLIGHT_INTENSITY*shadow*sunLightAttenuation)*sunLightTint(env.dayFactor, env.rainFactor);
 
-    // sky ambient - reduced for deeper shadow contrast
-    lum = luminance(light);
-    light += (skycol.horizon + skycol.zenith)*(uv1.y/(1.5+lum));
+      // sky ambient
+      lum = luminance(light);
+      light += (skycol.horizon + skycol.zenith)*(uv1.y/(1.0+lum));
+    }
 
   }
 
   // torch light
   lum = luminance(light);
-  light += torchLight/(1.0+lum);
+  if (hspeOn) {
+    light += torchLight;
+  } else {
+    light += torchLight/(1.0+lum);
+  }
 
   // game min brightness
   if (!(env.nether || env.end)) {
@@ -124,22 +144,11 @@ vec3 nlLighting(
 
 void nlUnderwaterLighting(inout vec3 light, inout vec3 pos, vec2 lit, vec2 uv1, vec3 tiledCpos, vec3 cPos, highp float t, vec3 horizonCol) {
   if (uv1.y < 0.9) {
-    // Fade caustics out with distance: far blocks lose float precision in
-    // disp()/sin() and produce black point-speckles. Distance-fade keeps
-    // near caustics detailed while far blocks stay evenly lit.
-    float causticFade = clamp(1.0 - length(pos.xyz)*0.045, 0.0, 1.0);
     float caustics = disp(tiledCpos, NL_WATER_WAVE_SPEED*t);
-    caustics = max(caustics, 0.0);           // never subtract -> no black dots
-    caustics *= 3.0*caustics*causticFade;
+    caustics *= 3.0*caustics;
     light += NL_UNDERWATER_BRIGHTNESS + NL_CAUSTIC_INTENSITY*caustics*(0.15 + lit.y + lit.x*0.7);
   }
-  // safe water tint: normalize() of a near-black underwater fog color
-  // returns NaN and renders blocks pure black. Clamp to a tiny epsilon so
-  // the tint stays a valid direction even when the fog color is ~0.
-  vec3 waterTint = normalize(max(horizonCol, vec3_splat(0.0001)));
-  light *= mix(waterTint, vec3_splat(0.6), lit.y*0.6);
-  // floor so deep/dark/murky water never crushes blocks to pure black
-  light = max(light, vec3_splat(NL_UNDERWATER_BRIGHTNESS*0.30));
+  light *= mix(normalize(horizonCol), vec3_splat(0.6), lit.y*0.6);
   #ifdef NL_UNDERWATER_WAVE
     pos.xy += NL_UNDERWATER_WAVE*min(0.05*pos.z,0.6)*sin(t*1.2 + dot(cPos,vec3_splat(PI_HALF)));
   #endif
@@ -175,14 +184,14 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
     sunLightAttenuation = mix(1.0, sunLightAttenuation*sunLightAttenuation, dawnFactor);
     sunLightAttenuation *= 1.0-0.5*env.rainFactor;
 
-    // direct light from top - BSL-like strong directional
+    // direct light from top
     light = (NL_SUNLIGHT_INTENSITY*l*sunLightAttenuation)*sunLightTint(env.dayFactor, env.rainFactor);
     vec3 N = normalize(mul(world, normal)).xyz;
-    light *= 0.85 + max(N.y, 0.0);
+    light *= 0.9 + max(N.y, 0.0);
 
     // sky ambient
     lum = luminance(light);
-    light += (skycol.horizon + skycol.zenith)*(l/(1.2+lum));
+    light += (skycol.horizon + skycol.zenith)*(l/(1.0+lum));
   }
 
   // torch light
@@ -211,9 +220,7 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
     vec3 gPos = wPos + CAMERA_POS;
     float caustics = 0.2 + 0.2*sin(dot(gPos, vec3(1.8, 2.4, 2.1)) + 0.8*t);
     light += 0.8*NL_UNDERWATER_BRIGHTNESS + NL_CAUSTIC_INTENSITY*caustics*(0.1 + tl);
-    // guard against NaN from normalize() of a near-black horizon color
-    light *= mix(normalize(max(skycol.horizon, vec3_splat(0.0001))), vec3_splat(0.5), tileLightCol.b*0.2);
-    light = max(light, vec3_splat(NL_UNDERWATER_BRIGHTNESS*0.15));
+    light *= mix(normalize(skycol.horizon), vec3_splat(0.5), tileLightCol.b*0.2);
   }
 
   lum = luminance(light);

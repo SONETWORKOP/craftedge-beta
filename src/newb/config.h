@@ -16,28 +16,48 @@
 //#define NL_TINT_LOW  vec3(0.85,0.92,1.08)
 //#define NL_TINT_HIGH vec3(1.08,1.0,0.86)
 
-/* Lighting - BSL-like strong directional light */
-#define NL_SUNLIGHT_INTENSITY   3.8    // blocks bright fix - was 4.2
-#define NL_TORCHLIGHT_INTENSITY 1.2    // torch 1.2 - was 1.4
-#define NL_SHADOW_INTENSITY     0.7    // halki parchai din me (kalapan kam, shape same)
-#define NL_MIN_LIGHTING_BOOST   0.82   // balanced ambient - dark nights but visible
+/* Lighting - hsbe-port jesa exact */
+#define NL_SUNLIGHT_INTENSITY   3.3
+#define NL_TORCHLIGHT_INTENSITY 1.0
+#define NL_SHADOW_INTENSITY     0.7
+#define NL_MIN_LIGHTING_BOOST   1.5
 //#define NL_BLINKING_TORCH
 #define NL_CLOUD_SHADOW
+
+/* HSPE world light (hsbe-port jesa exact) */
+#define NL_HSPE_LIGHT                // [toggle] HSPE light/shadow/torch colors
+// sun light color
+#define NL_HSPE_LIGHT_DAY    vec3(1.4,1.2,1.1)
+#define NL_HSPE_LIGHT_NIGHT  vec3(0.25,0.5,0.8)
+#define NL_HSPE_LIGHT_DUSK   vec3(1.3,1.1,0.6)
+#define NL_HSPE_LIGHT_DRAIN  vec3(0.8,0.8,0.8)
+#define NL_HSPE_LIGHT_NRAIN  vec3(0.4,0.4,0.4)
+// shadow color
+#define NL_HSPE_SHADOW_DAY   vec3(0.5,0.65,0.82)
+#define NL_HSPE_SHADOW_NIGHT vec3(0.2,0.2,0.35)
+#define NL_HSPE_SHADOW_DUSK  vec3(0.45,0.75,1.0)
+#define NL_HSPE_SHADOW_DRAIN vec3(0.6,0.6,0.6)
+#define NL_HSPE_SHADOW_NRAIN vec3(0.3,0.3,0.3)
+#define NL_HSPE_SHADOW_CAVE  vec3(0.15,0.25,0.35)
+// torch color
+#define NL_HSPE_TORCH_DAY    vec3(0.0,0.0,0.0)
+#define NL_HSPE_TORCH_NIGHT  vec3(2.0,1.3,0.0)
+#define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Ambient */
 #define NL_NETHER_AMBIENT vec3(3.0,2.16,1.89)
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
-/* Sun/moon - vivid but natural */
-#define NL_DAWN_SUNLIGHT_COL   vec3(1.69,1.21,0.36)  // HSPE LIGHT_DUSK*c2 - sunset warm light
-#define NL_NOON_SUNLIGHT_COL   vec3(1.15,0.98,0.80)    // warm golden noon - same brightness (was 1.1,1.0,0.85)
-#define NL_NIGHT_MOONLIGHT_COL vec3(0.05,0.12,0.32)  // cyan-tinted moonlight
+/* Sun/moon - hsbe-port values */
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.4,0.1)
+#define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.75,0.57)
+#define NL_NIGHT_MOONLIGHT_COL vec3(0.01,0.03,0.2)
 
-/* Torch */
-#define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.55,0.2)
-#define NL_UNDERWATER_TORCH_COL vec3(1.0,0.55,0.2)
-#define NL_NETHER_TORCH_COL     vec3(1.0,0.5,0.18)
-#define NL_END_TORCH_COL        vec3(1.0,0.55,0.28)
+/* Torch - hsbe-port values */
+#define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.52,0.18)
+#define NL_UNDERWATER_TORCH_COL vec3(1.0,0.52,0.18)
+#define NL_NETHER_TORCH_COL     vec3(1.0,0.52,0.18)
+#define NL_END_TORCH_COL        vec3(1.0,0.52,0.18)
 
 /* Fog - realistic atmospheric depth */
 #define NL_FOG 1.3
@@ -97,10 +117,10 @@
 #define NL_RAINBOW_RAIN  0.45
 
 /* Ore glow */
-#define NL_GLOW_TEX 2.8
-#define NL_GLOW_SHIMMER 0.9
+#define NL_GLOW_TEX 2.3
+#define NL_GLOW_SHIMMER 0.8
 #define NL_GLOW_SHIMMER_SPEED 0.9
-#define NL_GLOW_LEAK 0.5
+//#define NL_GLOW_LEAK 0.5          // hsbe me off
 
 /* Waving */
 #define NL_PLANTS_WAVE 0.055
@@ -108,11 +128,11 @@
 #define NL_WAVE_SPEED 2.8
 #define NL_WAVE_RANGE 14.0
 
-/* Water - clear pretty water + smooth waves */
-#define NL_WATER_TRANSPARENCY 0.72      // clear: neeche tak dikhe (pehle 0.94 milky tha)
-#define NL_WATER_BUMP 0.32              // smooth swell + fine chop
-#define NL_WATER_WAVE_SPEED  0.85       // thoda lively leher
-#define NL_WATER_TEX_OPACITY 0.07       // milky texture hataya (pehle 0.18)
+/* Water - hsbe-port values */
+#define NL_WATER_TRANSPARENCY 0.9
+#define NL_WATER_BUMP 0.09
+#define NL_WATER_WAVE_SPEED  0.8
+#define NL_WATER_TEX_OPACITY 0.3
 #define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
 #define NL_WATER_SUN_QUAD_TAN 0.1283    // tan of half the sun quad angular size (35*NL_SUN_SIZE/300)
 #define NL_WATER_MOON_QUAD_TAN 0.1167   // tan of half the moon quad angular size (35*NL_MOON_SIZE/300)
@@ -134,6 +154,11 @@
 #define NL_HSPE_WATER_BASE 0.15        // 0.0 black water ~ 0.5 bright water
 #define NL_HSPE_WATER_F0 0.25          // 0.04 less reflection ~ 0.5 mirror
 #define NL_HSPE_WATER_ALPHA 0.7        // 0.3 transparent ~ 1.0 opaque
+
+// hspe_block.h helpers (hsbe config values) - metal/tex functions compile ke liye
+#define NL_HSPE_TEX_HEIGHT 2.0
+#define NL_HSPE_TEX_NORMAL_OFFSET 0.5
+#define NL_HSPE_METALLIC 0.8
 
 /* Underwater */
 #define NL_UNDERWATER_BRIGHTNESS 0.85
