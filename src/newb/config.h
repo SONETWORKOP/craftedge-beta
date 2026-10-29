@@ -7,14 +7,14 @@
   Tuned for punchy, saturated colors with natural lighting and soft shadows.
 */
 
-/* Color correction - Newb original (pack default) */
-#define NL_TONEMAP_TYPE 5              // hspe-port: 5 HSPE ACES / 6 HSPE filmic / 4 tone.txt ACES (purana) / 1-3 legacy
-#define NL_GAMMA 1.2                   // sirf legacy TYPE 1-3; hspe TYPE 5/6 apne 2.0 andar use karte
-#define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
-#define NL_SATURATION 1.0                // vivid pink sunset ke liye (pehle 0.82)
-#define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
-#define NL_TINT_LOW  vec3(0.85,0.92,1.08)  // original subtle (cinematic grade ab tonemap.h me)
-#define NL_TINT_HIGH vec3(1.08,1.0,0.86)   // original subtle (cinematic grade ab tonemap.h me)
+/* Color correction - hsbe-port jesa exact (tonemap.h bhi isi ki file hai) */
+#define NL_TONEMAP_TYPE 5              // hsbe list: 1 Exp, 2 Reinhard, 3 ExtReinhard, 4 ACES(0.85), 5 HSPE ACES, 6 HSPE Filmic
+#define NL_GAMMA 2.0
+#define NL_SATURATION 1.125
+//#define NL_EXPOSURE                  // hsbe me off default
+//#define NL_TINT                      // hsbe me nahi hai
+//#define NL_TINT_LOW  vec3(0.85,0.92,1.08)
+//#define NL_TINT_HIGH vec3(1.08,1.0,0.86)
 
 /* Lighting - BSL-like strong directional light */
 #define NL_SUNLIGHT_INTENSITY   3.8    // blocks bright fix - was 4.2
@@ -126,11 +126,14 @@
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
 #define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
 
-// HSPE water waves (hspe-port se port: sirf surface lehrein, color beta ka)
-#define NL_HSPE_WATER                  // ON: HSPE waves water ke top par
-#define NL_HSPE_WATER_HEIGHT 0.05      // hspe default (0.01 calm ~ 0.2 high lehrein)
+// HSPE water (pura water hsbe-port jesa - waves + fresnel + base + alpha)
+#define NL_HSPE_WATER                  // ON: full hspe water (hsbe config jesa)
+#define NL_HSPE_WATER_HEIGHT 0.05      // 0.01 calm ~ 0.2 high waves
 #define NL_HSPE_WATER_NORMAL_OFFSET 0.2 // wave sample distance
 #define NL_HSPE_WATER_SPEED 1.0        // 0.2 slow ~ 3.0 fast
+#define NL_HSPE_WATER_BASE 0.15        // 0.0 black water ~ 0.5 bright water
+#define NL_HSPE_WATER_F0 0.25          // 0.04 less reflection ~ 0.5 mirror
+#define NL_HSPE_WATER_ALPHA 0.7        // 0.3 transparent ~ 1.0 opaque
 
 /* Underwater */
 #define NL_UNDERWATER_BRIGHTNESS 0.85
