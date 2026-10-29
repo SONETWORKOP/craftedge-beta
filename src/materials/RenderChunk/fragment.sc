@@ -18,6 +18,8 @@ SAMPLER2D_AUTOREG(s_MoonTexture);
 uniform vec4 CameraPosition;
 uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
+uniform vec4 FogAndDistanceControl; // hsbe water pixel ke liye (hsbe fragment jesa)
+uniform vec4 TimeOfDay;             // hsbe water pixel ke liye
 uniform vec4 MoonPhase;
 
 // (Water cloud-mirror HATAYA - beta: paani me clouds reflection nahi.
