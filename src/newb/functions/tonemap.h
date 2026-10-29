@@ -64,6 +64,20 @@ vec3 colorCorrection(vec3 col) {
     col = linearToSRGB(col);
     col = pow(col, vec3_splat(TONE_GAMMA));
     col += TONE_SHADOW_LIFT * (vec3_splat(1.0) - col);
+  #elif NL_TONEMAP_TYPE == 5
+    // hspe-port type 5 - HSPE ACES (pure; apna gamma 2.0 + sat 1.125, beta ke tint/vibrance skip)
+    col = clamp((col*(2.51*col + 0.03)) / (col*(2.43*col + 0.59) + 0.14), 0.0, 1.0);
+    col = pow(col, vec3_splat(2.0));
+    col = mix(vec3_splat(luminance(col)), col, 1.125);
+    return col;
+  #elif NL_TONEMAP_TYPE == 6
+    // hspe-port type 6 - HSPE filmic
+    col *= 1.4;
+    col = (col*(2.5*col + 0.1)) / (col*(2.52*col) + 0.9) - 0.1;
+    col = max(col, vec3_splat(0.0));
+    col = pow(col, vec3_splat(2.0));
+    col = mix(vec3_splat(luminance(col)), col, 1.125);
+    return col;
   #else
   // ref - https://64.github.io/tonemapping/
   #if NL_TONEMAP_TYPE == 3
@@ -106,6 +120,15 @@ vec3 colorCorrection(vec3 col) {
 
 // inv used in fogcolor for nether
 vec3 colorCorrectionInv(vec3 col) {
+  #if NL_TONEMAP_TYPE == 5 || NL_TONEMAP_TYPE == 6
+    // hspe ulta approx: sat(1.125) -> gamma(2.0); vibrance/tint forward me thi hi nahi
+    col = mix(vec3_splat(dot(col, vec3(0.21, 0.71, 0.08))), col, 1.0/1.125);
+    col = pow(col, vec3_splat(2.0));
+    #ifdef NL_EXPOSURE
+      col /= NL_EXPOSURE;
+    #endif
+    return col;
+  #endif
   // vibrance inverse (approx, fog-range me accurate - vib chhota hai)
   {
     float lumV = luminance(col);

@@ -8,8 +8,8 @@
 */
 
 /* Color correction - Newb original (pack default) */
-#define NL_TONEMAP_TYPE 4              // ACES filmic - pack original
-#define NL_GAMMA 1.2                   // legacy (TYPE 1-3 backup slots ke liye)
+#define NL_TONEMAP_TYPE 5              // hspe-port: 5 HSPE ACES / 6 HSPE filmic / 4 tone.txt ACES (purana) / 1-3 legacy
+#define NL_GAMMA 1.2                   // sirf legacy TYPE 1-3; hspe TYPE 5/6 apne 2.0 andar use karte
 #define NL_EXPOSURE 1.0                // neutral (lighting enhance tonemap-side hai)
 #define NL_SATURATION 1.0                // vivid pink sunset ke liye (pehle 0.82)
 #define NL_TINT                        // ON: subtle teal-orange cinematic split-tone
@@ -124,6 +124,12 @@
 //#define NL_WATER_REFL_MASK             // OFF: full reflection instead of patchy masked reflection
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue (pehle 0.28,0.7,0.88)
 #define NL_WATER_GLITTER 1.25           // sun glitter tez (pretty sparkle path)
+
+// HSPE water waves (hspe-port se port: sirf surface lehrein, color beta ka)
+#define NL_HSPE_WATER                  // ON: HSPE waves water ke top par
+#define NL_HSPE_WATER_HEIGHT 0.05      // hspe default (0.01 calm ~ 0.2 high lehrein)
+#define NL_HSPE_WATER_NORMAL_OFFSET 0.2 // wave sample distance
+#define NL_HSPE_WATER_SPEED 1.0        // 0.2 slow ~ 3.0 fast
 
 /* Underwater */
 #define NL_UNDERWATER_BRIGHTNESS 0.85

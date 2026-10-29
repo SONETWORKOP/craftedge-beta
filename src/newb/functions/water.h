@@ -14,6 +14,40 @@ float calculateFresnel(float cosR, float r0) {
   return r0 + (1.0-r0)*a2*a2*a;
 }
 
+// ---- HSPE water waves (hspe-port se port: sirf surface lehrein) ----
+#ifdef NL_HSPE_WATER
+// hspe value noise (HSPE clouds.h se copied)
+float nlHspeNoise(highp vec2 x) {
+  highp vec2 a = floor(x);
+  highp vec2 b = fract(x);
+  b = b*b*(3.0-2.0*b);
+  float h1 = rand(a);
+  float h2 = rand(a + vec2(1.0, 0.0));
+  float h3 = rand(a + vec2(0.0, 1.0));
+  float h4 = rand(a + vec2(1.0, 1.0));
+  return mix(mix(h1, h2, b.x), mix(h3, h4, b.x), b.y);
+}
+
+// hspe wave height
+float nlHspeWaterHeight(highp vec2 c, highp float t) {
+  c /= vec2(0.8, 0.7);
+  c += c.yx*0.3;
+  return abs(dot(sin(nlHspeNoise(c - t)*2.5 + c + t), vec2(1.75, 0.75)))*NL_HSPE_WATER_HEIGHT/7.5;
+}
+
+// hspe wave slope (xz)
+vec3 nlHspeWaterNormal(highp vec2 c, highp float t) {
+  float d = NL_HSPE_WATER_NORMAL_OFFSET;
+  float h0 = nlHspeWaterHeight(c, t);
+  float h1 = nlHspeWaterHeight(c + vec2(d, 0.0), t);
+  float h3 = nlHspeWaterHeight(c + vec2(0.0, d), t);
+  float sx = (h1 - h0)/d*2.0;
+  float sz = (h3 - h0)/d*2.0;
+  float z = abs(sx + sz);
+  return vec3(sx, -max(1.0 - z*z, 0.2), sz);
+}
+#endif
+
 // ---- Clear pretty water: smooth swell + fine chop (naya wave code) ----
 // badi smooth lehren (2 direction) + chhoti chop, sasta (sirf sin/cos)
 vec2 nlWaterSwell(vec2 p, float t) {
@@ -42,13 +76,20 @@ vec4 nlWater(
 ) {
 
   vec2 bump = vec2_splat(movingNoise2D(gPos.xz + gPos.yy, NL_WATER_WAVE_SPEED*t, 0.6));
-  // naya smooth swell (bump ke saath mix taaki reflection sundar toote)
-  vec2 swell = nlWaterSwell(gPos.xz, t);
+  // naya smooth swell (HSPE waves ON ho to ye nahi chahiye)
+  #ifndef NL_HSPE_WATER
+    vec2 swell = nlWaterSwell(gPos.xz, t);
+  #endif
 
   vec3 nrm;
   if (fractCposY > 0.0) { // top plane
-    nrm.xz = (bump*0.55 + swell*0.65)*NL_WATER_BUMP*1.15;
-    nrm.y = -1.0;
+    #ifdef NL_HSPE_WATER
+      // hspe waves (hspe-port se)
+      nrm = nlHspeWaterNormal(gPos.xz, t*NL_HSPE_WATER_SPEED);
+    #else
+      nrm.xz = (bump*0.55 + swell*0.65)*NL_WATER_BUMP*1.15;
+      nrm.y = -1.0;
+    #endif
     /*if (fractCposY>0.8 || fractCposY<0.9) { // flat plane
     } else { // slanted plane and highly slanted plane
     }*/
