@@ -29,7 +29,7 @@
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
 /* Sun/moon - vivid but natural */
-#define NL_DAWN_SUNLIGHT_COL   vec3(1.5,0.72,0.62)   // pink dawn light (reference image jaisa)
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.69,1.21,0.36)  // HSPE LIGHT_DUSK*c2 - sunset warm light
 #define NL_NOON_SUNLIGHT_COL   vec3(1.15,0.98,0.80)    // warm golden noon - same brightness (was 1.1,1.0,0.85)
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.05,0.12,0.32)  // cyan-tinted moonlight
 
@@ -58,12 +58,13 @@
 
 /* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
 #define NL_ATMO 0.5
-#define NL_ATMO_SUNSET vec3(1.9,0.65,0.95)  // pink haze (reference image jaisa)
+#define NL_ATMO_SUNSET vec3(1.21,0.9025,0.49)  // HSPE DUSK_EDGE*c2 sunset haze (pehle pink 1.9,0.65,0.95 tha)
 
 /* Sky colors - pink-magenta sunset (reference image), warm day sky */
-#define NL_DAWN_ZENITH_COL   vec3(0.55,0.27,0.78)     // magenta-purple upar
-#define NL_DAWN_HORIZON_COL  vec3(3.3,0.95,1.05)      // peachy-pink horizon
-#define NL_DAWN_EDGE_COL     vec3(3.8,1.45,1.35)      // pink-gold edge
+/* Sunset/sunrise colors - HSPE (hsbe-port se copy; HSPE DUSK values, c² applied) */
+#define NL_DAWN_ZENITH_COL   vec3(0.04,0.49,0.81)     // HSPE DUSK_ZENITH*c2 - cyan-blue upar
+#define NL_DAWN_HORIZON_COL  vec3(1.0,1.0,1.0)        // HSPE DUSK_HORIZON*c2 - safed-gold horizon
+#define NL_DAWN_EDGE_COL     vec3(1.21,0.9025,0.49)   // HSPE DUSK_EDGE*c2 - warm gold edge
 #define NL_DAY_ZENITH_COL    vec3(0.12,0.48,2.1)      // deep realistic sky blue
 #define NL_DAY_HORIZON_COL   vec3(0.55,1.1,1.65)      // soft hazy blue horizon
 #define NL_DAY_EDGE_COL      vec3(1.2,1.45,1.65)      // light atmospheric haze
