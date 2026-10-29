@@ -22,7 +22,7 @@ jobs:
       - name: Cache build environment
         uses: actions/cache@v4
         with:
-          key: env-files-linux-laz
+          key: env-files-linux-laz-v2
           path: |
             ${{ github.workspace }}/tool/data
 
