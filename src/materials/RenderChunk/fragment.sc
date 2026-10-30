@@ -194,12 +194,34 @@ void main() {
       #endif
     }
   } else if (v_refl.a > 0.0) {
-    // reflective effect - only on xz plane
+    // reflective effect - only on xz plane (ground / flat smooth blocks)
     float dy = abs(dFdy(v_extra.g));
     if (dy < 0.0002) {
       float mask = v_refl.a*(clamp(v_extra.r*10.0,8.2,8.8)-7.8);
-      diffuse.rgb *= 1.0 - 0.6*mask;
-      diffuse.rgb += v_refl.rgb*mask;
+
+      #ifdef NL_PBR_BLOCK_REFL
+        // === V3 PBR block reflection (normal-map + TBN + Cook-Torrance) ===
+        vec3 viewDir = v_reflPbr.xyz;
+        float rainFactor = v_reflPbr.w;
+        vec3 sunDir = v_reflSun.xyz;
+
+        vec3 texNormal = vec3(0.0, 0.0, 1.0);
+        if (rainFactor > 0.001) {
+          texNormal = nlTexNormal(s_MatTexture, v_texcoord0, NL_PBR_ATLAS_TEXEL, NL_PBR_NORMAL_STRENGTH);
+        }
+
+        float pbrMask = mask;
+        #ifdef NL_PBR_RAIN_BOOST
+          pbrMask *= 1.0 + NL_PBR_RAIN_BOOST*rainFactor;
+        #endif
+        pbrMask = min(pbrMask, 1.0);
+
+        diffuse.rgb *= 1.0 - 0.6*pbrMask;
+        diffuse.rgb = nlApplyPbrRefl(diffuse.rgb, v_refl.rgb, pbrMask, texNormal, v_position.xyz, viewDir, sunDir);
+      #else
+        diffuse.rgb *= 1.0 - 0.75*mask;
+        diffuse.rgb += v_refl.rgb*mask*1.15;
+      #endif
     }
   }
 

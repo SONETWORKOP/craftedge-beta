@@ -120,8 +120,15 @@
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.6,0.6,0.6)
 
-#define NL_END_ZENITH_COL    vec3(0.08,0.001,0.1)
-#define NL_END_HORIZON_COL   vec3(0.6,0.02,0.6)
+#define NL_END_ZENITH_COL    vec3(0.20,0.003,0.26)
+#define NL_END_HORIZON_COL   vec3(0.78,0.025,0.85)
+
+/* End black hole */
+#define NL_END_BLACK_HOLE
+#define NL_BH_COL_LOW  vec3(0.1,0.1,1.0)
+#define NL_BH_COL_HIGH vec3(2.8,0.1,0.6)
+#define NL_BH_DIST  1.8
+#define NL_BH_SPEED 0.3
 
 /* HSPE sky (ported from HSPE shader) */
 #define NL_HSPE_SKY                 // [toggle] use HSPE sky colors + gradient
@@ -329,10 +336,29 @@
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
 #define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
-/* Sky reflection */
-//#define NL_GROUND_REFL 0.4       // [toggle] 0.2 slightly reflective ~ 1.0 fully reflect sky
-#define NL_GROUND_RAIN_WETNESS 1.0 // 0.0 no wetness ~ 1.0 fully wet blocks when raining
-#define NL_GROUND_RAIN_PUDDLES 0.7 // 0.0 no puddles ~ 1.0 puddles
+/* PBR block reflection (from "block reflection V3") - fragment-stage
+   normal-mapped, TBN-distorted, Cook-Torrance mirror on smooth blocks (beta) */
+#define NL_PBR_BLOCK_REFL              // ON: enable V3-style PBR block reflection
+#define NL_PBR_ROUGHNESS 0.15          // tez mirror
+#define NL_PBR_METALLIC 0.0            // 0 keeps texture bright
+#define NL_PBR_F0 vec3(0.35,0.35,0.36) // strong reflectance
+#define NL_PBR_SUNCOLOR vec3(1.0,0.95,0.85) // neutral white glint, not golden
+#define NL_PBR_SPEC_INTENSITY 1.0      // tez glint
+#define NL_PBR_SPEC_CLAMP 1.5          // glint cap khula
+#define NL_PBR_NORMAL_STRENGTH 0.7     // bump strength
+#define NL_PBR_RAIN_BOOST 1.4          // extra mirror strength when raining (wet ground)
+#define NL_PBR_ATLAS_TEXEL vec2(0.0009765625, 0.001953125) // 1024x512 terrain atlas
+
+/* Ground reflection - reflective wet ground (beta) */
+#define NL_GROUND_REFL 1.2              // ON: strong mirror-like reflection
+#define NL_GROUND_RAIN_WETNESS 1.6     // strong puddle reflections while raining
+#define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
+
+/* Rain reflection - strong wet/puddle mirror only while raining (beta) */
+#define NL_RAIN_REFL_STRENGTH 1.5      // 0 = off, higher = stronger wet ground mirror
+
+/* End reflection boost - End me mirror aur tez (beta) */
+#define NL_END_REFL_BOOST 2.0          // 1.0 = no change, zyada = tez pink mirror
 
 /* Rain drop ripples on block surfaces (top faces, only while raining) */
 #define NL_RAIN_RIPPLE 1.0          // [toggle] 0.3 subtle ~ 1.5 strong ripples
@@ -378,6 +404,7 @@
   #undef NL_RAIN_MIST_OPACITY
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
+  #undef NL_PBR_BLOCK_REFL
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
   #define NL_AURORA_TEX_LAYERS 5
@@ -418,6 +445,9 @@
 #endif
 
 #ifdef NO_REFLECTIONS
+  #undef NL_GROUND_REFL
+  #undef NL_PBR_BLOCK_REFL
+  #undef NL_RAIN_REFL_STRENGTH
   #define NL_NO_GROUND_REFL
   #define NL_NO_WATER_CLOUD_REFL
 #endif

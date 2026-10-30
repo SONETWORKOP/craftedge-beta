@@ -14,6 +14,7 @@
 #include "functions/water.h"
 #include "functions/hspe_block.h"
 #include "functions/rain.h"
+#include "functions/refl_pbr.h"
 #include "functions/wave.h"
 #include "functions/glow.h"
 
