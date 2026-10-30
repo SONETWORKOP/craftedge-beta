@@ -14,13 +14,84 @@ float nlWindblow(vec3 pos, float t){
   return 0.25*val*val;
 }
 
+// ---- Rain drop ripples (ported from TSPE GLSL shader) ----
+#ifdef NL_RAIN_RIPPLE
+
+// scalar hash (was hash_rain) - random start time of each drop
+float nlRippleHash1(highp vec2 p) {
+  highp vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yxz + 19.19);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+// vector hash (was hash_ripple) - random drop position inside a cell
+vec2 nlRippleHash2(highp vec2 p) {
+  highp vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1031, 0.0973));
+  p3 += dot(p3, p3.yzx + 19.19);
+  return fract((p3.xx + p3.yz) * p3.zy);
+}
+
+// returns surface normal of the ripple field at world xz position
+vec3 nlRainRipple(highp vec2 worldXZ, highp float t) {
+  highp vec2 p3 = worldXZ * NL_RAIN_RIPPLE_SCALE;
+  highp vec2 p0 = floor(p3);
+  vec2 circles = vec2(0.0, 0.0);
+
+  for (int j = -NL_RAIN_RIPPLE_RADIUS; j <= NL_RAIN_RIPPLE_RADIUS; j++) {
+    for (int i = -NL_RAIN_RIPPLE_RADIUS; i <= NL_RAIN_RIPPLE_RADIUS; i++) {
+      highp vec2 cell = p0 + vec2(float(i), float(j));
+      highp vec2 p = cell + nlRippleHash2(cell);
+      float tt = fract(NL_RAIN_RIPPLE_SPEED*t + nlRippleHash1(cell));
+      vec2 v = p - p3;
+      float len = max(length(v), 0.0001);
+      float d = len - (float(NL_RAIN_RIPPLE_RADIUS) + 1.0) * tt;
+      float h = 0.001;
+      float d1 = d - h;
+      float d2 = d + h;
+      float p1 = sin(31.0*d1) * smoothstep(-0.6, -0.3, d1) * smoothstep(0.0, -0.3, d1);
+      float p2 = sin(31.0*d2) * smoothstep(-0.6, -0.3, d2) * smoothstep(0.0, -0.3, d2);
+      float fade = 1.0 - tt;
+      circles += 0.5 * (v/len) * ((p2 - p1)/(2.0*h)) * fade * fade;
+    }
+  }
+
+  float cells = float((NL_RAIN_RIPPLE_RADIUS*2 + 1) * (NL_RAIN_RIPPLE_RADIUS*2 + 1));
+  circles /= cells;
+
+  // keep sqrt() valid
+  float cl = length(circles);
+  circles *= min(1.0, 0.95/max(cl, 0.0001));
+
+  return vec3(circles, sqrt(1.0 - dot(circles, circles)));
+}
+
+// rippleStrength: v_position.w (rain * sky exposure), brightness: day/torch light
+// returns vec4(rgb highlight, darkening)
+vec4 nlRainRippleShade(highp vec2 worldXZ, highp float t, float rippleStrength, float fogA, float brightness) {
+  vec3 n = nlRainRipple(worldXZ, t);
+
+  // patchy wet areas
+  float patchy = clamp(pow(noise2D((worldXZ - 0.5)*0.5)*1.5, 2.0), 0.0, 1.0);
+  patchy = mix(1.0, patchy, NL_RAIN_RIPPLE_PATCHY);
+
+  // fade with distance (fog)
+  float distFade = pow(clamp(1.0 - fogA*2.0, 0.0, 1.0), 2.0);
+
+  float k = rippleStrength * patchy * distFade;
+  float spec = pow(clamp(dot(n, normalize(vec3(1.0, 0.7, 0.5))), 0.0, 1.0), 6.0);
+
+  float highlight = 5.0 * spec * brightness * k;
+  float darken = clamp(length(n.xy)*0.6, 0.0, 0.4) * k;
+  return vec4(highlight, highlight, highlight, darken);
+}
+
+#endif
+
 vec4 nlRefl(
   inout vec4 color, nl_skycolor skycol, nl_environment env, vec3 viewDir, vec3 wPos, vec3 tiledCpos,
   vec3 CAMERA_POS, vec3 torchColor, vec2 lit, float camDist, float renderDist, highp float t
 ) {
   vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
-
-  #ifndef NL_NO_GROUND_REFL
 
   #ifndef NL_GROUND_REFL
   if (env.rainFactor > 0.0) {
@@ -42,85 +113,26 @@ vec4 nlRefl(
         if (!env.end && !env.nether) {
           // only multiply with wetness in overworld
           reflective *= wetness;
-
-          // Keep clear-weather block reflections subtle. Rain deliberately
-          // keeps the original full-strength path below.
-          if (env.rainFactor <= 0.001) {
-            reflective *= 0.62;
-          }
-        }
-
-        // suppress reflection on green vegetation (grass, leaves, crops).
-        // metallic/smooth blocks (iron, diamond, gold, quartz) have grey/cyan/
-        // white tint so greenness ~0 and keep full reflection - this stops the
-        // white-washed look on grass that the previous always-on reflection had.
-        float greenness = color.g - max(color.r, color.b);
-        greenness = clamp(greenness, 0.0, 0.5);
-        reflective *= 1.0 - 0.85*smoothstep(0.05, 0.35, greenness);
+        } 
 
         wetness *= puddles;
         reflective = mix(reflective, wetness, env.rainFactor);
-
-        // --- rain reflection boost ---
-        // while raining the ground gets a wet film: puddles turn into strong
-        // mirrors. Only kicks in with rainFactor so clear weather is unchanged.
-        #ifdef NL_RAIN_REFL_STRENGTH
-          if (!env.end && !env.nether) {
-            float wetFilm = env.rainFactor*NL_GROUND_RAIN_WETNESS*wetness;
-            reflective += NL_RAIN_REFL_STRENGTH*wetFilm;
-          }
-        #endif
-      #endif
-
-      reflective = min(reflective, 1.0);
-
-      // End me mirror boost (overworld/nether me zero asar).
-      // alpha aage min() se clamped hai, sirf glint tez hota hai.
-      #ifdef NL_END_REFL_BOOST
-        if (env.end) {
-          reflective *= NL_END_REFL_BOOST;
-        }
       #endif
 
       if (wPos.y < 0.0) {
-        vec3 reflDir = viewDir;
-        reflDir.y = -reflDir.y;
-        wetRefl.rgb = nlRenderSky(skycol, env, reflDir, t, false);
+        viewDir.y = -viewDir.y;
+        wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false);
 
-        // RTX-style mirror reflection (ref: block reflection V3) - reflect
-        // sky + clouds clearly. Cloud contribution is strong but balanced so
-        // the reflection reads like a clean mirror, not a white wash.
-        vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, reflDir, wPos, CAMERA_POS, t, 1.0);
-        wetRefl.rgb = mix(wetRefl.rgb, cloudRefl.rgb, cloudRefl.a*0.6);
+        #ifdef NL_CLOUD_AURORA_REFLECTION
+          vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t);
+          wetRefl.rgb = mix(wetRefl.rgb, cloudRefl.rgb, cloudRefl.a);
+        #endif
 
         // torch light
         wetRefl.rgb += torchColor*lit.x*NL_TORCHLIGHT_INTENSITY;
 
-        // sharp sun specular glint - GGX-style tight highlight for a
-        // metallic RTX look on iron, gold, diamond, quartz, etc.
-        #if defined(NL_SUNLIGHT_INTENSITY)
-          vec3 sunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
-          vec3 halfVector = sunDir + viewDir;
-          float halfLengthSq = dot(halfVector, halfVector);
-          vec3 halfDir = halfLengthSq > 0.000001 ? halfVector/sqrt(halfLengthSq) : vec3(0.0,1.0,0.0);
-          float specAngle = max(dot(vec3(0.0,1.0,0.0), halfDir), 0.0);
-          float specHighlight = pow(specAngle, 512.0)*lit.y;
-          wetRefl.rgb += specHighlight*NL_SUNLIGHT_INTENSITY*sunLightTint(env.dayFactor, env.rainFactor)*reflective;
-        #endif
-
-        // strong mirror fresnel (r0 higher = more mirror) for RTX-like
-        // reflective blocks - reads as a clear mirror on smooth surfaces.
-        // Wet ground is smoother, so raise base reflectance while raining.
-        float r0 = 0.09;
-        #ifdef NL_RAIN_REFL_STRENGTH
-          r0 = mix(r0, 0.18, env.rainFactor);
-        #endif
-        wetRefl.a = calculateFresnel(cosR, r0)*reflective;
-        // smoother falloff before the clip distance instead of a linear fade
-        float clipFade = clamp(1.0 - camDist/endDist, 0.0, 1.0);
-        wetRefl.a *= clipFade*clipFade*(3.0-2.0*clipFade);
-        // alpha lift so the reflection reads as a strong mirror
-        wetRefl.a = min(wetRefl.a*1.35, 1.0);
+        wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
+        wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0); // fade out before clip
       }
     }
 
@@ -130,8 +142,6 @@ vec4 nlRefl(
   #ifndef NL_GROUND_REFL
   }
   #endif
-
-  #endif // NL_NO_GROUND_REFL
 
   return wetRefl;
 }

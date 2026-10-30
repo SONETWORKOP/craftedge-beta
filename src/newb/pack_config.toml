@@ -10,7 +10,7 @@ description = '''
 authors = ["Shivam"]
 url = ""
 uuid = "46c67d56-ee38-490a-a55d-9ac22ff988b7" # fresh identity (cache-bust)
-materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
+materials = ["Actor", "ActorGlint", "ActorMultiTexture", "Clouds", "EndSky", "ItemInHandColor", "ItemInHandColorGlint", "ItemInHandTextured", "RenderChunk", "Sky", "Stars", "SunMoon", "Weather"]
 
 [info] 
 copyright = '''
@@ -26,53 +26,25 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: High (default), then Medium (vibrant clouds), Low (ESTN clouds) last.
-# High is the default/base quality.
-
-[[subpack]]
-define = "NO_REFLECTIONS"
-materials = ["RenderChunk", "Clouds", "Sky"]
-description = '''
-Low
-Vibrant painted clouds. Ground, block & water reflections are turned off.
-The lightest option.
-'''
-
-[[subpack]]
-define = "MEDIUM"
-materials = ["RenderChunk", "Clouds", "Sky"]
-description = '''
-Medium
-Default rounded clouds. Cloud & aurora reflections on water are turned off
-for better performance. Sun/Moon mirror and ground reflections stay on.
-'''
-
+# subpacks are arranged in left to right order
+# right-most subpack is enabled by default
 [[subpack]]
 define = "REALISTIC_CLOUDS"
-materials = ["Sky"]
+materials = ["Clouds", "RenderChunk"]
 description = '''
-Realistic Clouds
-Noise-texture (y.png) 8-layer realistic clouds on the sky.
+Realistic clouds
 '''
 
 [[subpack]]
-define = "EDITOR_CLOUDS"
-materials = ["Clouds", "Sky"]
+define = "ROUNDED_CLOUDS"
+materials = ["Clouds"]
 description = '''
-Shader Editor Clouds
-Volumetric raymarch (shader-editor-clouds.txt) sky-dome clouds.
+Rounded Clouds
 '''
 
 [[subpack]]
-define = "DEFAULT"
-materials = []
+define = "BOX_CLOUDS"
+materials = ["Clouds", "RenderChunk"]
 description = '''
-High
+Box Clouds
 '''
-
-#[[subpack]]
-#define = "LITE"
-#materials = ["Sky", "RenderChunk", "Actor", "ActorGlint", "EndSky", "Clouds", "SunMoon", "Weather", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint", "Stars"]
-#description = '''
-#Many effects disabled. A bit lighter!
-#'''

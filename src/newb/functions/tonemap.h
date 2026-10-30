@@ -3,12 +3,6 @@
 
 #include "utils.h"
 
-// hsbe-port se exact copy. sirf sRGBtoLinear neeche di hui hai - baaki materials
-// (Actor/RenderChunk/Weather/ItemInHand fragments) isi ko use karte hain, tonemap par asar nahi
-vec3 sRGBtoLinear(vec3 sRGB) {
-  return max(mix(sRGB / 12.92, pow(0.947867*sRGB + 0.0521327, vec3_splat(2.4)), step(0.04045, sRGB)), 0.0);
-}
-
 vec3 colorCorrection(vec3 col) {
   #ifdef NL_EXPOSURE
     col *= NL_EXPOSURE;

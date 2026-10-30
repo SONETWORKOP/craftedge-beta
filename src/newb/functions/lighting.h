@@ -7,34 +7,6 @@
 #include "noise.h"
 #include "clouds.h"
 
-#ifdef NL_HSPE_LIGHT
-// hsbe sky.h ke hspe light helpers (beta sky.h me nahi hote, isliye yahan)
-vec3 nlHspeLin(vec3 c) { return c*c; }
-
-void nlHspeTime(nl_environment env, out float night, out float dusk) {
-  night = smoothstep(0.1, -0.2, env.dayFactor);
-  dusk = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-  dusk *= 1.0 - env.rainFactor;
-}
-
-void nlHspeLightColors(nl_environment env, float skyExposure, out vec3 light, out vec3 shadow, out vec3 torch) {
-  float night, dusk;
-  nlHspeTime(env, night, dusk);
-  float wet = env.rainFactor;
-
-  light = mix(mix(mix(NL_HSPE_LIGHT_DAY, NL_HSPE_LIGHT_NIGHT, night), NL_HSPE_LIGHT_DUSK, dusk), mix(NL_HSPE_LIGHT_DRAIN, NL_HSPE_LIGHT_NRAIN, night), wet);
-  shadow = mix(mix(mix(NL_HSPE_SHADOW_DAY, NL_HSPE_SHADOW_NIGHT, night), NL_HSPE_SHADOW_DUSK, dusk), mix(NL_HSPE_SHADOW_DRAIN, NL_HSPE_SHADOW_NRAIN, night), wet);
-  shadow = mix(shadow, NL_HSPE_SHADOW_CAVE, 1.0 - skyExposure*skyExposure);
-
-  float cave = 1.0 - skyExposure*skyExposure*skyExposure;
-  torch = mix(mix(NL_HSPE_TORCH_DAY, NL_HSPE_TORCH_NIGHT, night), NL_HSPE_TORCH_CAVE, cave);
-
-  light = nlHspeLin(light);
-  shadow = nlHspeLin(shadow);
-  torch = nlHspeLin(torch);
-}
-#endif
-
 vec3 sunLightTint(float dayFactor, float rain) {
   float nightFactor = step(dayFactor, 0.0);
   float dawnFactor = 1.0-dayFactor*dayFactor;
