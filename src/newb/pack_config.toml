@@ -26,25 +26,46 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks are arranged in left to right order
-# right-most subpack is enabled by default
+# subpacks: High (default), then Medium, Realistic, Editor, Low last.
+# High is the default/base quality.
+
+[[subpack]]
+define = "NO_REFLECTIONS"
+materials = ["RenderChunk", "Clouds", "Sky"]
+description = '''
+Low
+Vibrant painted clouds. Ground, block & water reflections are turned off.
+The lightest option.
+'''
+
+[[subpack]]
+define = "EDITOR_CLOUDS"
+materials = ["Clouds", "Sky"]
+description = '''
+Shader Editor Clouds
+Volumetric raymarch sky-dome clouds.
+'''
+
 [[subpack]]
 define = "REALISTIC_CLOUDS"
-materials = ["Clouds", "RenderChunk"]
+materials = ["Sky"]
 description = '''
-Realistic clouds
+Realistic Clouds
+Noise-texture (y.png) 8-layer realistic clouds on the sky.
 '''
 
 [[subpack]]
-define = "ROUNDED_CLOUDS"
-materials = ["Clouds"]
+define = "MEDIUM"
+materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
-Rounded Clouds
+Medium
+Default rounded clouds. Cloud & aurora reflections on water are turned off
+for better performance. Sun/Moon mirror and ground reflections stay on.
 '''
 
 [[subpack]]
-define = "BOX_CLOUDS"
-materials = ["Clouds", "RenderChunk"]
+define = "DEFAULT"
+materials = []
 description = '''
-Box Clouds
+High
 '''

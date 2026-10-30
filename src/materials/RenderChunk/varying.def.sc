@@ -16,3 +16,6 @@ centroid vec2 v_texcoord0  : TEXCOORD0;
 vec2 v_lightmapUV : TEXCOORD1;
 vec4 v_position   : TEXCOORD2;
 vec4 v_extra      : TEXCOORD3;
+vec4 v_reflPbr    : TEXCOORD4;
+vec4 v_reflSun    : TEXCOORD9;
+vec4 v_sunMoon    : TEXCOORD10;

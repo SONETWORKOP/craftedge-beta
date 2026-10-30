@@ -82,16 +82,26 @@
 #define NL_HSPE_TORCH_NIGHT  vec3(2.0,1.3,0.0)
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
-/* Fog */
-#define NL_FOG 1.0                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
-#define NL_MIST_DENSITY 0.18      // 0.0 no mist ~ 1.0 misty
-#define NL_RAIN_MIST_OPACITY 0.12 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow
-#define NL_CLOUDY_FOG 0.1         // [toggle] 0.0 subtle - 0.8 dense fog clouds
+/* Fog - realistic atmospheric depth (beta) */
+#define NL_FOG 1.3                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
+#define NL_MIST_DENSITY 0.38      // 0.0 no mist ~ 1.0 misty
+#define NL_END_FOG 1.6            // End-only extra fog thickness (1.0 = same as overworld)
+#define NL_RAIN_MIST_OPACITY 0.4  // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow
+#define NL_CLOUDY_FOG 0.25        // [toggle] 0.0 subtle - 0.8 dense fog clouds
+
+/* Height fog - ground-hugging mist that thins with altitude */
+#define NL_HEIGHT_FOG 0.5
+#define NL_HEIGHT_FOG_START 56.0
+#define NL_HEIGHT_FOG_RANGE 55.0
 
 /* Sky */
 #define NL_SKY_VOID_FACTOR     0.5
 #define NL_SKY_VOID_DARKNESS   0.3
-#define NL_SKY_RAIN_MIX_FACTOR 0.9
+#define NL_SKY_RAIN_MIX_FACTOR 0.95
+
+/* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
+#define NL_ATMO 0.5
+#define NL_ATMO_SUNSET vec3(1.21,0.9025,0.49)  // HSPE DUSK_EDGE*c2 sunset haze
 
 /* Sky colors - zenith=top, horizon=bottom */
 #define NL_DAWN_ZENITH_COL   vec3(0.1,0.4,0.7)
@@ -100,9 +110,13 @@
 #define NL_DAY_ZENITH_COL    vec3(0.3,0.9,2.0)
 #define NL_DAY_HORIZON_COL   vec3(1.0,1.6,1.8)
 #define NL_DAY_EDGE_COL      vec3(1.44,1.56,1.62)
-#define NL_NIGHT_ZENITH_COL  vec3(0.008,0.048,0.08)
-#define NL_NIGHT_HORIZON_COL vec3(0.02,0.06,0.1)
-#define NL_NIGHT_EDGE_COL    vec3(0.04,0.08,0.1)
+#define NL_NIGHT_ZENITH_COL  vec3(0.04,0.20,0.38)    // deep cyan zenith (beta)
+#define NL_NIGHT_HORIZON_COL vec3(0.06,0.30,0.48)    // cyan horizon (beta)
+#define NL_NIGHT_EDGE_COL    vec3(0.08,0.38,0.55)    // bright cyan edge (beta)
+/* Raat ke clouds ka fixed rang - halka cyan (din me asar nahi) */
+#define NL_NIGHT_CLOUD_COL   vec3(0.55,0.75,0.88)    // halka cyan night clouds
+#define NL_NIGHT_CLOUD_BLEND 0.65  // raat me kitna cyan mix ho
+#define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.6,0.6,0.6)
 
@@ -117,10 +131,10 @@
 #define NL_HSPE_DAY_EDGE      vec3(0.8,0.9,1.0)
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
-// night
-#define NL_HSPE_NIGHT_EDGE    vec3(0.0,0.05,0.1)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.05,0.135,0.2)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.05,0.22,0.5)
+// night (beta cyan - HSPE gradient ke saath)
+#define NL_HSPE_NIGHT_EDGE    vec3(0.08,0.38,0.55)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.06,0.30,0.48)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.20,0.38)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -138,7 +152,7 @@
 /* Rainbow */
 #define NL_RAINBOW           // [toggle] enable rainbow in sky
 #define NL_RAINBOW_CLEAR 0.0 // 0.3 subtle ~ 1.0 bright during clear weather
-#define NL_RAINBOW_RAIN  0.4 // 0.3 subtle ~ 1.0 bright during rain weather
+#define NL_RAINBOW_RAIN  0.45 // 0.3 subtle ~ 1.0 bright during rain weather
 
 /* Ore glow intensity */
 #define NL_GLOW_TEX 2.3           // 0.4 weak ~ 8.0 bright
@@ -147,20 +161,29 @@
 //#define NL_GLOW_LEAK 0.6        // [toggle] 0.08 subtle ~ 1.0 100% brightness of NL_GLOW_TEX
 
 /* Waving */
-#define NL_PLANTS_WAVE 0.05    // [toggle] 0.02 gentle ~ 0.4 violent
+#define NL_PLANTS_WAVE 0.055   // [toggle] 0.02 gentle ~ 0.4 violent
 #define NL_LANTERN_WAVE 0.16   // [toggle] 0.05 subtle ~ 0.4 large swing
 #define NL_WAVE_SPEED 2.8      // 0.5 slow wave ~ 5.0 very fast wave
 //#define NL_EXTRA_PLANTS_WAVE // [toggle] !dont use! wave using texture coords (1.21.0 vanilla 2048x1024)
-#define NL_WAVE_RANGE 13.0     // 6.0 upto 6 blocks ~ 32.0 upto 32 blocks away (slower)
+#define NL_WAVE_RANGE 14.0     // 6.0 upto 6 blocks ~ 32.0 upto 32 blocks away (slower)
 
 /* Water */
 #define NL_WATER_TRANSPARENCY 0.9 // 0.0 transparent ~ 1.0 normal
 #define NL_WATER_BUMP 0.09        // 0.001 plain ~ 0.2 bumpy water
 #define NL_WATER_WAVE_SPEED  0.8  // 0.2 calm ~ 2.0 turbulent
 #define NL_WATER_TEX_OPACITY 0.3  // 0.0 plain water ~ 1.0 vanilla water texture
-#define NL_WATER_WAVE             // [toggle] wave effect
-//#define NL_WATER_REFL_MASK      // [toggle] fake water reflection mask
-#define NL_WATER_TINT vec3(0.52,0.9,0.45)
+#define NL_WATER_SUN_DISC    0.35       // per-pixel sun disc mirror strength on water (0 = off)
+#define NL_WATER_SUN_QUAD_TAN 0.1283    // tan of half the sun quad angular size
+#define NL_WATER_MOON_QUAD_TAN 0.1167   // tan of half the moon quad angular size
+#define NL_WATER_CLOUD_MIRROR 0.42      // soft cloud mirror on water (clouds reflection off hai)
+#define NL_WATER_CLOUD_HEIGHT 192.0     // cloud height used by legacy samplers
+#define NL_WATER_CLOUD_REFLECTION_DEPTH 2.0
+#define NL_WATER_CLOUD_REFL_RIPPLE 0.012
+#define NL_WATER_AURORA_MIRROR 0.55     // paani me aurora aks kitna tez
+//#define NL_WATER_WAVE               // OFF: water wave band (flat paani)
+//#define NL_WATER_REFL_MASK          // OFF: full reflection instead of patchy masked reflection
+#define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue
+#define NL_WATER_GLITTER 1.25           // sun glitter tez
 
 /* HSPE water (ported from HSPE shader) */
 #define NL_HSPE_WATER                  // [toggle] use HSPE waves + reflection
@@ -181,20 +204,20 @@
 #define NL_HSPE_METALLIC 0.8           // 0.0 plain ~ 1.0 full metal tint
 
 /* Underwater */
-#define NL_UNDERWATER_BRIGHTNESS 0.8         // 0.0 dark ~ 3.0 bright
-#define NL_CAUSTIC_INTENSITY 1.9             // 0.5 weak ~ 5.0 bright
-#define NL_UNDERWATER_WAVE 0.1               // [toggle] 0.02 subtle ~ 0.6 trippy
-#define NL_UNDERWATER_STREAKS 1.0            // [toggle] 0.8 subtle - 2.0 bright streaks from top
-#define NL_UNDERWATER_TINT vec3(0.9,1.0,0.9) // fog tint color when underwater
+#define NL_UNDERWATER_BRIGHTNESS 0.85        // 0.0 dark ~ 3.0 bright
+#define NL_CAUSTIC_INTENSITY 2.1             // 0.5 weak ~ 5.0 bright
+#define NL_UNDERWATER_WAVE 0.11              // [toggle] 0.02 subtle ~ 0.6 trippy
+#define NL_UNDERWATER_STREAKS 1.1            // [toggle] 0.8 subtle - 2.0 bright streaks from top
+#define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0) // fog tint color when underwater
 
-/* Cloud type */
-#define NL_CLOUD_TYPE 4 // 0:vanilla, 1:soft, 2:rounded, 3:realistic, 4:HSPE (needs NL_HSPE_SKY)
+/* Cloud type - mesh clouds off, sky-dome dome clouds draw karte hain (beta) */
+#define NL_CLOUD_TYPE 0 // 0:vanilla, 1:soft, 2:rounded, 3:realistic, 4:HSPE (needs NL_HSPE_SKY)
 
 /* Vanilla cloud settings - make sure to remove clouds.png when using this */
 #define NL_CLOUD0_THICKNESS 2.1      // 0.5 slim ~ 8.0 fat
 #define NL_CLOUD0_RAIN_THICKNESS 4.0 // 0.5 slim ~ 8.0 fat
-#define NL_CLOUD0_OPACITY 0.9        // 0.0 invisible ~ 1.0 opaque
-#define NL_CLOUD0_MULTILAYER         // [toggle] extra cloud layer
+#define NL_CLOUD0_OPACITY 0.0        // disabled: sky-dome clouds draw karte hain
+//#define NL_CLOUD0_MULTILAYER       // [toggle] extra cloud layer
 
 /* Soft cloud settings */
 #define NL_CLOUD1_SCALE vec2(0.016, 0.022) // 0.003 large ~ 0.2 tiny
@@ -227,6 +250,19 @@
 #define NL_CLOUD3_SHADOW 0.9             // 0.1 subtle ~ 1.0 dark
 #define NL_CLOUD3_SHADOW_OFFSET 0.3      // 0.05 minimal ~ 1.0 large
 
+/* Realistic texture clouds (y.png) */
+#define NL_REAL_CLOUD_SCALE 0.5       // plane project scale
+
+/* Sky-following clouds - din/sunset/raat/barish rang (Sky dome + mirror) */
+#define NL_CLOUD_SKY_TINT
+#define NL_CLOUD_DUSK_STRENGTH 0.8     // sunset narangi kitni tez (0 = band)
+
+/* Sky-dome procedural clouds (vibrant) - NO_REFLECTIONS/Low me on */
+//#define NL_SKY_CLOUDS
+#define NL_SKY_CLOUD_SPEED 0.09    // drift speed (cell units/sec)
+#define NL_SKY_CLOUD_DIR vec2(1.0, 0.35) // wind direction
+#define NL_SKY_CLOUD_OPACITY 0.9   // max cloud opacity
+
 /* HSPE cloud settings */
 #define NL_HSPE_CLOUD_QUALITY 6        // 3 fast ~ 7 best quality
 #define NL_HSPE_CLOUD_SCALE 1.0        // 0.5 large clouds ~ 2.0 small clouds
@@ -250,20 +286,24 @@
 #define NL_HSPE_CSHADOW_DRAIN  vec3(0.5,0.5,0.5)
 #define NL_HSPE_CSHADOW_NRAIN  vec3(0.2,0.2,0.2)
 
-/* Aurora settings */
-#define NL_AURORA 1.2           // [toggle] 0.4 dim ~ 4.0 very bright
+/* Aurora settings (beta - texture curtain + water mirror) */
+#define NL_AURORA 1.3           // [toggle] 0.4 dim ~ 4.0 very bright
+#define NL_AURORA_TEX 1.0          // original
+#define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
+#define NL_AURORA_TEX_COL1 vec3(0.6,7.5,9.5)  // original cyan
+#define NL_AURORA_TEX_COL2 vec3(0.2,4.2,8.0)  // original teal-blue
 #define NL_AURORA_VELOCITY 0.03 // 0.0 static ~ 0.3 very fast
 #define NL_AURORA_SCALE 0.04    // 0.002 large ~ 0.4 tiny
 #define NL_AURORA_WIDTH 0.18    // 0.04 thin line ~ 0.4 thick lines
-#define NL_AURORA_COL1 vec3(0.1,1.0,0.0)
-#define NL_AURORA_COL2 vec3(0.1,0.0,1.0)
+#define NL_AURORA_COL1 vec3(0.2,0.6,1.0)   // original sky blue
+#define NL_AURORA_COL2 vec3(0.35,0.85,1.0)  // original cyan-blue
 
 #define NL_CLOUD_AURORA_REFLECTION // [toggle] simple clouds/aurora reflection
 
-/* Shooting star */
+/* Shooting star - 4 streaks fire together every NL_SHOOTING_STAR_PERIOD seconds */
 #define NL_SHOOTING_STAR 1.0        // [toggle] 0.2 dim ~ 1.0 bright
-#define NL_SHOOTING_STAR_PERIOD 6.0 // 0.4 fast ~ 12.0 slow (12 secs)
-#define NL_SHOOTING_STAR_DELAY 64.0 // 0.0 no delay ~ 100.0 long time (100 secs)
+#define NL_SHOOTING_STAR_PERIOD 5.0 // 0.4 fast ~ 12.0 slow (12 secs)
+#define NL_SHOOTING_STAR_DELAY 0.0  // 0.0 no delay ~ 100.0 long time (100 secs)
 
 /* Galaxy */
 //#define NL_GALAXY_STARS 2.0           // [toggle] 0.1 dim - 4.0 bright
@@ -274,18 +314,20 @@
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
 
-/* Sun/Moon */
-#define NL_SUN_SIZE  1.0           // 0.3 tiny ~ 4.0 massive
-#define NL_MOON_SIZE 1.0           // 0.3 tiny ~ 4.0 massive
-#define NL_SUN_PATH_YAW    15.0 //
-#define NL_MOON_PATH_YAW   17.0 //
-#define NL_SUN_PATH_TILT   31.0 //
-#define NL_MOON_PATH_TILT -28.0 //
-#define NL_SUN_TILT        45.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
-#define NL_MOON_TILT       45.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
+/* Sun/Moon (beta) */
+#define NL_SUN_SIZE  2.75          // 0.3 tiny ~ 4.0 massive
+#define NL_MOON_SIZE 1.7           // 0.3 tiny ~ 4.0 massive
+#define NL_SUN_PATH_YAW    0.0     // seedha rasta (centered)
+#define NL_MOON_PATH_YAW   17.0
+#define NL_SUN_PATH_TILT   0.0     // 0.0 = suraj seedha upar-neeche
+#define NL_MOON_PATH_TILT -28.0
+#define NL_SUN_TILT        0.0     // 0.0 = no tilt
+#define NL_MOON_TILT       90.0    // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
-/* Fake godrays during sunrise/sunset */
-//#define NL_GODRAY 0.3 // [toggle] 0.1 subtle ~ 0.8 strong
+/* Godrays - strong volumetric light shafts (beta) */
+#define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
+#define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
 /* Sky reflection */
 //#define NL_GROUND_REFL 0.4       // [toggle] 0.2 slightly reflective ~ 1.0 fully reflect sky
@@ -300,13 +342,13 @@
 #define NL_RAIN_RIPPLE_PATCHY 1.0   // 0.0 ripples everywhere ~ 1.0 patchy wet areas
 
 /* Entity (Actor, ItemInHand) */
-#define NL_ENTITY_BRIGHTNESS     0.65 // 0.1 dark ~ 1.6 bright
-#define NL_ENTITY_EDGE_HIGHLIGHT 0.41 // [toggle] 0.0 no highlight ~ 1.6 bright highlight
+#define NL_ENTITY_BRIGHTNESS     0.68 // 0.1 dark ~ 1.6 bright
+#define NL_ENTITY_EDGE_HIGHLIGHT 0.42 // [toggle] 0.0 no highlight ~ 1.6 bright highlight
 
 /* Weather particles */
-#define NL_WEATHER_SPECK 0.6         // [toggle] 0.0 vanilla texture ~ 1.0 soft speck
-#define NL_WEATHER_RAIN_SLANT 4.0    // 1.0 minimal ~ 8.0 violent
-#define NL_WEATHER_PARTICLE_SIZE 1.0 // 0.5 tiny ~ 4.0 large
+#define NL_WEATHER_SPECK 0.5         // [toggle] 0.0 vanilla texture ~ 1.0 soft speck
+#define NL_WEATHER_RAIN_SLANT 5.0    // 1.0 minimal ~ 8.0 violent
+#define NL_WEATHER_PARTICLE_SIZE 0.85 // 0.5 tiny ~ 4.0 large
 
 /* Lava effects */
 #define NL_LAVA_NOISE            // [toggle] darken lava in certain regions
@@ -336,6 +378,10 @@
   #undef NL_RAIN_MIST_OPACITY
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
+  // halve the aurora curtain: 2 texture taps per layer per sky pixel
+  #undef NL_AURORA_TEX_LAYERS
+  #define NL_AURORA_TEX_LAYERS 5
+  #define NL_NO_WATER_CLOUD_REFL
 #endif
 
 #ifdef NO_WAVE_NO_FOG
@@ -359,22 +405,26 @@
   #define NL_CHUNK_LOAD_ANIM 100.0
 #endif
 
-#ifdef ROUNDED_CLOUDS
-  #undef NL_CLOUD_TYPE
-  #define NL_CLOUD_TYPE 2
-  #undef NL_CLOUD_SHADOW // TODO: Cloud shadow for rounded, realistic clouds
+/* ---- Beta subpacks ---- */
+#ifdef MEDIUM
+  // cloud + aurora mirror on water band (heaviest two reflection layers)
+  #define NL_NO_WATER_CLOUD_AURORA_REFL
 #endif
 
-#ifdef BOX_CLOUDS
+#if defined(VIBRANT_CLOUD) || defined(NO_REFLECTIONS)
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 0
-  #undef NL_CLOUD_SHADOW
+  #define NL_SKY_CLOUDS
 #endif
 
-#ifdef REALISTIC_CLOUDS
+#ifdef NO_REFLECTIONS
+  #define NL_NO_GROUND_REFL
+  #define NL_NO_WATER_CLOUD_REFL
+#endif
+
+#ifdef EDITOR_CLOUDS
   #undef NL_CLOUD_TYPE
-  #define NL_CLOUD_TYPE 3
-  #undef NL_CLOUD_SHADOW
+  #define NL_CLOUD_TYPE 2
 #endif
 
 #endif

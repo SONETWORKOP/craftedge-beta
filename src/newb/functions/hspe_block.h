@@ -40,7 +40,7 @@ vec3 nlHspeReflection(nl_skycolor skycol, nl_environment env, vec3 r, vec3 relPo
   vec3 col = nlRenderSky(skycol, env, r, t, false);
   #ifdef NL_CLOUD_AURORA_REFLECTION
     if (r.y < 0.0) {
-      vec4 cr = nlCloudAuroraReflection(skycol, env, r, relPos, CAMERA_POS, t);
+      vec4 cr = nlCloudAuroraReflection(skycol, env, r, relPos, CAMERA_POS, t, 1.0);
       col = mix(col, cr.rgb, cr.a);
     }
   #endif

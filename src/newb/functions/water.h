@@ -15,6 +15,18 @@ float calculateFresnel(float cosR, float r0) {
 }
 
 #ifdef NL_HSPE_WATER
+// hspe value noise (HSPE clouds.h se copy - beta ki clouds.h me nahi hai)
+float nlHspeNoise(highp vec2 x) {
+  highp vec2 a = floor(x);
+  highp vec2 b = fract(x);
+  b = b*b*(3.0-2.0*b);
+  float h1 = rand(a);
+  float h2 = rand(a + vec2(1.0, 0.0));
+  float h3 = rand(a + vec2(0.0, 1.0));
+  float h4 = rand(a + vec2(1.0, 1.0));
+  return mix(mix(h1, h2, b.x), mix(h3, h4, b.x), b.y);
+}
+
 // hspe wave height
 float nlHspeWaterHeight(highp vec2 c, highp float t) {
   c /= vec2(0.8, 0.7);
@@ -69,7 +81,7 @@ vec4 nlWater(
 
   #if defined(NL_CLOUD_AURORA_REFLECTION)
     if (viewDir.y < 0.0) {
-      vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t);
+      vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t, 1.0);
       waterRefl = mix(waterRefl, cloudRefl.rgb, cloudRefl.a);
     }
   #endif
@@ -112,6 +124,18 @@ vec4 nlWater(
   #endif
 
   return vec4(waterRefl, fresnel);
+}
+
+// ---- beta ke fragment ke liye (RenderChunk fragment.sc call karta hai) ----
+vec3 nlUnderwaterScatter(vec3 litColor, vec3 sunDir, float waterFlag) {
+  float moonVisibility = clamp(-sunDir.y, 0.0, 1.0);
+
+  // red jaldi absorb, blue bachta hai (murky depth tint, non-water pixels par)
+  const vec3 extinctionCoeffs = vec3(0.15, 0.08, 0.01);
+  litColor *= mix(exp(-extinctionCoeffs * 8.0), vec3(1.0, 1.0, 1.0), waterFlag);
+  litColor *= mix(2.0 - 0.5 * moonVisibility, 1.0, waterFlag);
+
+  return litColor;
 }
 
 #endif

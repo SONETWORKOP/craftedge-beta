@@ -2,7 +2,7 @@ $input a_color0, a_position, a_texcoord0, a_texcoord1
 #ifdef INSTANCING
   $input i_data0, i_data1, i_data2, i_data3
 #endif
-$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_position, v_extra
+$output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v_position, v_reflPbr, v_reflSun, v_sunMoon
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
@@ -116,9 +116,24 @@ void main() {
 
   vec4 fogColor;
   fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
-  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy);
+  // ATMO sunset palette (ESTN jaisa): dawn/dusk me kohra sunset-rang pakde.
+  // Sirf overworld, paani/nether/end me nahi. dawnF: noon+night 0, dusk 1.
+  #ifdef NL_ATMO
+    if (!env.end && !env.nether && !env.underwater) {
+      float dawnF = clamp(1.0 - env.dayFactor * env.dayFactor, 0.0, 1.0);
+      dawnF *= dawnF;
+      fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, NL_ATMO * dawnF);
+    }
+  #endif
+  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
+  fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
+  // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
+  // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
+  fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.35, 0.55), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
   #if defined(NL_GODRAY) && defined(NL_FOG)
-    fogColor.a = mix(fogColor.a, 1.0, min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0));
+    float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
+    fogColor.rgb = mix(fogColor.rgb, nlGodRayTint(FogColor.rgb), godRayAmount);
+    fogColor.a = mix(fogColor.a, 1.0, godRayAmount);
   #endif
 
   if (env.nether) {
@@ -180,7 +195,14 @@ void main() {
   #endif
 
   v_extra = vec4(shade, worldPos.y, water, shimmer);
+  v_refl = refl;
+  v_texcoord0 = uv0;
+  v_lightmapUV = uv1;
+  v_color0 = color;
+  v_color1 = a_color0;
+  v_fog = fogColor;
 
+  // --- PBR block reflection (V3) data for fragment stage ---
   // xyz = absolute world pos, w = rain ripple strength (rain * sky exposure)
   #ifdef NL_RAIN_RIPPLE
     float rippleStrength = env.rainFactor*lit.y*lit.y*NL_RAIN_RIPPLE;
@@ -191,12 +213,14 @@ void main() {
   #else
     v_position = vec4(gPos, 0.0);
   #endif
-  v_refl = refl;
-  v_texcoord0 = uv0;
-  v_lightmapUV = uv1;
-  v_color0 = color;
-  v_color1 = a_color0;
-  v_fog = fogColor;
+  // viewDir (surface->camera) in xyz, rainFactor in w
+  v_reflPbr = vec4(viewDir, env.rainFactor);
+  // real sun dir in xyz, dayFactor in w; real moon dir in v_sunMoon.xyz,
+  // camera-underwater flag in v_sunMoon.w (water.txt underwater block ke liye).
+  // The fragment picks sun vs moon by the sun's height above the horizon
+  // (v_reflSun.y), so the sun leaves the water the moment it visually sets.
+  v_reflSun = vec4(env.sunDir, env.dayFactor);
+  v_sunMoon = vec4(env.moonDir, env.underwater ? 1.0 : 0.0);
 
   #else
 
