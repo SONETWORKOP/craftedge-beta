@@ -124,7 +124,7 @@ vec4 nlRefl(
         wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false);
 
         #ifdef NL_CLOUD_AURORA_REFLECTION
-          vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t);
+          vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t, 1.0);
           wetRefl.rgb = mix(wetRefl.rgb, cloudRefl.rgb, cloudRefl.a);
         #endif
 
