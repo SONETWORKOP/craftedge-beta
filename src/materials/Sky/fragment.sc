@@ -14,6 +14,7 @@
   // buffers/BsbeNoise.json, only used by the BICUBIC_CLOUDS subpack
   #ifdef BICUBIC_CLOUDS
     SAMPLER2D_AUTOREG(s_BsbeNoise);
+    #define NL_BSBE_SKY_DECLARED
   #endif
   #define NL_ROUNDED_CLOUDS
   #define NL_AURORA_REFLECTION
