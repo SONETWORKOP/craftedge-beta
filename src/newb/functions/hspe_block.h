@@ -123,7 +123,8 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
     // clouds
     #if defined(BICUBIC_CLOUDS)
       float bcAlpha = nlBsbeCloudAlpha(R, t) * (1.0 - env.rainFactor);
-      col = mix(col, vec3_splat(1.0), clamp(bcAlpha, 0.0, 1.0));
+      vec3 bcCol = nlBsbeCloudColor(skycol, env);
+      col = mix(col, bcCol, clamp(bcAlpha, 0.0, 1.0));
     #elif defined(REALISTIC_CLOUDS) || defined(EDITOR_CLOUDS)
       vec4 cr = nlCloudAuroraReflection(skycol, env, -R, vec3(0.0, 0.0, 0.0), CAMERA_POS, t, 1.0);
       col = mix(col, cr.rgb, cr.a);

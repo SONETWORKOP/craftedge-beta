@@ -54,6 +54,15 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
 }
 
 // simple clouds 2D noise
+// BICUBIC ("High (Realistic Clouds)") cloud color: plain white in full day,
+// otherwise follow the sky tint (cyan night, warm dusk, grey rain).
+vec3 nlBsbeCloudColor(nl_skycolor skycol, nl_environment env) {
+  vec3 tint = nlSkyCloudTint(vec3_splat(1.0), skycol.horizon, env.dayFactor, env.rainFactor);
+  float whiteAmt = smoothstep(0.18, 0.55, env.dayFactor);
+  whiteAmt *= 1.0 - 0.65*env.rainFactor;
+  return mix(tint, vec3_splat(1.0), clamp(whiteAmt, 0.0, 1.0));
+}
+
 float cloudNoise2D(vec2 p, highp float t, float rain) {
   t *= NL_CLOUD1_SPEED;
   p += t;

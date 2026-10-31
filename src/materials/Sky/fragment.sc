@@ -156,9 +156,6 @@ void main() {
     nl_skycolor skycol = nlOverworldSkyColors(env);
 
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
-    #ifdef NL_SHOOTING_STAR
-      skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z);
-    #endif
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
@@ -222,9 +219,10 @@ void main() {
     // painted bicubic clouds (texture noise), baaki dome-clouds nahi bante.
     #ifdef BICUBIC_CLOUDS
       if (!env.underwater && env.rainFactor < 0.99) {
-        // plain white: pass 1/brightness so horC*brightness == 1.0
+        // day = plain white; night/dusk/rain = sky-tinted clouds
+        vec3 bsbeCol = nlBsbeCloudColor(skycol, env);
         vec3 withClouds = bsbeClouds(skyColor, viewDir, v_underwaterRainTimeDay.z,
-                                     vec3_splat(1.0/NL_SKY_CLOUDS_BRIGHTNESS), vec3_splat(1.0), gl_FragCoord.xy);
+                                     bsbeCol/NL_SKY_CLOUDS_BRIGHTNESS, bsbeCol, gl_FragCoord.xy);
         skyColor = mix(withClouds, skyColor, env.rainFactor);
       }
     #else
@@ -311,6 +309,11 @@ void main() {
     #endif // REALISTIC_CLOUDS
     #endif // BICUBIC_CLOUDS
     #endif // EDITOR_CLOUDS
+
+    // stars/shooting stars last so clouds don't hide them (night-only mask inside)
+    #ifdef NL_SHOOTING_STAR
+      skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z);
+    #endif
 
     skyColor = colorCorrection(skyColor);
 
