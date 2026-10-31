@@ -4,6 +4,9 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_position,
 // noise texture driving the aurora curtain - shared with the Sky dome via
 // newb/functions/clouds.h so the water mirror draws the same aurora shape
 SAMPLER2D_AUTOREG(s_NoiseVoxel);
+// cloud noise + rounded-cloud dome reflection (block reflection snapshot)
+SAMPLER2D_AUTOREG(s_NoiseTexture);
+#define NL_ROUNDED_CLOUDS
 #define NL_AURORA_REFLECTION
 #include <newb/main.sh>
 

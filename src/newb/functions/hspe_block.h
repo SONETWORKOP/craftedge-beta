@@ -47,6 +47,51 @@ vec3 nlHspeReflection(nl_skycolor skycol, nl_environment env, vec3 r, vec3 relPo
   return col;
 }
 
+// dome reflection
+vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMERA_POS, highp float t) {
+  vec3 col = nlRenderSky(skycol, env, -R, t, false);
+
+  if (R.y > 0.001) {
+    // clouds
+    #if defined(REALISTIC_CLOUDS) || defined(EDITOR_CLOUDS)
+      vec4 cr = nlCloudAuroraReflection(skycol, env, -R, vec3(0.0, 0.0, 0.0), CAMERA_POS, t, 1.0);
+      col = mix(col, cr.rgb, cr.a);
+    #elif defined(NL_SKY_CLOUDS)
+      float scale = 0.8/R.y;
+      float cloudA = nlVibrantClouds(R.xz*scale, 0.004*scale, t);
+      cloudA *= smoothstep(0.05, 0.35, R.y);
+      cloudA *= NL_SKY_CLOUD_OPACITY;
+      vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor), skycol.horizon, env.rainFactor);
+      col = mix(col, cloudCol, clamp(cloudA, 0.0, 1.0));
+    #elif defined(MEDIUM)
+      vec4 medClouds = renderCloudsRounded(
+        R, CAMERA_POS, env.rainFactor, t,
+        skycol.horizon, skycol.zenith,
+        NL_CLOUD2_STEPS, NL_CLOUD2_THICKNESS, NL_CLOUD2_RAIN_THICKNESS,
+        NL_CLOUD2_VELOCITY, NL_CLOUD2_SCALE, NL_CLOUD2_DENSITY, NL_CLOUD2_SHAPE
+      );
+      medClouds.rgb = nlSkyCloudTint(medClouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+      col = mix(col, medClouds.rgb, clamp(medClouds.a*smoothstep(0.05, 0.3, R.y), 0.0, 1.0));
+    #elif defined(NL_ROUNDED_CLOUDS) && !defined(NO_REFLECTIONS)
+      float jitter = fract(sin(dot(R.xy, vec2(12.9898, 78.233))) * 43758.5453);
+      vec4 clouds = nlRoundedClouds(R, t, jitter);
+      clouds.rgb = nlSkyCloudTint(clouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+      col = mix(col, clouds.rgb, clouds.a*0.5*smoothstep(0.1, 0.3, R.y));
+    #endif
+
+    // aurora
+    #if defined(NL_AURORA_REFLECTION) && !defined(REALISTIC_CLOUDS) && !defined(EDITOR_CLOUDS)
+      float aurUp = clamp(R.y, 0.0, 1.0);
+      float aurNight = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
+      if (aurNight > 0.001 && aurUp > 0.15) {
+        float dither = fract(sin(dot(R.xy, vec2(12.9898, 78.233))) * 43758.5453);
+        col += NL_AURORA_TEX*aurNight*nlAuroraBorealis(R, aurUp, dither, env.rainFactor, CAMERA_POS.xz, t);
+      }
+    #endif
+  }
+  return col;
+}
+
 // hspe water per pixel, returns vec4(reflection * fresnel, alpha)
 vec4 nlHspeWaterPixel(nl_environment env, vec3 gPos, vec3 CAMERA_POS, vec3 VIEW_POS, vec2 uv1, highp float t) {
   vec3 relPos = gPos - CAMERA_POS;
@@ -96,7 +141,7 @@ vec3 nlHspeMetal(nl_environment env, vec3 diffuse, vec3 albedo, vec3 texN, vec3 
   vec3 R = reflect(vd, cn);
 
   nl_skycolor skycol = nlSkyColors(env);
-  vec3 rc = nlHspeReflection(skycol, env, -R, wp, CAMERA_POS, t);
+  vec3 rc = nlDomeReflection(skycol, env, R, CAMERA_POS, t);
 
   float cosine = clamp(abs(dot(vd, cn)), 0.0, 1.0);
   vec3 F0 = mix(vec3_splat(0.04), albedo, NL_HSPE_METALLIC);
