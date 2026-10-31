@@ -39,6 +39,13 @@ vec3 nlHspeTexNormal(sampler2D tex, highp vec2 uv) {
 // texture-noise painted clouds that the Sky dome draws (plain white, same
 // layer/octave setup as Sky/fragment.sc bsbeClouds).
 #ifdef BICUBIC_CLOUDS
+  #ifdef NL_ROUNDED_CLOUDS
+    // RenderChunk side of the bicubic subpack: bind the same noise texture the
+    // Sky dome uses (declared here because subpack defines are not visible at
+    // the top of RenderChunk/fragment.sc).
+    SAMPLER2D_AUTOREG(s_BsbeNoise);
+  #endif
+
 float nlBsbeReflHash(float h) {
   return fract(sin(h) * 43758.5453);
 }

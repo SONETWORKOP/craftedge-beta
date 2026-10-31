@@ -6,9 +6,6 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_position,
 SAMPLER2D_AUTOREG(s_NoiseVoxel);
 // cloud noise + dome reflection (block reflection snapshot)
 SAMPLER2D_AUTOREG(s_NoiseTexture);
-// bicubic painted-cloud noise - same texture as the "High (Realistic Clouds)" sky subpack
-// (declared unconditionally: subpack define is injected around newb/main.sh, not here)
-SAMPLER2D_AUTOREG(s_BsbeNoise);
 #define NL_ROUNDED_CLOUDS
 #define NL_AURORA_REFLECTION
 #include <newb/main.sh>
