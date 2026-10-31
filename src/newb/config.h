@@ -433,6 +433,22 @@
 #endif
 
 /* ---- Beta subpacks ---- */
+/* Download/clouds: BSBE bicubic painted sky clouds (texture noise)
+   - "High (Realistic Clouds)" subpack */
+#ifdef BICUBIC_CLOUDS
+  #define NL_SKY_CLOUDS_NOISE_TEX
+  #define NL_SKY_CLOUDS_NOISE_CELLS 16.0
+  #define NL_SKY_CLOUDS_LAYERS 10
+  #define NL_SKY_CLOUDS_LOD_Y 0.06
+  #define NL_SKY_CLOUDS_SCALE 0.7
+  #define NL_SKY_CLOUDS_DENSITY 1.8
+  #define NL_SKY_CLOUDS_SPEED 1.0
+  #define NL_SKY_CLOUDS_LAYER_SQUEEZE 0.045
+  #define NL_SKY_CLOUDS_AMBIENT_MIX 0.2
+  #define NL_SKY_CLOUDS_BRIGHTNESS 1.5
+  #define NL_SKY_CLOUDS_HORIZON_FADE 0.5
+#endif
+
 #ifdef MEDIUM
   // cloud + aurora mirror on water band (heaviest two reflection layers)
   #define NL_NO_WATER_CLOUD_AURORA_REFL

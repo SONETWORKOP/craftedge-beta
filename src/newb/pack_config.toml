@@ -50,5 +50,12 @@ for better performance. Sun/Moon mirror and ground reflections stay on.
 define = "DEFAULT"
 materials = []
 description = '''
-High
+Rounded Clouds (High)
+'''
+
+[[subpack]]
+define = "BICUBIC_CLOUDS"
+materials = ["Sky"]
+description = '''
+High (Realistic Clouds)
 '''
