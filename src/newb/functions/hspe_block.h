@@ -35,6 +35,67 @@ vec3 nlHspeTexNormal(sampler2D tex, highp vec2 uv) {
   return normalize(vec3((b-a)*0.5, 1.0/NL_HSPE_TEX_HEIGHT, (c-a)*0.5));
 }
 
+// BICUBIC subpack ("High (Realistic Clouds)"): blocks reflect the same
+// texture-noise painted clouds that the Sky dome draws (plain white, same
+// layer/octave setup as Sky/fragment.sc bsbeClouds).
+#ifdef BICUBIC_CLOUDS
+float nlBsbeReflHash(float h) {
+  return fract(sin(h) * 43758.5453);
+}
+
+#ifdef NL_SKY_CLOUDS_NOISE_TEX
+  float nlBsbeReflVoronoi(vec2 pos) {
+    return texture2DLod(s_BsbeNoise, pos * (1.0 / NL_SKY_CLOUDS_NOISE_CELLS), 0.0).r;
+  }
+#else
+  float nlBsbeReflVoronoi(vec2 pos) {
+    vec2 p = floor(pos);
+    vec2 f = fract(pos);
+    float dist = 1.0;
+    for (float y = -1.0; y <= 1.0; y++) {
+      for (float x = -1.0; x <= 1.0; x++) {
+        vec2 ne = vec2(x, y);
+        vec2 pn = p + ne;
+        float n = pn.x + pn.y * 57.0;
+        dist = min(dist, length(ne + nlBsbeReflHash(n) - f));
+      }
+    }
+    return dist;
+  }
+#endif
+
+float nlBsbeReflFbm(vec2 pos, float pDens, float fTime, int nOct) {
+  float sum = 0.0;
+  float sDens = 1.0;
+  pos += fTime * 0.001 * NL_SKY_CLOUDS_SPEED;
+  for (int i = 0; i < 4; i++) {
+    if (i < nOct) sum += nlBsbeReflVoronoi(pos) * sDens * pDens;
+    else          sum += 0.42 * sDens * pDens;
+    sDens *= 0.5;
+    pos *= 2.5;
+    pos += fTime * 0.05 * NL_SKY_CLOUDS_SPEED;
+  }
+  return saturate(1.0 - sum);
+}
+
+float nlBsbeCloudAlpha(vec3 nPos, highp float t) {
+  vec2 cloudP = (nPos.xz / nPos.y) * NL_SKY_CLOUDS_SCALE;
+  float alpha = 0.0;
+  float sDens = NL_SKY_CLOUDS_DENSITY;
+  float lodY = nPos.y / NL_SKY_CLOUDS_LOD_Y;
+  int nOct = int(step(1.0, lodY) + step(1.58, lodY) + step(2.5, lodY) + step(3.95, lodY));
+  if (nOct > 0) {
+    for (int i = 0; i < NL_SKY_CLOUDS_LAYERS; i++) {
+      float cloudM = nlBsbeReflFbm(cloudP, sDens, t, nOct);
+      alpha = mix(alpha, 1.0, cloudM * smoothstep(0.0, NL_SKY_CLOUDS_HORIZON_FADE, nPos.y));
+      sDens += (i <= 6) ? -0.1 : 0.1;
+      cloudP -= cloudP * NL_SKY_CLOUDS_LAYER_SQUEEZE;
+    }
+  }
+  return alpha;
+}
+#endif
+
 // reflection (r = negated true direction, same as nlRenderSky)
 vec3 nlHspeReflection(nl_skycolor skycol, nl_environment env, vec3 r, vec3 relPos, vec3 CAMERA_POS, highp float t) {
   vec3 col = nlRenderSky(skycol, env, r, t, false);
@@ -53,7 +114,10 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
 
   if (R.y > 0.001) {
     // clouds
-    #if defined(REALISTIC_CLOUDS) || defined(EDITOR_CLOUDS)
+    #if defined(BICUBIC_CLOUDS)
+      float bcAlpha = nlBsbeCloudAlpha(R, t) * (1.0 - env.rainFactor);
+      col = mix(col, vec3_splat(1.0), clamp(bcAlpha, 0.0, 1.0));
+    #elif defined(REALISTIC_CLOUDS) || defined(EDITOR_CLOUDS)
       vec4 cr = nlCloudAuroraReflection(skycol, env, -R, vec3(0.0, 0.0, 0.0), CAMERA_POS, t, 1.0);
       col = mix(col, cr.rgb, cr.a);
     #elif defined(NL_SKY_CLOUDS)

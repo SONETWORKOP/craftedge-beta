@@ -1,0 +1,15 @@
+[
+  {
+    "name": "BsbeNoise",
+    "texture_path": "textures/newb/NoiseTexture",
+    "sampler": {
+      "internalFormat": "RGBA8",
+      "format": "RGBA",
+      "minFilter": "LINEAR",
+      "magFilter": "LINEAR",
+      "wrapS": "REPEAT",
+      "wrapT": "REPEAT"
+    },
+    "register_slot": 11
+  }
+]

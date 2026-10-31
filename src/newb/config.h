@@ -83,14 +83,14 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.6                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (kam fog)
-#define NL_MIST_DENSITY 0.15      // 0.0 no mist ~ 1.0 misty (kam fog)
+#define NL_FOG 0.4                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (kam fog)
+#define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty (kam fog)
 #define NL_END_FOG 1.6            // End-only extra fog thickness (1.0 = same as overworld)
-#define NL_RAIN_MIST_OPACITY 0.15 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow (kam fog)
-#define NL_CLOUDY_FOG 0.10        // [toggle] 0.0 subtle - 0.8 dense fog clouds (kam fog)
+#define NL_RAIN_MIST_OPACITY 0.10 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow (kam fog)
+#define NL_CLOUDY_FOG 0.05        // [toggle] 0.0 subtle - 0.8 dense fog clouds (kam fog)
 
 /* Height fog - ground-hugging mist that thins with altitude */
-#define NL_HEIGHT_FOG 0.2
+#define NL_HEIGHT_FOG 0.12
 #define NL_HEIGHT_FOG_START 56.0
 #define NL_HEIGHT_FOG_RANGE 55.0
 
@@ -139,9 +139,9 @@
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
 // night (beta cyan - HSPE gradient ke saath)
-#define NL_HSPE_NIGHT_EDGE    vec3(0.08,0.38,0.55)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.06,0.30,0.48)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.20,0.38)
+#define NL_HSPE_NIGHT_EDGE    vec3(0.10,0.62,0.72)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -332,22 +332,9 @@
 #define NL_MOON_TILT       90.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
 /* Godrays - strong volumetric light shafts (beta) */
-#define NL_GODRAY 0.20 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY 0.17 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
 #define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
-
-/* PBR block reflection (from "block reflection V3") - fragment-stage
-   normal-mapped, TBN-distorted, Cook-Torrance mirror on smooth blocks (beta) */
-#define NL_PBR_BLOCK_REFL              // ON: enable V3-style PBR block reflection
-#define NL_PBR_ROUGHNESS 0.15          // tez mirror
-#define NL_PBR_METALLIC 0.0            // 0 keeps texture bright
-#define NL_PBR_F0 vec3(0.35,0.35,0.36) // strong reflectance
-#define NL_PBR_SUNCOLOR vec3(1.0,0.95,0.85) // neutral white glint, not golden
-#define NL_PBR_SPEC_INTENSITY 1.0      // tez glint
-#define NL_PBR_SPEC_CLAMP 1.5          // glint cap khula
-#define NL_PBR_NORMAL_STRENGTH 0.7     // bump strength
-#define NL_PBR_RAIN_BOOST 1.4          // extra mirror strength when raining (wet ground)
-#define NL_PBR_ATLAS_TEXEL vec2(0.0009765625, 0.001953125) // 1024x512 terrain atlas
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_GROUND_REFL 1.0              // reflection strength (beta: 1)
@@ -404,7 +391,6 @@
   #undef NL_RAIN_MIST_OPACITY
   #undef NL_CLOUDY_FOG
   #undef NL_ENTITY_EDGE_HIGHLIGHT
-  #undef NL_PBR_BLOCK_REFL
   // halve the aurora curtain: 2 texture taps per layer per sky pixel
   #undef NL_AURORA_TEX_LAYERS
   #define NL_AURORA_TEX_LAYERS 5
@@ -462,7 +448,6 @@
 
 #ifdef NO_REFLECTIONS
   #undef NL_GROUND_REFL
-  #undef NL_PBR_BLOCK_REFL
   #undef NL_RAIN_REFL_STRENGTH
   #define NL_NO_GROUND_REFL
   #define NL_NO_WATER_CLOUD_REFL

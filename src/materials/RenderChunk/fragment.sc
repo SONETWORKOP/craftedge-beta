@@ -4,8 +4,12 @@ $input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_position,
 // noise texture driving the aurora curtain - shared with the Sky dome via
 // newb/functions/clouds.h so the water mirror draws the same aurora shape
 SAMPLER2D_AUTOREG(s_NoiseVoxel);
-// cloud noise + rounded-cloud dome reflection (block reflection snapshot)
+// cloud noise + dome reflection (block reflection snapshot)
 SAMPLER2D_AUTOREG(s_NoiseTexture);
+#ifdef BICUBIC_CLOUDS
+  // bicubic painted-cloud noise - same texture as the "High (Realistic Clouds)" sky subpack
+  SAMPLER2D_AUTOREG(s_BsbeNoise);
+#endif
 #define NL_ROUNDED_CLOUDS
 #define NL_AURORA_REFLECTION
 #include <newb/main.sh>
@@ -202,29 +206,8 @@ void main() {
     if (dy < 0.0002) {
       float mask = v_refl.a*(clamp(v_extra.r*10.0,8.2,8.8)-7.8);
 
-      #ifdef NL_PBR_BLOCK_REFL
-        // === V3 PBR block reflection (normal-map + TBN + Cook-Torrance) ===
-        vec3 viewDir = v_reflPbr.xyz;
-        float rainFactor = v_reflPbr.w;
-        vec3 sunDir = v_reflSun.xyz;
-
-        vec3 texNormal = vec3(0.0, 0.0, 1.0);
-        if (rainFactor > 0.001) {
-          texNormal = nlTexNormal(s_MatTexture, v_texcoord0, NL_PBR_ATLAS_TEXEL, NL_PBR_NORMAL_STRENGTH);
-        }
-
-        float pbrMask = mask;
-        #ifdef NL_PBR_RAIN_BOOST
-          pbrMask *= 1.0 + NL_PBR_RAIN_BOOST*rainFactor;
-        #endif
-        pbrMask = min(pbrMask, 1.0);
-
-        diffuse.rgb *= 1.0 - 0.6*pbrMask;
-        diffuse.rgb = nlApplyPbrRefl(diffuse.rgb, v_refl.rgb, pbrMask, texNormal, v_position.xyz, viewDir, sunDir);
-      #else
-        diffuse.rgb *= 1.0 - 0.75*mask;
-        diffuse.rgb += v_refl.rgb*mask*1.15;
-      #endif
+      diffuse.rgb *= 1.0 - 0.75*mask;
+      diffuse.rgb += v_refl.rgb*mask*1.15;
     }
   }
 

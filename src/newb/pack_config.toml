@@ -55,7 +55,7 @@ Rounded Clouds (High)
 
 [[subpack]]
 define = "BICUBIC_CLOUDS"
-materials = ["Sky"]
+materials = ["RenderChunk", "Sky"]
 description = '''
 High (Realistic Clouds)
 '''
