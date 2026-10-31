@@ -26,8 +26,7 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: High (default), then Medium, Realistic, Editor, Low last.
-# High is the default/base quality.
+# subpacks: High (default), Medium, Low.
 
 [[subpack]]
 define = "NO_REFLECTIONS"
@@ -36,22 +35,6 @@ description = '''
 Low
 Vibrant painted clouds. Ground, block & water reflections are turned off.
 The lightest option.
-'''
-
-[[subpack]]
-define = "EDITOR_CLOUDS"
-materials = ["Clouds", "Sky"]
-description = '''
-Shader Editor Clouds
-Volumetric raymarch sky-dome clouds.
-'''
-
-[[subpack]]
-define = "REALISTIC_CLOUDS"
-materials = ["Sky"]
-description = '''
-Realistic Clouds
-Noise-texture (y.png) 8-layer realistic clouds on the sky.
 '''
 
 [[subpack]]

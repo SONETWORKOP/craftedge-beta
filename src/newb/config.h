@@ -322,17 +322,17 @@
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
 
 /* Sun/Moon (beta) */
-#define NL_SUN_SIZE  2.75          // 0.3 tiny ~ 4.0 massive
+#define NL_SUN_SIZE  2.75           // 0.3 tiny ~ 4.0 massive
 #define NL_MOON_SIZE 1.7           // 0.3 tiny ~ 4.0 massive
-#define NL_SUN_PATH_YAW    0.0     // seedha rasta (centered)
+#define NL_SUN_PATH_YAW    0.0       // 0.0 para centrar la direccion del recorrido
 #define NL_MOON_PATH_YAW   17.0
-#define NL_SUN_PATH_TILT   0.0     // 0.0 = suraj seedha upar-neeche
+#define NL_SUN_PATH_TILT   0.0       // 0.0 para que el sol suba y baje totalmente derecho
 #define NL_MOON_PATH_TILT -28.0
-#define NL_SUN_TILT        0.0     // 0.0 = no tilt
-#define NL_MOON_TILT       90.0    // 0.0 no tilt ~ 90.0 tilt of 90 degrees
+#define NL_SUN_TILT        0.0       // 0.0 elimina la inclinacion del eje del sol
+#define NL_MOON_TILT       90.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
 /* Godrays - strong volumetric light shafts (beta) */
-#define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY 0.20 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
 #define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
@@ -350,7 +350,7 @@
 #define NL_PBR_ATLAS_TEXEL vec2(0.0009765625, 0.001953125) // 1024x512 terrain atlas
 
 /* Ground reflection - reflective wet ground (beta) */
-#define NL_GROUND_REFL 1.2              // ON: strong mirror-like reflection
+#define NL_GROUND_REFL 1.0              // reflection strength (beta: 1)
 #define NL_GROUND_RAIN_WETNESS 1.6     // strong puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 

@@ -609,9 +609,26 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
   vec4 refl = vec4_splat(0.0);
 
   #ifdef NL_AURORA
-    vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, env.fogCol);
-    aurora.a *= fade;
-    refl = vec4(2.0*aurora.rgb*aurora.a, aurora.a);
+    #ifdef NL_AURORA_REFLECTION
+      // textured curtain - identical shape/brightness to the Sky dome aurora
+      // (the old procedural renderAurora here was masked out by the fog color
+      // at night, so the water mirror never showed anything)
+      vec3 aurV = viewDir.y < 0.0 ? -viewDir : viewDir;
+      float aurUp = clamp(aurV.y, 0.0, 1.0);
+      float aurNight = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
+      if (aurNight > 0.001 && aurUp > 0.15) {
+        float dither = fract(sin(dot(aurV.xy, vec2(12.9898, 78.233))) * 43758.5453);
+        vec3 aur = NL_AURORA_TEX*aurNight*nlAuroraBorealis(
+          aurV, aurUp, dither, env.rainFactor, CAMERA_POS.xz, t
+        );
+        float aurA = clamp(max(aur.r, max(aur.g, aur.b))*2.0, 0.0, 1.0)*fade;
+        refl = vec4(2.0*aur, aurA);
+      }
+    #else
+      vec4 aurora = renderAurora(cloudPos.xyy, t, env.rainFactor, env.fogCol);
+      aurora.a *= fade;
+      refl = vec4(2.0*aurora.rgb*aurora.a, aurora.a);
+    #endif
   #endif
 
   // Cloud reflection always uses the lightweight Simple cloud algorithm,
