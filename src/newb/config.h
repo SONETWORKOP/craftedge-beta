@@ -83,14 +83,14 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.4                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (kam fog)
-#define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty (kam fog)
-#define NL_END_FOG 1.6            // End-only extra fog thickness (1.0 = same as overworld)
-#define NL_RAIN_MIST_OPACITY 0.10 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow (kam fog)
-#define NL_CLOUDY_FOG 0.05        // [toggle] 0.0 subtle - 0.8 dense fog clouds (kam fog)
+#define NL_FOG 0.2                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (bahut kam fog)
+#define NL_MIST_DENSITY 0.04      // 0.0 no mist ~ 1.0 misty (bahut kam fog)
+#define NL_END_FOG 1.2            // End-only extra fog thickness (1.0 = same as overworld)
+#define NL_RAIN_MIST_OPACITY 0.04 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow (bahut kam fog)
+#define NL_CLOUDY_FOG 0.02        // [toggle] 0.0 subtle - 0.8 dense fog clouds (bahut kam fog)
 
 /* Height fog - ground-hugging mist that thins with altitude */
-#define NL_HEIGHT_FOG 0.12
+#define NL_HEIGHT_FOG 0.05
 #define NL_HEIGHT_FOG_START 56.0
 #define NL_HEIGHT_FOG_RANGE 55.0
 
@@ -338,14 +338,14 @@
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_GROUND_REFL 1.0              // reflection strength (beta: 1)
-#define NL_GROUND_RAIN_WETNESS 1.6     // strong puddle reflections while raining
+#define NL_GROUND_RAIN_WETNESS 1.0     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
 /* Rain reflection - strong wet/puddle mirror only while raining (beta) */
-#define NL_RAIN_REFL_STRENGTH 1.5      // 0 = off, higher = stronger wet ground mirror
+#define NL_RAIN_REFL_STRENGTH 1.0      // 0 = off, higher = stronger wet ground mirror
 
 /* End reflection boost - End me mirror aur tez (beta) */
-#define NL_END_REFL_BOOST 2.0          // 1.0 = no change, zyada = tez pink mirror
+#define NL_END_REFL_BOOST 1.0          // 1.0 = no change, zyada = tez pink mirror
 
 /* Rain drop ripples on block surfaces (top faces, only while raining) */
 #define NL_RAIN_RIPPLE 1.0          // [toggle] 0.3 subtle ~ 1.5 strong ripples
