@@ -1,4 +1,4 @@
-$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_position, v_extra, v_reflPbr, v_reflSun, v_sunMoon
+$input v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_position, v_extra, v_reflPbr, v_reflSun, v_sunMoon, v_sunLight
 
 #include <bgfx_shader.sh>
 // noise texture driving the aurora curtain - shared with the Sky dome via
@@ -77,6 +77,22 @@ void main() {
 
   vec3 glow = nlGlow(s_MatTexture, v_texcoord0, v_extra.a);
 
+  #if defined(NL_YSS_LIGHTING) || defined(NL_YSS_WATER_GLINT)
+    nl_environment yssEnv = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogAndDistanceControl.xyz);
+  #endif
+
+  // YSS direct sun/dusk/moon light: per-pixel N.L on top of HSPE ambient
+  #ifdef NL_YSS_LIGHTING
+    if (!(yssEnv.nether || yssEnv.end || yssEnv.underwater)) {
+      vec3 yssRel = v_position.xyz - CameraPosition.xyz;
+      vec3 yssNg = normalize(cross(dFdx(yssRel), dFdy(yssRel)));
+      if (dot(yssNg, yssRel) > 0.0) {
+        yssNg = -yssNg;
+      }
+      color.rgb += v_sunLight.rgb*max(dot(yssNg, nlYssMainDir(yssEnv)), 0.0);
+    }
+  #endif
+
   diffuse.rgb *= diffuse.rgb;
   vec3 albedoLin = diffuse.rgb;
 
@@ -115,6 +131,35 @@ void main() {
           diffuse.rgb += wr.rgb;
           diffuse.a = wr.a;
           hspeWaterDone = true;
+        }
+      }
+    #endif
+
+    // YSS GGX sun/moon glint - sunrise/sunset shimmer on water
+    #if defined(NL_YSS_WATER_GLINT) && defined(TRANSPARENT) && !(defined(SEASONS) || defined(RENDER_AS_BILLBOARDS))
+      if (!(yssEnv.nether || yssEnv.end || yssEnv.underwater)) {
+        float glintFlat = abs(dFdx(v_extra.g)) + abs(dFdy(v_extra.g));
+        if (glintFlat < 0.0004) {
+          vec3 glintRel = v_position.xyz - CameraPosition.xyz;
+          vec3 glintNg = normalize(cross(dFdx(glintRel), dFdy(glintRel)));
+          if (dot(glintNg, glintRel) > 0.0) {
+            glintNg = -glintNg;
+          }
+          vec3 Nw = nlYssWaterNormal(v_position.xz, ViewPositionAndTime.w);
+          Nw = normalize(mix(glintNg, Nw, step(0.9, glintNg.y)));
+          vec3 V = normalize(v_reflPbr.xyz);
+          vec3 L = nlYssMainDir(yssEnv);
+          vec3 H = normalize(L + V);
+          float NdotV = max(dot(Nw, V), 0.0);
+          float NdotL = max(dot(Nw, L), 0.0);
+          float NdotH = max(dot(Nw, H), 0.0);
+          float F = nlYssFresnel(NdotV, NL_YSS_WATER_F0, NL_YSS_WATER_ROUGH);
+          float D = nlYssGGX(NdotH, NL_YSS_WATER_ROUGH);
+          float G = nlYssGeoSchlick(NdotV, NL_YSS_WATER_ROUGH)*nlYssGeoSchlick(NdotL, NL_YSS_WATER_ROUGH);
+          float sunMask = smoothstep(NL_YSS_SHADOW_RANGE.x, NL_YSS_SHADOW_RANGE.y, v_lightmapUV.y);
+          float inten = min(NdotL, max(dot(glintNg, L), 0.0)*sunMask)*(1.0-yssEnv.rainFactor);
+          float glint = min(F*F*D*G/(4.0*NdotV*NdotL + 0.0001), NL_YSS_GLINT_CLAMP);
+          diffuse.rgb += nlYssSunMoonLight(yssEnv)*vec3_splat(glint*inten*NL_YSS_GLINT_STRENGTH);
         }
       }
     #endif

@@ -3,6 +3,7 @@
 
 #include "detection.h"
 #include "noise.h"
+#include "yss_port.h"
 
 struct nl_skycolor {
   vec3 zenith;
@@ -113,6 +114,18 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   s.horizonEdge = mix(s.horizonEdge, s.horizon, env.rainFactor);
   #endif
 
+  // YSS sunrise/sunset palette (only dawn/dusk, day/night keep HSPE)
+  #ifdef NL_YSS_SKY
+  {
+    float yssMix = nlYssDusk(env.dayFactor)*NL_YSS_SKY_MIX*(1.0-env.rainFactor);
+    if (yssMix > 0.0001 && !env.nether) {
+      s.zenith = mix(s.zenith, nlYssSkyLinear(env, 1.0), yssMix);
+      s.horizon = mix(s.horizon, nlYssSkyLinear(env, 0.1), yssMix);
+      s.horizonEdge = mix(s.horizonEdge, nlYssSkyLinear(env, -0.02), yssMix);
+    }
+  }
+  #endif
+
   if (env.underwater) {
     vec3 underwaterFog = env.fogCol*env.fogCol*NL_UNDERWATER_TINT;
     s.zenith = mix(2.0*underwaterFog, underwaterFog*zh, 0.8);
@@ -182,6 +195,16 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
     source *= source;
     source *= source;
     sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
+  }
+  #endif
+
+  // YSS sunrise/sunset 5-band gradient on the dome (sunset horizon orange)
+  #ifdef NL_YSS_SKY
+  if (!env.underwater && !env.nether) {
+    float yssMix = nlYssDusk(env.dayFactor)*NL_YSS_SKY_MIX*(1.0-env.rainFactor);
+    if (yssMix > 0.0001) {
+      sky = mix(sky, nlYssSkyLinear(env, viewDir.y), yssMix);
+    }
   }
   #endif
 

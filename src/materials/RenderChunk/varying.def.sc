@@ -19,3 +19,4 @@ vec4 v_extra      : TEXCOORD3;
 vec4 v_reflPbr    : TEXCOORD4;
 vec4 v_reflSun    : TEXCOORD9;
 vec4 v_sunMoon    : TEXCOORD10;
+vec4 v_sunLight   : TEXCOORD11;
