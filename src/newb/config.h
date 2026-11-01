@@ -369,7 +369,7 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
-  YSS PORT - sunrise/sunset palette, sun/moon lighting, water glint
+  YSS PORT - sunrise/sunset sky palette
   Values are 1:1 from the YSS pack. Only dawn/dusk is affected here,
   day/night keep the existing HSPE look.
 */
@@ -408,25 +408,6 @@
 #define NL_YSS_DAY_SBC    vec3(0.3529,0.4902,0.5882)*0.97
 #define NL_YSS_DUSK_SBC   vec3(0.41,0.4,0.4)
 #define NL_YSS_NIGHT_SBC  vec3(0.2,0.6,0.9)*0.7
-
-/* YSS direct sun/moon lighting (added on top of the HSPE ambient) */
-#define NL_YSS_LIGHTING               // [toggle] per-pixel sun/moon N.L
-#define NL_YSS_LIGHT_STRENGTH 0.6     // 0.0 off ~ 1.5 full YSS strength
-#define NL_YSS_DIRECT_SCALE 0.293     // Kd/PI of the YSS default material
-#define NL_YSS_SHADOW_RANGE vec2(0.8,0.9) // sky light range with direct sun
-#define NL_YSS_SUN_COL      vec3(1.0,0.9804,0.8627)
-#define NL_YSS_SUN_BOOST    3.0
-#define NL_YSS_MOONLIGHT    vec3(0.3922,0.549,0.7059)*0.2
-#define NL_YSS_DUSKLIGHT    vec3(0.9804,0.6078,0.1569)*2.5
-#define NL_YSS_DAY_DIF      vec3(0.5686,0.7843,1.0)*1.2
-
-/* YSS water sun/moon glint at dawn/dusk (GGX + animated wave normal) */
-#define NL_YSS_WATER_GLINT            // [toggle] sun/moon glint on water
-#define NL_YSS_GLINT_STRENGTH 1.0     // 0.0 off ~ 2.0 strong
-#define NL_YSS_GLINT_CLAMP 50.0
-#define NL_YSS_WATER_F0    0.4        // reflectivity at straight view
-#define NL_YSS_WATER_ROUGH 0.15       // 0.05 mirror ~ 0.5 dull
-#define NL_YSS_WATER_BUMP  1.0        // wave normal strength
 
 /*
   NEWB SHADER SUBPACK CONFIG

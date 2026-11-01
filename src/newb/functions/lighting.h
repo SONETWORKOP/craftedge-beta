@@ -6,7 +6,6 @@
 #include "utils.h"
 #include "noise.h"
 #include "clouds.h"
-#include "yss_port.h"
 
 vec3 sunLightTint(float dayFactor, float rain) {
   float nightFactor = step(dayFactor, 0.0);
@@ -21,11 +20,9 @@ vec3 sunLightTint(float dayFactor, float rain) {
 
 vec3 nlLighting(
   sampler2D tex, nl_skycolor skycol, nl_environment env, vec3 wPos, out vec3 torchColor, vec3 COLOR,
-  vec2 uv1, vec2 lit, bool isTree, float shade, highp float t, float renderdistance, float TIME_OF_DAY, vec3 CAMERA_POS,
-  out vec3 directLight
+  vec2 uv1, vec2 lit, bool isTree, float shade, highp float t, float renderdistance, float TIME_OF_DAY, vec3 CAMERA_POS
 ) {
   vec3 light;
-  directLight = vec3_splat(0.0);
 
   if (env.underwater) {
     torchColor = NL_UNDERWATER_TORCH_COL;
@@ -141,14 +138,6 @@ vec3 nlLighting(
   if (isTree) {
     light *= 1.25;
   }
-
-  // YSS direct sun/dusk/moon light, applied per-pixel in the fragment shader
-  #ifdef NL_YSS_LIGHTING
-    if (!(env.nether || env.end || env.underwater)) {
-      float yssShadow = smoothstep(NL_YSS_SHADOW_RANGE.x, NL_YSS_SHADOW_RANGE.y, uv1.y);
-      directLight = nlYssSunMoonLight(env)*(NL_YSS_DIRECT_SCALE*NL_YSS_LIGHT_STRENGTH*yssShadow*(1.0-env.rainFactor));
-    }
-  #endif
 
   return light;
 }
