@@ -49,7 +49,7 @@
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
 /* Sun/moon light color */
-#define NL_DAWN_SUNLIGHT_COL   vec3(1.2,0.55,0.18)   // old-beta warm orange sunrise
+#define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.4,0.1)   // original HSPE sunrise sunlight
 #define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.75,0.57)
 #define NL_NIGHT_MOONLIGHT_COL vec3(0.01,0.03,0.2)
 
@@ -65,7 +65,7 @@
 // sun light color
 #define NL_HSPE_LIGHT_DAY    vec3(1.4,1.2,1.1)
 #define NL_HSPE_LIGHT_NIGHT  vec3(0.25,0.5,0.8)
-#define NL_HSPE_LIGHT_DUSK   vec3(1.095,0.742,0.424) // old-beta warm orange sunrise (c2 = 1.2,0.55,0.18)
+#define NL_HSPE_LIGHT_DUSK   vec3(1.3,1.1,0.6)
 #define NL_HSPE_LIGHT_DRAIN  vec3(0.8,0.8,0.8)
 #define NL_HSPE_LIGHT_NRAIN  vec3(0.4,0.4,0.4)
 
@@ -104,9 +104,9 @@
 #define NL_ATMO_SUNSET vec3(1.21,0.9025,0.49)  // HSPE DUSK_EDGE*c2 sunset haze
 
 /* Sky colors - zenith=top, horizon=bottom */
-#define NL_DAWN_ZENITH_COL   vec3(0.15,0.30,0.92)   // old-beta vivid twilight blue
-#define NL_DAWN_HORIZON_COL  vec3(2.9,0.62,0.16)    // old-beta deep sunrise orange
-#define NL_DAWN_EDGE_COL     vec3(3.1,1.15,0.34)    // old-beta warm golden edge
+#define NL_DAWN_ZENITH_COL   vec3(0.1,0.4,0.7)   // original HSPE dawn zenith
+#define NL_DAWN_HORIZON_COL  vec3(3.0,0.4,0.4)   // original HSPE dawn horizon
+#define NL_DAWN_EDGE_COL     vec3(2.0,0.8,0.8)   // original HSPE dawn edge
 #define NL_DAY_ZENITH_COL    vec3(0.3,0.9,2.0)
 #define NL_DAY_HORIZON_COL   vec3(1.0,1.6,1.8)
 #define NL_DAY_EDGE_COL      vec3(1.44,1.56,1.62)
@@ -143,9 +143,9 @@
 #define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
 #define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
 // dusk / dawn
-#define NL_HSPE_DUSK_EDGE     vec3(1.761,1.072,0.583) // c2 = old-beta golden edge
-#define NL_HSPE_DUSK_HORIZON  vec3(1.703,0.787,0.4)   // c2 = old-beta sunrise orange horizon
-#define NL_HSPE_DUSK_ZENITH   vec3(0.387,0.548,0.959) // c2 = old-beta twilight blue
+#define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
+#define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
+#define NL_HSPE_DUSK_ZENITH   vec3(0.2,0.7,0.9)
 // day rain
 #define NL_HSPE_DRAIN_EDGE    vec3(1.0,1.0,1.0)
 #define NL_HSPE_DRAIN_HORIZON vec3(0.8,0.8,0.8)
