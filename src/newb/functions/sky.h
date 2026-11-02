@@ -114,11 +114,11 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   s.horizonEdge = mix(s.horizonEdge, s.horizon, env.rainFactor);
   #endif
 
-  // YSS sunrise/sunset palette (only dawn/dusk, day/night keep HSPE)
+  // YSS full day/dusk/night palette
   #ifdef NL_YSS_SKY
   {
-    float yssMix = nlYssDusk(env.dayFactor)*NL_YSS_SKY_MIX*(1.0-env.rainFactor);
-    if (yssMix > 0.0001 && !env.nether) {
+    float yssMix = NL_YSS_SKY_MIX;
+    if (yssMix > 0.0001 && !env.nether && !env.underwater) {
       s.zenith = mix(s.zenith, nlYssSkyLinear(env, 1.0), yssMix);
       s.horizon = mix(s.horizon, nlYssSkyLinear(env, 0.1), yssMix);
       s.horizonEdge = mix(s.horizonEdge, nlYssSkyLinear(env, -0.02), yssMix);
@@ -198,13 +198,21 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   }
   #endif
 
-  // YSS sunrise/sunset 5-band gradient on the dome (sunset horizon orange)
+  // YSS full 5-band gradient on the dome
   #ifdef NL_YSS_SKY
   if (!env.underwater && !env.nether) {
-    float yssMix = nlYssDusk(env.dayFactor)*NL_YSS_SKY_MIX*(1.0-env.rainFactor);
+    float yssMix = NL_YSS_SKY_MIX;
     if (yssMix > 0.0001) {
       sky = mix(sky, nlYssSkyLinear(env, viewDir.y), yssMix);
     }
+  }
+  #endif
+
+  // YSS procedural sun/moon disc + halo. isSkyPlane keeps it out of the
+  // water-reflection sky; it still renders when the camera is underwater.
+  #ifdef NL_YSS_SUNMOON
+  if (isSkyPlane && !env.nether) {
+    sky = nlYssSunMoonOverlay(sky, env, viewDir);
   }
   #endif
 

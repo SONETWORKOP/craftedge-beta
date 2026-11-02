@@ -3,6 +3,17 @@
 
 #include "utils.h"
 
+// YSS Filmic (Hable) curve - from YSS function F()
+vec3 yssFilmicCurve(vec3 x) {
+  const float A = 0.22;
+  const float B = 0.30;
+  const float C = 0.10;
+  const float D = 0.20;
+  const float E = 0.01;
+  const float F = 0.30;
+  return ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E/F;
+}
+
 vec3 colorCorrection(vec3 col) {
   #ifdef NL_EXPOSURE
     col *= NL_EXPOSURE;
@@ -35,6 +46,14 @@ vec3 colorCorrection(vec3 col) {
     col *= 1.4;
     col = (col*(2.5*col + 0.1)) / (col*(2.52*col) + 0.9) - 0.1;
     col = max(col, 0.0);
+  #elif NL_TONEMAP_TYPE == 7
+    // YSS filmic tonemap (FilmicToneMapping, adapted_lum = 1.0)
+    const float yssWhite = 11.2;
+    col = yssFilmicCurve(1.6*col) / (yssFilmicCurve(vec3_splat(yssWhite))*0.75);
+    col = max(col, vec3_splat(0.0));
+  #elif NL_TONEMAP_TYPE == 8
+    // YSS ACES tonemap
+    col = clamp((col*(2.51*col + 0.03)) / (col*(2.43*col + 0.59) + 0.14), 0.0, 1.0);
   #elif NL_TONEMAP_TYPE == 2
     // simple reinhard tonemap
     col = col/(1.0+col);

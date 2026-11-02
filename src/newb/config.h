@@ -28,10 +28,10 @@
 */
 
 /* Color correction */
-#define NL_TONEMAP_TYPE 5              // 1:Exponential, 2:Reinhard, 3:Extended Reinhard, 4:ACES, 5:HSPE ACES, 6:HSPE Filmic
-#define NL_GAMMA 2.0                   // 0.3 low ~ 2.0 high (HSPE uses 2.0)
+#define NL_TONEMAP_TYPE 7              // 1:Exponential, 2:Reinhard, 3:Extended Reinhard, 4:ACES, 5:HSPE ACES, 6:HSPE Filmic, 7:YSS Filmic, 8:YSS ACES
+#define NL_GAMMA 2.2                   // 0.3 low ~ 2.2 high (YSS uses 2.2)
 //#define NL_EXPOSURE 1.3              // [toggle] 0.5 dark ~ 3.0 bright
-#define NL_SATURATION 1.125            // [toggle] 0.0 grayscale ~ 4.0 super saturated (HSPE block saturation)
+#define NL_SATURATION 1.0              // [toggle] 0.0 grayscale ~ 4.0 super saturated (YSS uses 1.0)
 //#define NL_TINT                      // [toggle] enable light/dark tone tinting
 #define NL_TINT_LOW  vec3(0.3,0.5,1.4) // color tint for dark tone
 #define NL_TINT_HIGH vec3(1.4,0.7,0.3) // color tint for light tone
@@ -369,15 +369,14 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
-  YSS PORT - sunrise/sunset sky palette
-  Values are 1:1 from the YSS pack. Only dawn/dusk is affected here,
-  day/night keep the existing HSPE look.
+  YSS PORT - sky palette, sun/moon disc and fog
+  Values are 1:1 from the YSS pack (day / dusk / night gradients).
 */
 
 #define NL_YSS_GAMMA 2.2
 
-/* Sunrise/sunset 5-band sky gradient */
-#define NL_YSS_SKY                    // [toggle] YSS sunset sky colours
+/* 5-band sky gradient (full day/dusk/night YSS palette) */
+#define NL_YSS_SKY                    // [toggle] YSS sky colours
 #define NL_YSS_SKY_MIX 1.0            // 0.0 HSPE only ~ 1.0 full YSS palette
 #define NL_YSS_SKYLINE_P1 -0.2
 #define NL_YSS_SKYLINE_P2  0.1
@@ -408,6 +407,22 @@
 #define NL_YSS_DAY_SBC    vec3(0.3529,0.4902,0.5882)*0.97
 #define NL_YSS_DUSK_SBC   vec3(0.41,0.4,0.4)
 #define NL_YSS_NIGHT_SBC  vec3(0.2,0.6,0.9)*0.7
+
+/* Sun / moon disc and halo (drawn in the sky shader, hides vanilla quad) */
+#define NL_YSS_SUNMOON                // [toggle] procedural YSS sun/moon disc
+#define NL_YSS_SUNMOON_DISC_SIZE vec2(0.06, 0.03) // outer, inner edge distance
+
+#define NL_YSS_DAY_SUNC   vec3(1.8,1.6,1.4)*3.0
+#define NL_YSS_DUSK_SUNC  vec3(1.8,1.1,0.6)*3.0
+#define NL_YSS_MOONC      vec3(1.15,1.1,1.0)*1.5
+
+/* Fog colours + density per time of day */
+#define NL_YSS_FOG                    // [toggle] YSS fog colours / sun glow
+#define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
+#define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
+#define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3
+#define NL_YSS_RAIN_FOG   vec3(0.3,0.3,0.3)
+#define NL_YSS_FOG_EDGE_FADE 1.0      // 0.0 no sky edge fade
 
 /*
   NEWB SHADER SUBPACK CONFIG
