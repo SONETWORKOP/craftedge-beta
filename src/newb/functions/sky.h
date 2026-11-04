@@ -123,6 +123,13 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
       s.horizon = mix(s.horizon, nlYssSkyLinear(env, 0.1), yssMix);
       s.horizonEdge = mix(s.horizonEdge, nlYssSkyLinear(env, -0.02), yssMix);
     }
+
+    // HSPE/Newb sky base, but borrow the YSS sunrise/sunset horizon colours.
+    float horizonMix = NL_YSS_HORIZON_MIX * nlYssDusk(env.dayFactor);
+    if (horizonMix > 0.0001 && !env.nether && !env.underwater) {
+      s.horizon = mix(s.horizon, nlYssSkyLinear(env, 0.1), horizonMix);
+      s.horizonEdge = mix(s.horizonEdge, nlYssSkyLinear(env, -0.02), horizonMix);
+    }
   }
   #endif
 

@@ -377,7 +377,8 @@
 
 /* 5-band sky gradient (full day/dusk/night YSS palette) */
 #define NL_YSS_SKY                    // [toggle] YSS sky colours
-#define NL_YSS_SKY_MIX 1.0            // 0.0 HSPE only ~ 1.0 full YSS palette
+#define NL_YSS_SKY_MIX 0.0            // 0.0 HSPE base sky ~ 1.0 full YSS palette
+#define NL_YSS_HORIZON_MIX 1.0        // YSS sunrise/sunset horizon tint on the HSPE sky
 #define NL_YSS_SKYLINE_P1 -0.2
 #define NL_YSS_SKYLINE_P2  0.1
 #define NL_YSS_SKYLINE_P3 -0.05
