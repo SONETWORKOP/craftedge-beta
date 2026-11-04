@@ -19,6 +19,7 @@ from util import (
     save_conf,
     NS_DEV_MAT_SRC_SHA256,
     NS_DEV_MAT_SRC_URL,
+    NS_DEV_MAT_SRC_PATH,
     NS_DEV_SHADERC_ASSETS,
     NS_DEV_SHADERC_URL_PREFIX,
 )
@@ -146,17 +147,29 @@ def run(args):
 
         test_mat = os.path.join(mat_path, "Sky.material.json")
         if not os.path.exists(test_mat):
-            progress.console.print("Downloading source materials")
-            mat_filename = os.path.join(data_path, 'materials.zip')
-            _download_file(
-                NS_DEV_MAT_SRC_URL,
-                mat_filename,
-                "src-materials-1.26.51.zip",
-                NS_DEV_MAT_SRC_SHA256,
-            )
+            is_local_mat_src = NS_DEV_MAT_SRC_URL.startswith("local://")
+            if is_local_mat_src:
+                progress.console.print("Extracting source materials")
+                mat_filename = NS_DEV_MAT_SRC_PATH
+                if not os.path.exists(mat_filename):
+                    progress.console.print(
+                        f"Error: local material source '{mat_filename}' not found",
+                        style='red',
+                    )
+                    exit(1)
+            else:
+                progress.console.print("Downloading source materials")
+                mat_filename = os.path.join(data_path, 'materials.zip')
+                _download_file(
+                    NS_DEV_MAT_SRC_URL,
+                    mat_filename,
+                    "src-materials-1.26.60.zip",
+                    NS_DEV_MAT_SRC_SHA256,
+                )
             with zipfile.ZipFile(mat_filename, 'r') as zip_ref:
                 zip_ref.extractall(mat_path)
-            os.remove(mat_filename)
+            if not is_local_mat_src:
+                os.remove(mat_filename)
             # flatten single top-level folder (GitHub codeload archives)
             entries = os.listdir(mat_path)
             if len(entries) == 1 and os.path.isdir(os.path.join(mat_path, entries[0])):

@@ -6,7 +6,8 @@ import platform
 CONF_FILE = "tool/data/.builder.pkl"
 NS_DEV_ASSET_URL_PREFIX = "https://api.github.com/repos/devendrn/newb-shader/releases/assets/"
 NS_DEV_RELEASE = "https://github.com/devendrn/newb-shader/releases/download/dev/"
-NS_DEV_MAT_SRC_URL = NS_DEV_RELEASE + "src-materials-1.26.51.zip"
+NS_DEV_MAT_SRC_URL = "local://26.60-material.json.zip"
+NS_DEV_MAT_SRC_PATH = os.path.join('tool', 'materials', '26.60-material.json.zip')
 NS_DEV_MAT_SRC_SHA256 = None  # codeload zips are regenerated (hash unstable) - skip check
 NS_DEV_SHADERC_ASSETS = {
     "android-arm": "186072253",
