@@ -369,8 +369,20 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
-  YSS FOG ONLY - time-of-day fog colour and density
+  YSS FOG + SKY COLOURS - no YSS sun/moon disc or sky overlay
 */
+
+#define NL_YSS_GAMMA 2.2
+
+/* Fixed YSS noon / sunrise-sunset sky accents */
+#define NL_SKY_ACCENTS                // [toggle] noon + sunrise/sunset sky accents
+#define NL_SKY_NOON_MIX 1.0           // 0.0 HSPE day sky ~ 1.0 YSS noon colours
+#define NL_SKY_SUNSET_MIX 1.0         // strength of the YSS sunrise/sunset horizon
+#define NL_SKY_NOON_ZENITH    vec3(0.2525,0.3843,0.5247)*1.1
+#define NL_SKY_NOON_HORIZON   vec3(0.5686,0.6667,0.7059)*1.1
+#define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
+#define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
+#define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
 
 #define NL_YSS_FOG                    // [toggle] YSS fog colours
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1

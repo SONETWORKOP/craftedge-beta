@@ -1,8 +1,7 @@
 #ifndef YSS_PORT_H
 #define YSS_PORT_H
 
-// YSS fog only: time-of-day fog colour and density.
-// YSS sky colours, sun/moon disc and sky overlay are intentionally not used.
+// YSS fog + fixed sky accents. YSS sun/moon disc and overlay are not used.
 
 #include "utils.h"
 #include "detection.h"
@@ -22,6 +21,11 @@ float nlYssNight(float d) {
 
 vec3 nlYssTime3(vec3 day, vec3 dusk, vec3 night, float du, float ni) {
   return mix(mix(day, dusk, du), night, ni);
+}
+
+// YSS sky colours are authored in gamma space.
+vec3 nlYssToLinear(vec3 c) {
+  return pow(max(c, vec3_splat(0.0)), vec3_splat(NL_YSS_GAMMA));
 }
 
 vec4 nlYssFog(nl_environment env, float relDist) {

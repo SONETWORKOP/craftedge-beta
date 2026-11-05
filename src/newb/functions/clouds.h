@@ -40,9 +40,13 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
       float duskAmt = 0.8;
     #endif
     col = mix(col, cloudCol*duskCol*0.9 + duskCol*0.22, duskF*duskAmt);
-    // raat: config cyan + tez dark (chamke nahi)
+    // sirf high noon par white; baaki waqt sky colour follow
+    float noonF = smoothstep(0.55, 0.90, dayFactor);
+    noonF *= 1.0 - rainFactor;
+    col = mix(col, vec3_splat(1.0), noonF*0.85);
+    // raat: config cyan + thoda extra dark
     col = mix(col, NL_NIGHT_CLOUD_COL*0.7, nightF*NL_NIGHT_CLOUD_BLEND);
-    col *= 1.0 - 0.62*nightF;
+    col *= 1.0 - 0.72*nightF;
     // barish: grey + dark
     float lum = dot(col, vec3(0.299, 0.587, 0.114));
     col = mix(col, vec3_splat(lum)*vec3(0.72, 0.76, 0.82), rainFactor*0.7);
@@ -57,10 +61,7 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
 // BICUBIC ("High (Realistic Clouds)") cloud color: plain white in full day,
 // otherwise follow the sky tint (cyan night, warm dusk, grey rain).
 vec3 nlBsbeCloudColor(nl_skycolor skycol, nl_environment env) {
-  vec3 tint = nlSkyCloudTint(vec3_splat(1.0), skycol.horizon, env.dayFactor, env.rainFactor);
-  float whiteAmt = smoothstep(0.18, 0.55, env.dayFactor);
-  whiteAmt *= 1.0 - 0.65*env.rainFactor;
-  return mix(tint, vec3_splat(1.0), clamp(whiteAmt, 0.0, 1.0));
+  return nlSkyCloudTint(vec3_splat(1.0), skycol.horizon, env.dayFactor, env.rainFactor);
 }
 
 float cloudNoise2D(vec2 p, highp float t, float rain) {
