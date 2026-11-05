@@ -369,8 +369,8 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
-  YSS PORT - sun/moon disc, fixed sky accents and fog
-  Values are 1:1 from the YSS pack. The YSS sky gradient itself is not used.
+  YSS PORT - sun/moon disc and fixed sky accents
+  Values are 1:1 from the YSS pack. The YSS sky gradient and fog are not used.
 */
 
 #define NL_YSS_GAMMA 2.2
@@ -392,14 +392,6 @@
 #define NL_YSS_DAY_SUNC   vec3(1.8,1.6,1.4)*3.0
 #define NL_YSS_DUSK_SUNC  vec3(1.8,1.1,0.6)*3.0
 #define NL_YSS_MOONC      vec3(1.15,1.1,1.0)*1.5
-
-/* Fog colours + density per time of day */
-#define NL_YSS_FOG                    // [toggle] YSS fog colours / sun glow
-#define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
-#define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
-#define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3
-#define NL_YSS_RAIN_FOG   vec3(0.3,0.3,0.3)
-#define NL_YSS_FOG_EDGE_FADE 1.0      // 0.0 no sky edge fade
 
 /*
   NEWB SHADER SUBPACK CONFIG

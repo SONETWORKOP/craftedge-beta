@@ -145,13 +145,6 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   return s;
 }
 
-vec3 nlSkyEdgeColor(nl_skycolor skyCol, float h) {
-  float farF = clamp(1.0 - h, 0.0, 1.0);
-  float skyline = clamp((0.325 - h)/0.325, 0.0, 1.0);
-  skyline *= skyline;
-  return mix(mix(skyCol.zenith, skyCol.horizon, farF), skyCol.horizonEdge, skyline);
-}
-
 nl_skycolor nlSkyColors(nl_environment env) {
   if (env.end) {
     return nlEndSkyColors(env);

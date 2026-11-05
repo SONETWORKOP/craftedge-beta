@@ -2,13 +2,12 @@
 #define YSS_PORT_H
 
 // =====================================================================
-// YSS port - sun/moon disc and fog only.
-// The YSS 5-band sky gradient was removed; the sky is HSPE with fixed
-// noon / sunrise / sunset accent colours (see sky.h + config.h).
+// YSS port - sun/moon disc only.
+// The YSS 5-band sky gradient and YSS fog were removed; the sky is HSPE
+// with fixed noon / sunrise / sunset accent colours (see sky.h + config.h).
 //   - YSS dawn/dusk/night time factors
 //   - procedural sun/moon disc + halo (also visible underwater)
-//   - YSS time-of-day fog colours + sun glow
-// Lighting, water glint, stars, comets, aurora and clouds stay as they were.
+// Lighting, fog, water glint, stars, comets, aurora and clouds stay as they were.
 // =====================================================================
 
 #include "utils.h"
@@ -19,12 +18,6 @@ float nlYssLinestep(float a, float b, float x) {
   return clamp((x-a)/(b-a), 0.0, 1.0);
 }
 
-// smoothstep that is safe for a > b
-float nlYssSmooth(float a, float b, float x) {
-  float t = clamp((x-a)/(b-a), 0.0, 1.0);
-  return t*t*(3.0-2.0*t);
-}
-
 // YSS time factors. d = env.dayFactor (1 = noon, -1 = midnight)
 float nlYssDusk(float d) {
   return nlYssLinestep(1.0, 0.3, d)*smoothstep(-0.3, 0.1, d);
@@ -32,10 +25,6 @@ float nlYssDusk(float d) {
 
 float nlYssNight(float d) {
   return nlYssLinestep(0.1, -0.1, d);
-}
-
-vec3 nlYssTime3(vec3 day, vec3 dusk, vec3 night, float du, float ni) {
-  return mix(mix(day, dusk, du), night, ni);
 }
 
 // YSS colours are authored in gamma space
@@ -69,35 +58,6 @@ vec3 nlYssSunMoonOverlay(vec3 c, nl_environment env, vec3 vd) {
   g = mix(g, smc, rainInv*0.3*pow(nlYssLinestep(1.8, 0.0, len), 3.5));
 
   return nlYssToLinear(g);
-}
-
-// YSS fog colour + opacity. Colours are kept in YSS gamma space (YSS does
-// the same); edge fade blends towards the linear sky in sky.h.
-vec4 nlYssFog(nl_environment env, float relDist, vec3 vd) {
-  float df = env.dayFactor;
-  float du = nlYssDusk(df);
-  float ni = nlYssNight(df);
-  float rain = env.rainFactor;
-
-  float fogEnd = 1.8;
-  fogEnd = mix(fogEnd, 1.0, du);
-  fogEnd = mix(fogEnd, 0.9, ni);
-  fogEnd = mix(fogEnd, 0.7, rain);
-
-  float fogAmt = 0.04;
-  fogAmt = mix(fogAmt, 0.15, du);
-  fogAmt = mix(fogAmt, 0.1, ni);
-  fogAmt = mix(fogAmt, 0.6, rain);
-
-  vec3 fogc = nlYssTime3(NL_YSS_DAY_FOG, NL_YSS_DUSK_FOG, NL_YSS_NIGHT_FOG, du, ni);
-  fogc = mix(fogc, NL_YSS_RAIN_FOG, rain);
-
-  // glow around the sun
-  float len = length(vd - nlYssMainDir(env));
-  float g = nlYssSmooth(1.2, 0.0, len);
-  fogc += nlYssSunMoonColor(env)*0.6*(1.0-rain)*g*g*g*0.5;
-
-  return vec4(fogc, fogAmt*nlYssLinestep(0.0, fogEnd, relDist));
 }
 
 #endif
