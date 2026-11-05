@@ -13,6 +13,11 @@ $output v_texcoord0
 void main() {
   v_texcoord0 = a_texcoord0;
   #ifndef INSTANCING
+    #ifdef NL_YSS_SUNMOON
+      gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+      return;
+    #endif
+
     vec3 pos = a_position;
     pos.x = -pos.x;
 

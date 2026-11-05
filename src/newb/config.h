@@ -369,6 +369,39 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
+  YSS PORT - sun/moon disc, fixed sky accents and fog
+  Values are 1:1 from the YSS pack. The YSS sky gradient itself is not used.
+*/
+
+#define NL_YSS_GAMMA 2.2
+
+/* Fixed sky accents: HSPE sky + YSS noon / sunrise / sunset colours */
+#define NL_SKY_ACCENTS                // [toggle] noon + sunrise/sunset sky accents
+#define NL_SKY_NOON_MIX 1.0           // 0.0 HSPE day sky ~ 1.0 YSS noon colours
+#define NL_SKY_SUNSET_MIX 1.0         // strength of the YSS sunrise/sunset horizon
+#define NL_SKY_NOON_ZENITH    vec3(0.2525,0.3843,0.5247)*1.1
+#define NL_SKY_NOON_HORIZON   vec3(0.5686,0.6667,0.7059)*1.1
+#define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
+#define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
+#define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
+
+/* Sun / moon disc and halo (drawn in the sky shader, hides vanilla quad) */
+#define NL_YSS_SUNMOON                // [toggle] procedural YSS sun/moon disc
+#define NL_YSS_SUNMOON_DISC_SIZE vec2(0.06, 0.03) // outer, inner edge distance
+
+#define NL_YSS_DAY_SUNC   vec3(1.8,1.6,1.4)*3.0
+#define NL_YSS_DUSK_SUNC  vec3(1.8,1.1,0.6)*3.0
+#define NL_YSS_MOONC      vec3(1.15,1.1,1.0)*1.5
+
+/* Fog colours + density per time of day */
+#define NL_YSS_FOG                    // [toggle] YSS fog colours / sun glow
+#define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
+#define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
+#define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3
+#define NL_YSS_RAIN_FOG   vec3(0.3,0.3,0.3)
+#define NL_YSS_FOG_EDGE_FADE 1.0      // 0.0 no sky edge fade
+
+/*
   NEWB SHADER SUBPACK CONFIG
   This part contains custom configuration options for each subpack.
 
