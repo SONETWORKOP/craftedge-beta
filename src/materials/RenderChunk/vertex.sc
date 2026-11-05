@@ -121,7 +121,7 @@ void main() {
       vec3 yssVd = vec3(viewDir.x, -viewDir.y, viewDir.z);
       fogColor = nlYssFog(env, relativeDist, yssVd);
       float edge = NL_YSS_FOG_EDGE_FADE*smoothstep(FogAndDistanceControl.x, FogAndDistanceControl.y, relativeDist);
-      fogColor.rgb = mix(fogColor.rgb, nlYssSkyLinear(env, yssVd.y), edge);
+      fogColor.rgb = mix(fogColor.rgb, nlSkyEdgeColor(skycol, yssVd.y), edge);
       fogColor.a += (1.0-fogColor.a)*edge;
     } else
   #endif

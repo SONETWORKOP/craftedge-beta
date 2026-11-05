@@ -369,45 +369,21 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
-  YSS PORT - sky palette, sun/moon disc and fog
-  Values are 1:1 from the YSS pack (day / dusk / night gradients).
+  YSS PORT - sun/moon disc and fog
+  Values are 1:1 from the YSS pack.
 */
 
 #define NL_YSS_GAMMA 2.2
 
-/* 5-band sky gradient (full day/dusk/night YSS palette) */
-#define NL_YSS_SKY                    // [toggle] YSS sky colours
-#define NL_YSS_SKY_MIX 0.0            // 0.0 HSPE base sky ~ 1.0 full YSS palette
-#define NL_YSS_HORIZON_MIX 1.0        // YSS sunrise/sunset horizon tint on the HSPE sky
-#define NL_YSS_SKYLINE_P1 -0.2
-#define NL_YSS_SKYLINE_P2  0.1
-#define NL_YSS_SKYLINE_P3 -0.05
-#define NL_YSS_SKYLINE_P4  0.0
-#define NL_YSS_SKYLINE_P5 -0.05
-#define NL_YSS_SKYLINE_P6  0.15
-#define NL_YSS_SKYLINE_P7  0.0
-#define NL_YSS_SKYLINE_P8  0.6
-
-#define NL_YSS_DAY_SKY    vec3(0.2525,0.3843,0.5247)*1.1
-#define NL_YSS_DUSK_SKY   vec3(0.2588,0.3137,0.3765)
-#define NL_YSS_NIGHT_SKY  vec3(0.05,0.2,0.35)
-#define NL_YSS_RAIN_SKY   vec3(0.4,0.4,0.4)
-
-#define NL_YSS_DAY_SMC    vec3(0.3765,0.5255,0.6)*1.15
-#define NL_YSS_DUSK_SMC   vec3(0.6,0.4,0.2)
-#define NL_YSS_NIGHT_SMC  vec3(0.2,0.6,0.9)*0.8
-
-#define NL_YSS_DAY_SLC    vec3(0.5686,0.6667,0.7059)*1.1
-#define NL_YSS_DUSK_SLC   vec3(1.0,0.55,0.2)
-#define NL_YSS_NIGHT_SLC  vec3(0.2,0.6,0.9)*0.8
-
-#define NL_YSS_DAY_SLBC   vec3(0.4902,0.6275,0.7216)*1.25
-#define NL_YSS_DUSK_SLBC  vec3(1.0,0.5,0.2)
-#define NL_YSS_NIGHT_SLBC vec3(0.2,0.6,0.9)*0.8
-
-#define NL_YSS_DAY_SBC    vec3(0.3529,0.4902,0.5882)*0.97
-#define NL_YSS_DUSK_SBC   vec3(0.41,0.4,0.4)
-#define NL_YSS_NIGHT_SBC  vec3(0.2,0.6,0.9)*0.7
+/* Fixed sky accents: HSPE sky + YSS noon / sunrise / sunset colours */
+#define NL_SKY_ACCENTS                // [toggle] noon + sunrise/sunset sky accents
+#define NL_SKY_NOON_MIX 1.0           // 0.0 HSPE day sky ~ 1.0 YSS noon colours
+#define NL_SKY_SUNSET_MIX 1.0         // strength of the YSS sunrise/sunset horizon
+#define NL_SKY_NOON_ZENITH    vec3(0.2525,0.3843,0.5247)*1.1
+#define NL_SKY_NOON_HORIZON   vec3(0.5686,0.6667,0.7059)*1.1
+#define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
+#define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
+#define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
 
 /* Sun / moon disc and halo (drawn in the sky shader, hides vanilla quad) */
 #define NL_YSS_SUNMOON                // [toggle] procedural YSS sun/moon disc

@@ -114,21 +114,23 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   s.horizonEdge = mix(s.horizonEdge, s.horizon, env.rainFactor);
   #endif
 
-  // YSS full day/dusk/night palette
-  #ifdef NL_YSS_SKY
-  {
-    float yssMix = NL_YSS_SKY_MIX;
-    if (yssMix > 0.0001 && !env.nether && !env.underwater) {
-      s.zenith = mix(s.zenith, nlYssSkyLinear(env, 1.0), yssMix);
-      s.horizon = mix(s.horizon, nlYssSkyLinear(env, 0.1), yssMix);
-      s.horizonEdge = mix(s.horizonEdge, nlYssSkyLinear(env, -0.02), yssMix);
+  // Fixed sky accents: YSS noon palette and YSS sunrise/sunset horizon.
+  // The YSS 5-band gradient is not used for the sky itself.
+  #ifdef NL_SKY_ACCENTS
+  if (!env.nether && !env.underwater) {
+    float noon = smoothstep(0.35, 0.85, env.dayFactor);
+    noon *= (1.0 - env.rainFactor) * NL_SKY_NOON_MIX;
+    if (noon > 0.0001) {
+      s.zenith = mix(s.zenith, nlYssToLinear(NL_SKY_NOON_ZENITH), noon);
+      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_NOON_HORIZON), noon);
+      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_NOON_EDGE), noon);
     }
 
-    // HSPE/Newb sky base, but borrow the YSS sunrise/sunset horizon colours.
-    float horizonMix = NL_YSS_HORIZON_MIX * nlYssDusk(env.dayFactor);
-    if (horizonMix > 0.0001 && !env.nether && !env.underwater) {
-      s.horizon = mix(s.horizon, nlYssSkyLinear(env, 0.1), horizonMix);
-      s.horizonEdge = mix(s.horizonEdge, nlYssSkyLinear(env, -0.02), horizonMix);
+    float sunset = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+    sunset *= (1.0 - env.rainFactor) * NL_SKY_SUNSET_MIX;
+    if (sunset > 0.0001) {
+      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_SUNSET_HORIZON), sunset);
+      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_SUNSET_EDGE), sunset);
     }
   }
   #endif
@@ -141,6 +143,13 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   }
 
   return s;
+}
+
+vec3 nlSkyEdgeColor(nl_skycolor skyCol, float h) {
+  float farF = clamp(1.0 - h, 0.0, 1.0);
+  float skyline = clamp((0.325 - h)/0.325, 0.0, 1.0);
+  skyline *= skyline;
+  return mix(mix(skyCol.zenith, skyCol.horizon, farF), skyCol.horizonEdge, skyline);
 }
 
 nl_skycolor nlSkyColors(nl_environment env) {
@@ -202,16 +211,6 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
     source *= source;
     source *= source;
     sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
-  }
-  #endif
-
-  // YSS full 5-band gradient on the dome
-  #ifdef NL_YSS_SKY
-  if (!env.underwater && !env.nether) {
-    float yssMix = NL_YSS_SKY_MIX;
-    if (yssMix > 0.0001) {
-      sky = mix(sky, nlYssSkyLinear(env, viewDir.y), yssMix);
-    }
   }
   #endif
 
