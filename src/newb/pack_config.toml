@@ -9,7 +9,7 @@ description = '''
 ''' # %w = patch warning, %v = version
 authors = ["Shivam"]
 url = ""
-uuid = "1b24192a-f73e-4da2-98f7-3d423c1bada5" # fresh identity (cache-bust)
+uuid = "46c67d56-ee38-490a-a55d-9ac22ff988b7" # fresh identity (cache-bust)
 materials = ["Actor", "ActorGlint", "ActorMultiTexture", "Clouds", "EndSky", "ItemInHandColor", "ItemInHandColorGlint", "ItemInHandTextured", "RenderChunk", "Sky", "Stars", "SunMoon", "Weather"]
 
 [info] 
