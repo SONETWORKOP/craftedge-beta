@@ -114,27 +114,6 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   s.horizonEdge = mix(s.horizonEdge, s.horizon, env.rainFactor);
   #endif
 
-  // Fixed sky accents: YSS noon palette and YSS sunrise/sunset horizon.
-  // The YSS 5-band gradient is not used for the sky itself.
-  #ifdef NL_SKY_ACCENTS
-  if (!env.nether && !env.underwater) {
-    float noon = smoothstep(0.35, 0.85, env.dayFactor);
-    noon *= (1.0 - env.rainFactor) * NL_SKY_NOON_MIX;
-    if (noon > 0.0001) {
-      s.zenith = mix(s.zenith, nlYssToLinear(NL_SKY_NOON_ZENITH), noon);
-      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_NOON_HORIZON), noon);
-      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_NOON_EDGE), noon);
-    }
-
-    float sunset = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-    sunset *= (1.0 - env.rainFactor) * NL_SKY_SUNSET_MIX;
-    if (sunset > 0.0001) {
-      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_SUNSET_HORIZON), sunset);
-      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_SUNSET_EDGE), sunset);
-    }
-  }
-  #endif
-
   if (env.underwater) {
     vec3 underwaterFog = env.fogCol*env.fogCol*NL_UNDERWATER_TINT;
     s.zenith = mix(2.0*underwaterFog, underwaterFog*zh, 0.8);
@@ -143,6 +122,13 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   }
 
   return s;
+}
+
+vec3 nlSkyEdgeColor(nl_skycolor skyCol, float h) {
+  float farF = clamp(1.0 - h, 0.0, 1.0);
+  float skyline = clamp((0.325 - h)/0.325, 0.0, 1.0);
+  skyline *= skyline;
+  return mix(mix(skyCol.zenith, skyCol.horizon, farF), skyCol.horizonEdge, skyline);
 }
 
 nl_skycolor nlSkyColors(nl_environment env) {
@@ -204,14 +190,6 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
     source *= source;
     source *= source;
     sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
-  }
-  #endif
-
-  // YSS procedural sun/moon disc + halo. isSkyPlane keeps it out of the
-  // water-reflection sky; it still renders when the camera is underwater.
-  #ifdef NL_YSS_SUNMOON
-  if (isSkyPlane && !env.nether) {
-    sky = nlYssSunMoonOverlay(sky, env, viewDir);
   }
   #endif
 

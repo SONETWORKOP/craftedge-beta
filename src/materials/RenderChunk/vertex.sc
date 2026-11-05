@@ -115,21 +115,33 @@ void main() {
   relativeDist += RenderChunkFogAlpha.x;
 
   vec4 fogColor;
-  fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
-  // ATMO sunset palette (ESTN jaisa): dawn/dusk me kohra sunset-rang pakde.
-  // Sirf overworld, paani/nether/end me nahi. dawnF: noon+night 0, dusk 1.
-  #ifdef NL_ATMO
-    if (!env.end && !env.nether && !env.underwater) {
-      float dawnF = clamp(1.0 - env.dayFactor * env.dayFactor, 0.0, 1.0);
-      dawnF *= dawnF;
-      fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, NL_ATMO * dawnF);
-    }
+  #if defined(NL_YSS_FOG) && defined(NL_FOG)
+    if (!env.underwater && !env.end && !env.nether) {
+      // YSS fog: time-of-day colour, fades into the sky at range
+      vec3 yssVd = vec3(viewDir.x, -viewDir.y, viewDir.z);
+      fogColor = nlYssFog(env, relativeDist);
+      float edge = NL_YSS_FOG_EDGE_FADE*smoothstep(FogAndDistanceControl.x, FogAndDistanceControl.y, relativeDist);
+      fogColor.rgb = mix(fogColor.rgb, nlSkyEdgeColor(skycol, yssVd.y), edge);
+      fogColor.a += (1.0-fogColor.a)*edge;
+    } else
   #endif
-  fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
-  fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
-  // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
-  // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
-  fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.14, 0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
+  {
+    fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
+    // ATMO sunset palette (ESTN jaisa): dawn/dusk me kohra sunset-rang pakde.
+    // Sirf overworld, paani/nether/end me nahi. dawnF: noon+night 0, dusk 1.
+    #ifdef NL_ATMO
+      if (!env.end && !env.nether && !env.underwater) {
+        float dawnF = clamp(1.0 - env.dayFactor * env.dayFactor, 0.0, 1.0);
+        dawnF *= dawnF;
+        fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, NL_ATMO * dawnF);
+      }
+    #endif
+    fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
+    fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
+    // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
+    // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
+    fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.14, 0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
+  }
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
     fogColor.rgb = mix(fogColor.rgb, nlGodRayTint(FogColor.rgb), godRayAmount);

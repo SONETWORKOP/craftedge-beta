@@ -19,10 +19,6 @@ void main() {
     float tr = 1.0 - SunMoonColor.a;
     color.a *= 1.0 - tr*tr;
     color.rgb = colorCorrection(color.rgb);
-    #ifdef NL_YSS_SUNMOON
-      // sun/moon disc is drawn in the sky shader (YSS style, also underwater)
-      discard;
-    #endif
     gl_FragColor = color;
   #else
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
