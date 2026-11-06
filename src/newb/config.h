@@ -407,12 +407,6 @@
 #define NL_YSS_CLOUDTHICK 1.5
 #define NL_YSS_BLV_STEPS 32
 
-/* Real Life Clouds (Ultra) subpack - YSS N2D + BLV */
-#ifdef ULTRA_CLOUDS
-  #define NL_YSS_N2DCLOUD
-  #define NL_YSS_BLVCLOUD
-#endif
-
 /*
   NEWB SHADER SUBPACK CONFIG
   This part contains custom configuration options for each subpack.

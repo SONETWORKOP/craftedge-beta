@@ -26,7 +26,7 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: Low, Medium, Ultra, Rounded, Realistic (default).
+# subpacks: Low, Medium, Rounded, Realistic (default).
 
 [[subpack]]
 define = "NO_REFLECTIONS"
@@ -44,15 +44,6 @@ description = '''
 Medium
 Rounded clouds. Cloud & aurora reflections on water are turned off
 for better performance. Sun/Moon mirror and ground reflections stay on.
-'''
-
-[[subpack]]
-define = "ULTRA_CLOUDS"
-materials = ["Sky"]
-description = '''
-Real Life Clouds (Ultra)
-Soft realistic 2D clouds.
-Heaviest cloud option - use only on powerful devices.
 '''
 
 [[subpack]]
