@@ -51,7 +51,7 @@ define = "ULTRA_CLOUDS"
 materials = ["Sky"]
 description = '''
 Real Life Clouds (Ultra)
-Layered realistic 2D and volumetric clouds.
+Soft realistic 2D clouds.
 Heaviest cloud option - use only on powerful devices.
 '''
 

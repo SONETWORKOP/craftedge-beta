@@ -337,7 +337,7 @@
 #define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
-#define NL_GROUND_REFL 1.0              // reflection strength (beta: 1)
+#define NL_GROUND_REFL 0.6              // reflection strength (beta: 0.6)
 #define NL_GROUND_RAIN_WETNESS 1.0     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
@@ -408,8 +408,6 @@
 /* Real Life Clouds (Ultra) subpack */
 #ifdef ULTRA_CLOUDS
   #define NL_YSS_N2DCLOUD
-  #define NL_YSS_BLVCLOUD
-  #define NL_YSS_BLV_STEPS 32
 #endif
 
 /*
