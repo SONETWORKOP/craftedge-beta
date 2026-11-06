@@ -182,7 +182,7 @@ void main() {
     if (!env.underwater) {
       vec3 yssFp = viewDir*3.0/max(viewDir.y, 0.001);
       float yssStp = nlYssLinestep(40.0, 20.0, length(yssFp.xz));
-      float yssNt = max(nlYssNight(env.dayFactor), nlYssDusk(env.dayFactor))*(1.0-env.rainFactor);
+      float yssNt = nlYssNight(env.dayFactor)*(1.0-env.rainFactor);
       if (yssNt > 0.001 && viewDir.y > 0.0) {
         vec3 yssComet = nlYssToLinear(vec3(1.1,1.9,2.5));
         skyColor = mix(skyColor, yssComet, yssStarMove(yssFp.xz, v_underwaterRainTimeDay.z)*yssStp*yssNt);
@@ -333,9 +333,10 @@ void main() {
     #endif // EDITOR_CLOUDS
     #endif // ULTRA_CLOUDS
 
-    // stars/shooting stars last so clouds don't hide them (night-only mask inside)
+    // stars/shooting stars last so clouds don't hide them
     #ifdef NL_SHOOTING_STAR
-      skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z);
+      float nlStarNight = 1.0 - smoothstep(-0.08, 0.12, env.dayFactor);
+      skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z)*nlStarNight;
     #endif
 
     skyColor = colorCorrection(skyColor);

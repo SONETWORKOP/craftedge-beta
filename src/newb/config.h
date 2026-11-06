@@ -408,7 +408,6 @@
 /* Real Life Clouds (Ultra) subpack */
 #ifdef ULTRA_CLOUDS
   #define NL_YSS_N2DCLOUD
-  #define NL_YSS_BL2DCLOUD
   #define NL_YSS_BLVCLOUD
   #define NL_YSS_BLV_STEPS 32
 #endif
