@@ -119,7 +119,9 @@ vec4 nlRefl(
         reflective = mix(reflective, wetness, env.rainFactor);
       #endif
 
-      if (wPos.y < 0.0) {
+      // End islands sit above y=0, so the old y<0 guard suppressed every
+      // End reflection. Keep it for the overworld and enable End explicitly.
+      if (wPos.y < 0.0 || env.end) {
         viewDir.y = -viewDir.y;
         wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false);
 
@@ -130,6 +132,7 @@ vec4 nlRefl(
 
         // torch light
         wetRefl.rgb += torchColor*lit.x*NL_TORCHLIGHT_INTENSITY;
+        wetRefl.rgb = nlEndReflection(wetRefl.rgb, env.end);
 
         wetRefl.a = calculateFresnel(cosR, 0.03)*reflective;
         wetRefl.a *= clamp(2.0-2.0*camDist/endDist, 0.0, 1.0); // fade out before clip

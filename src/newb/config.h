@@ -344,8 +344,9 @@
 /* Rain reflection - strong wet/puddle mirror only while raining (beta) */
 #define NL_RAIN_REFL_STRENGTH 1.0      // 0 = off, higher = stronger wet ground mirror
 
-/* End reflection boost - End me mirror aur tez (beta) */
-#define NL_END_REFL_BOOST 1.0          // 1.0 = no change, zyada = tez pink mirror
+/* End reflection boost - End me pink mirror (beta) */
+#define NL_END_REFL_TINT vec3(1.25,0.20,0.95) // pink/magenta reflection tint
+#define NL_END_REFL_BOOST 1.45         // 1.0 = no change, zyada = brighter pink mirror
 
 /* Rain drop ripples on block surfaces (top faces, only while raining) */
 #define NL_RAIN_RIPPLE 1.0          // [toggle] 0.3 subtle ~ 1.5 strong ripples

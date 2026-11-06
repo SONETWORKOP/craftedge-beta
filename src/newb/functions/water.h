@@ -14,6 +14,15 @@ float calculateFresnel(float cosR, float r0) {
   return r0 + (1.0-r0)*a2*a2*a;
 }
 
+// End dimension reflection: push the purple End sky towards a brighter pink
+vec3 nlEndReflection(vec3 col, bool isEnd) {
+  if (isEnd) {
+    col = mix(col, col*NL_END_REFL_TINT, 0.65);
+    col *= NL_END_REFL_BOOST;
+  }
+  return col;
+}
+
 #ifdef NL_HSPE_WATER
 // hspe value noise (HSPE clouds.h se copy - beta ki clouds.h me nahi hai)
 float nlHspeNoise(highp vec2 x) {
@@ -85,6 +94,8 @@ vec4 nlWater(
       waterRefl = mix(waterRefl, cloudRefl.rgb, cloudRefl.a);
     }
   #endif
+
+  waterRefl = nlEndReflection(waterRefl, env.end);
 
   // torch light reflection
   float tc = 0.5+0.5*sin(16.0*viewDir.x)*sin(16.0*viewDir.z);

@@ -112,7 +112,7 @@ vec3 nlHspeReflection(nl_skycolor skycol, nl_environment env, vec3 r, vec3 relPo
       col = mix(col, cr.rgb, cr.a);
     }
   #endif
-  return col;
+  return nlEndReflection(col, env.end);
 }
 
 // dome reflection
@@ -161,7 +161,7 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
       }
     #endif
   }
-  return col;
+  return nlEndReflection(col, env.end);
 }
 
 // hspe water per pixel, returns vec4(reflection * fresnel, alpha)
