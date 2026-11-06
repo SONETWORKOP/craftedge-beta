@@ -404,6 +404,7 @@
 #define NL_YSS_NIGHT_CLOUD_DIR  vec3(0.3,0.6,0.9)
 #define NL_YSS_RAIN_CLOUD_DIR   vec3(0.5,0.5,0.5)
 #define NL_YSS_CLOUDTHICK 1.5
+#define NL_YSS_BLV_STEPS 32
 
 /* Real Life Clouds (Ultra) subpack */
 #ifdef ULTRA_CLOUDS
