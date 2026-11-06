@@ -59,3 +59,12 @@ materials = ["RenderChunk", "Sky"]
 description = '''
 High (Realistic Clouds)
 '''
+
+[[subpack]]
+define = "ULTRA_CLOUDS"
+materials = ["Sky"]
+description = '''
+Real Life Clouds (Ultra)
+YSS layered 2D, block and volumetric clouds.
+Heaviest cloud option - use only on powerful devices.
+'''

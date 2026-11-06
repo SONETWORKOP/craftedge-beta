@@ -391,6 +391,28 @@
 #define NL_YSS_RAIN_FOG   vec3(0.3,0.3,0.3)
 #define NL_YSS_FOG_EDGE_FADE 1.0      // 0.0 no sky edge fade
 
+/* YSS shooting star (comet) */
+#define NL_YSS_COMET                  // [toggle] YSS comet-like shooting star
+
+/* YSS cloud colours */
+#define NL_YSS_DAY_CLOUD_DIF    vec3(0.7059,0.8627,1.0)*0.7
+#define NL_YSS_DUSK_CLOUD_DIF   vec3(0.3922,0.549,0.7059)*0.7
+#define NL_YSS_NIGHT_CLOUD_DIF  vec3(0.3,0.6,0.9)*0.3
+#define NL_YSS_RAIN_CLOUD_DIF   vec3(0.5,0.5,0.5)*0.6
+#define NL_YSS_DAY_CLOUD_DIR    vec3(1.0,0.9725,0.9216)*0.95
+#define NL_YSS_DUSK_CLOUD_DIR   vec3(0.7647,0.6275,0.3922)
+#define NL_YSS_NIGHT_CLOUD_DIR  vec3(0.3,0.6,0.9)
+#define NL_YSS_RAIN_CLOUD_DIR   vec3(0.5,0.5,0.5)
+#define NL_YSS_CLOUDTHICK 1.5
+
+/* Real Life Clouds (Ultra) subpack */
+#ifdef ULTRA_CLOUDS
+  #define NL_YSS_N2DCLOUD
+  #define NL_YSS_BL2DCLOUD
+  #define NL_YSS_BLVCLOUD
+  #define NL_YSS_BLV_STEPS 32
+#endif
+
 /*
   NEWB SHADER SUBPACK CONFIG
   This part contains custom configuration options for each subpack.
