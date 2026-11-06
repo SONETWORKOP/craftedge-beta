@@ -407,10 +407,9 @@
 #define NL_YSS_CLOUDTHICK 1.5
 #define NL_YSS_BLV_STEPS 32
 
-/* Real Life Clouds (Ultra) subpack - YSS default cloud stack */
+/* Real Life Clouds (Ultra) subpack - YSS N2D only */
 #ifdef ULTRA_CLOUDS
   #define NL_YSS_N2DCLOUD
-  #define NL_YSS_BL2DCLOUD
 #endif
 
 /*
