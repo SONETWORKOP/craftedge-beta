@@ -39,7 +39,7 @@
 /* Lighting */
 #define NL_SUNLIGHT_INTENSITY   3.3  // 1.0 weak ~ 5.0 bright
 #define NL_TORCHLIGHT_INTENSITY 1.0  // 0.5 weak ~ 3.0 bright
-#define NL_SHADOW_INTENSITY     0.7  // 0.0 no shadow ~ 1.0 strong shadow
+#define NL_SHADOW_INTENSITY     0.9  // 0.0 no shadow ~ 1.0 strong shadow
 #define NL_MIN_LIGHTING_BOOST   1.5  // 1.0 minimal lighting boost for dark areas ~ 3.0 brighter dark areas
 //#define NL_BLINKING_TORCH  // [toggle] flickering light
 #define NL_CLOUD_SHADOW      // [toggle] cloud shadow (simple clouds only)
@@ -337,7 +337,7 @@
 #define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
-#define NL_GROUND_REFL 0.6              // reflection strength (beta: 0.6)
+#define NL_GROUND_REFL 0.3              // reflection strength (beta: 0.3)
 #define NL_GROUND_RAIN_WETNESS 1.0     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
