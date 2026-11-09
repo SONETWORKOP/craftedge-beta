@@ -89,6 +89,19 @@
 #define NL_FOG_MIX 0.5            // Newb<->HSPE blend (0.5 = equal, lower = Newb-heavy)
 #define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty
 #define NL_HSPE_FOG_DENSITY vec2(0.2, 0.2) // HSPE fog distance/quadratic density
+
+/* Fog curve constants (no longer hardcoded in fog.h) */
+#define NL_FOG_EXP_FALLOFF 0.9    // Newb exponential distance curve
+#define NL_FOG_EXP_WEIGHT 0.35    // Newb exponential contribution
+#define NL_FOG_MIST_WEIGHT 0.3     // Newb mist contribution
+#define NL_FOG_MIST_GREEN_BASE 19.0 // mist colour response base
+#define NL_FOG_MIST_GREEN_SCALE 18.0 // mist colour response scale
+#define NL_HSPE_FOG_CLEAR 0.22    // HSPE clear-weather strength
+#define NL_HSPE_FOG_SUNSET 0.35   // HSPE sunset/sunrise strength
+#define NL_HSPE_FOG_RAIN 0.9      // HSPE rain strength
+#define NL_HSPE_FOG_NETHER 1.5    // HSPE nether strength
+#define NL_HSPE_FOG_CURVE 4.0     // HSPE exponential curve
+#define NL_HSPE_FOG_UNDERWATER 12.0 // HSPE underwater curve
 #define NL_CRAFT_FOG_BROWN vec3(0.46,0.31,0.19) // CraftEdge warm brown fog accent
 #define NL_CRAFT_FOG_BROWN_AMOUNT 0.20 // 0.0 off ~ 0.5 strong brown haze
 #define NL_END_FOG 1.2            // End-only extra fog thickness (1.0 = same as overworld)

@@ -6,12 +6,12 @@ float nlRenderFogFade(float relativeDist, vec3 FOG_COLOR, vec2 FOG_CONTROL, bool
     float fade = smoothstep(FOG_CONTROL.x, FOG_CONTROL.y, relativeDist);
 
     // exponential distance fog - closer to how real atmospheric haze builds up
-    float expFade = 1.0 - exp(-relativeDist*relativeDist*0.9);
-    fade = max(fade, expFade*0.35);
+    float expFade = 1.0 - exp(-relativeDist*relativeDist*NL_FOG_EXP_FALLOFF);
+    fade = max(fade, expFade*NL_FOG_EXP_WEIGHT);
 
     // misty effect
-    float density = NL_MIST_DENSITY*(19.0 - 18.0*FOG_COLOR.g);
-    fade += (1.0-fade)*(0.3-0.3*exp(-relativeDist*relativeDist*density));
+    float density = NL_MIST_DENSITY*(NL_FOG_MIST_GREEN_BASE - NL_FOG_MIST_GREEN_SCALE*FOG_COLOR.g);
+    fade += (1.0-fade)*NL_FOG_MIST_WEIGHT*(1.0-exp(-relativeDist*relativeDist*density));
 
     float fog = max(NL_FOG * fade, NL_FOG_BASE);
     #ifdef NL_END_FOG
@@ -80,16 +80,16 @@ float nlSunsetGlow(vec3 fogColor) {
 //   pack fade jeette, sunset/rain me halka snippet), nether 30.0 -> 1.5.
 // Underwater exp(-dist*12.0) exact rakha (self-normalizing hai).
 float nlGetFog(float dist, vec2 fogDensity, float rain, float sunsetSunrise, bool underwater, bool nether) {
-  float fogStrength = mix(0.22, 0.35, sunsetSunrise);
-  fogStrength = mix(fogStrength, 0.9, rain);
-  if (nether) fogStrength = 1.5;
+  float fogStrength = mix(NL_HSPE_FOG_CLEAR, NL_HSPE_FOG_SUNSET, sunsetSunrise);
+  fogStrength = mix(fogStrength, NL_HSPE_FOG_RAIN, rain);
+  if (nether) fogStrength = NL_HSPE_FOG_NETHER;
 
   float q1 = dist * fogDensity.x * fogStrength;
   float q2 = dist * dist * fogDensity.y * fogStrength * fogStrength;
-  float fogFactor = 1.0 - exp(-(q1 + q2) * 4.0);
+  float fogFactor = 1.0 - exp(-(q1 + q2) * NL_HSPE_FOG_CURVE);
 
   if (underwater) {
-    fogFactor = 1.0 - exp(-dist * 12.0);
+    fogFactor = 1.0 - exp(-dist * NL_HSPE_FOG_UNDERWATER);
   }
 
   return clamp(fogFactor, 0.0, 1.0);
