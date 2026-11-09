@@ -84,7 +84,7 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.95               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (bahut zyada fog)
+#define NL_FOG 0.20               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
 #define NL_FOG_BASE 0.15          // baseline haze at any distance (0.0 off ~ 0.3 strong)
 #define NL_MIST_DENSITY 0.40      // 0.0 no mist ~ 1.0 misty (bahut zyada mist)
 #define NL_HSPE_FOG_DENSITY vec2(0.24, 0.36) // HSPE fog distance/quadratic density
