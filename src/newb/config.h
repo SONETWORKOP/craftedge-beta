@@ -52,7 +52,7 @@
 /* Sun/moon light color */
 #define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.4,0.1)   // original HSPE sunrise sunlight
 #define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.75,0.57)
-#define NL_NIGHT_MOONLIGHT_COL vec3(0.01,0.03,0.2)
+#define NL_NIGHT_MOONLIGHT_COL vec3(0.005,0.015,0.10)
 
 /* Torch colors */
 #define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.52,0.18)
@@ -65,14 +65,14 @@
 
 // sun light color
 #define NL_HSPE_LIGHT_DAY    vec3(1.4,1.2,1.1)
-#define NL_HSPE_LIGHT_NIGHT  vec3(0.25,0.5,0.8)
+#define NL_HSPE_LIGHT_NIGHT  vec3(0.12,0.20,0.34)
 #define NL_HSPE_LIGHT_DUSK   vec3(1.3,1.1,0.6)
 #define NL_HSPE_LIGHT_DRAIN  vec3(0.8,0.8,0.8)
 #define NL_HSPE_LIGHT_NRAIN  vec3(0.4,0.4,0.4)
 
 // shadow color
 #define NL_HSPE_SHADOW_DAY   vec3(0.5,0.65,0.82)
-#define NL_HSPE_SHADOW_NIGHT vec3(0.2,0.2,0.35)
+#define NL_HSPE_SHADOW_NIGHT vec3(0.07,0.09,0.16)
 #define NL_HSPE_SHADOW_DUSK  vec3(0.45,0.75,1.0)
 #define NL_HSPE_SHADOW_DRAIN vec3(0.6,0.6,0.6)
 #define NL_HSPE_SHADOW_NRAIN vec3(0.3,0.3,0.3)
@@ -84,8 +84,8 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.28               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (kam fog)
-#define NL_MIST_DENSITY 0.06      // 0.0 no mist ~ 1.0 misty (kam fog)
+#define NL_FOG 0.50               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (zyada fog)
+#define NL_MIST_DENSITY 0.15      // 0.0 no mist ~ 1.0 misty (zyada mist)
 #define NL_CRAFT_FOG_BROWN vec3(0.46,0.31,0.19) // CraftEdge warm brown fog accent
 #define NL_CRAFT_FOG_BROWN_AMOUNT 0.15 // 0.0 off ~ 0.5 strong brown haze
 #define NL_END_FOG 1.2            // End-only extra fog thickness (1.0 = same as overworld)
@@ -93,7 +93,7 @@
 #define NL_CLOUDY_FOG 0.02        // [toggle] 0.0 subtle - 0.8 dense fog clouds (bahut kam fog)
 
 /* Height fog - ground-hugging mist that thins with altitude */
-#define NL_HEIGHT_FOG 0.08
+#define NL_HEIGHT_FOG 0.15
 #define NL_HEIGHT_FOG_START 56.0
 #define NL_HEIGHT_FOG_RANGE 55.0
 
@@ -103,7 +103,7 @@
 #define NL_SKY_RAIN_MIX_FACTOR 0.95
 
 /* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
-#define NL_ATMO 0.5
+#define NL_ATMO 0.0
 #define NL_ATMO_SUNSET vec3(1.21,0.9025,0.49)  // HSPE DUSK_EDGE*c2 sunset haze
 
 /* Sky colors - zenith=top, horizon=bottom */
@@ -113,11 +113,11 @@
 #define NL_DAY_ZENITH_COL    vec3(0.3,0.9,2.0)
 #define NL_DAY_HORIZON_COL   vec3(1.0,1.6,1.8)
 #define NL_DAY_EDGE_COL      vec3(1.44,1.56,1.62)
-#define NL_NIGHT_ZENITH_COL  vec3(0.04,0.20,0.38)    // deep cyan zenith (beta)
-#define NL_NIGHT_HORIZON_COL vec3(0.06,0.30,0.48)    // cyan horizon (beta)
-#define NL_NIGHT_EDGE_COL    vec3(0.08,0.38,0.55)    // bright cyan edge (beta)
+#define NL_NIGHT_ZENITH_COL  vec3(0.02,0.10,0.20)    // deep cyan zenith (beta)
+#define NL_NIGHT_HORIZON_COL vec3(0.03,0.15,0.24)    // cyan horizon (beta)
+#define NL_NIGHT_EDGE_COL    vec3(0.04,0.18,0.28)    // bright cyan edge (beta)
 /* Raat ke clouds ka fixed rang - halka cyan (din me asar nahi) */
-#define NL_NIGHT_CLOUD_COL   vec3(0.55,0.75,0.88)    // halka cyan night clouds
+#define NL_NIGHT_CLOUD_COL   vec3(0.22,0.30,0.42)    // darker cyan night clouds
 #define NL_NIGHT_CLOUD_BLEND 0.65  // raat me kitna cyan mix ho
 #define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
@@ -142,9 +142,9 @@
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
 // night (beta cyan - HSPE gradient ke saath)
-#define NL_HSPE_NIGHT_EDGE    vec3(0.10,0.62,0.72)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
+#define NL_HSPE_NIGHT_EDGE    vec3(0.04,0.20,0.28)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.03,0.16,0.24)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.02,0.12,0.20)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -391,6 +391,7 @@
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
 
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
+#define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
 #define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
 #define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3

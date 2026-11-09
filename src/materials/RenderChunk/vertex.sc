@@ -147,6 +147,16 @@ void main() {
     // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
     // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
     fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.14, 0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
+
+    // Sunset: YSS colour returns only on the setting-sun side.
+    // Sunrise keeps the HSPE sky/fog colour.
+    float sunsetSide = smoothstep(-0.15, 0.15, sin(6.2831853*TimeOfDay.x));
+    float horizonFade = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+    float yssSunset = sunsetSide*horizonFade*(1.0-env.rainFactor);
+    if (yssSunset > 0.001) {
+      vec4 yssFog = nlYssFog(env, relativeDist);
+      fogColor.rgb = mix(fogColor.rgb, yssFog.rgb, yssSunset*NL_YSS_SUNSET_MIX);
+    }
   }
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
