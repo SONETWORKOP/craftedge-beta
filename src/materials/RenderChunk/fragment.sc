@@ -103,6 +103,7 @@ void main() {
   diffuse.rgb += glow;
 
   if (v_extra.b > 0.9) {
+    diffuse.rgb *= NL_WATER_SURFACE_TINT;
     bool hspeWaterDone = false;
 
     // water

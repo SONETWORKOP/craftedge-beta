@@ -122,7 +122,13 @@ void main() {
       fogColor = nlYssFog(env, relativeDist);
       float edge = NL_YSS_FOG_EDGE_FADE*smoothstep(FogAndDistanceControl.x, FogAndDistanceControl.y, relativeDist);
       fogColor.rgb = mix(fogColor.rgb, nlSkyEdgeColor(skycol, yssVd.y), edge);
+      // CraftEdge warm brown accent in the YSS fog
+      fogColor.rgb = mix(fogColor.rgb, NL_CRAFT_FOG_BROWN, NL_CRAFT_FOG_BROWN_AMOUNT*(1.0-env.rainFactor));
       fogColor.a += (1.0-fogColor.a)*edge;
+      // HSPE distance/mist fog on top of YSS colour fog
+      float hspeFog = nlGetFog(relativeDist, vec2(0.14,0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
+      fogColor.a = max(fogColor.a, hspeFog);
+      fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
     } else
   #endif
   {

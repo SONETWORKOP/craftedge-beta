@@ -85,6 +85,8 @@
 /* Fog - realistic atmospheric depth (beta) */
 #define NL_FOG 0.28               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (kam fog)
 #define NL_MIST_DENSITY 0.06      // 0.0 no mist ~ 1.0 misty (kam fog)
+#define NL_CRAFT_FOG_BROWN vec3(0.46,0.31,0.19) // CraftEdge warm brown fog accent
+#define NL_CRAFT_FOG_BROWN_AMOUNT 0.15 // 0.0 off ~ 0.5 strong brown haze
 #define NL_END_FOG 1.2            // End-only extra fog thickness (1.0 = same as overworld)
 #define NL_RAIN_MIST_OPACITY 0.04 // [toggle] 0.04 very subtle ~ 0.5 thick rain mist blow (bahut kam fog)
 #define NL_CLOUDY_FOG 0.02        // [toggle] 0.0 subtle - 0.8 dense fog clouds (bahut kam fog)
@@ -190,6 +192,7 @@
 //#define NL_WATER_WAVE               // OFF: water wave band (flat paani)
 //#define NL_WATER_REFL_MASK          // OFF: full reflection instead of patchy masked reflection
 #define NL_WATER_TINT vec3(0.30,0.78,0.92)  // clear tropical blue
+#define NL_WATER_SURFACE_TINT vec3(0.74,0.90,1.18) // thoda blue water surface
 #define NL_WATER_GLITTER 1.25           // sun glitter tez
 
 /* HSPE water (ported from HSPE shader) */
