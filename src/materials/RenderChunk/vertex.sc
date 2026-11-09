@@ -148,10 +148,17 @@ void main() {
     // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
     fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.14, 0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
 
-    // Sunset: YSS colour returns only on the setting-sun side.
-    // Sunrise keeps the HSPE sky/fog colour.
-    float sunsetSide = smoothstep(-0.15, 0.15, sin(6.2831853*TimeOfDay.x));
+    float sunSide = sin(6.2831853*TimeOfDay.x);
     float horizonFade = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+    fogColor.rgb = mix(fogColor.rgb, NL_CRAFT_FOG_BROWN, NL_CRAFT_FOG_BROWN_AMOUNT*(1.0-env.rainFactor));
+
+    // Sunrise: HSPE golden haze (YSS stays sunset-only).
+    float sunriseSide = 1.0 - smoothstep(-0.15, 0.15, sunSide);
+    float sunriseGlow = sunriseSide*horizonFade*(1.0-env.rainFactor);
+    fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, 0.45*sunriseGlow);
+
+    // Sunset: YSS colour returns only on the setting-sun side.
+    float sunsetSide = smoothstep(-0.15, 0.15, sunSide);
     float yssSunset = sunsetSide*horizonFade*(1.0-env.rainFactor);
     if (yssSunset > 0.001) {
       vec4 yssFog = nlYssFog(env, relativeDist);
