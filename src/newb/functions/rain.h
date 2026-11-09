@@ -93,6 +93,10 @@ vec4 nlRefl(
 ) {
   vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
 
+  #ifdef NL_NO_REFLECTION
+    return wetRefl;
+  #endif
+
   #ifndef NL_GROUND_REFL
   if (env.rainFactor > 0.0) {
   #endif

@@ -341,6 +341,7 @@
 #define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
+#define NL_NO_REFLECTION                // [toggle] disable ground/water/metal reflections
 #define NL_GROUND_REFL 0.3              // reflection strength (beta: 0.3)
 #define NL_GROUND_RAIN_WETNESS 1.0     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
@@ -389,7 +390,7 @@
 #define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
 
-#define NL_YSS_FOG                    // [toggle] YSS fog colours
+//#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
 #define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
 #define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3

@@ -166,6 +166,9 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
 
 // hspe water per pixel, returns vec4(reflection * fresnel, alpha)
 vec4 nlHspeWaterPixel(nl_environment env, vec3 gPos, vec3 CAMERA_POS, vec3 VIEW_POS, vec2 uv1, highp float t) {
+  #ifdef NL_NO_REFLECTION
+    return vec4(0.0,0.0,0.0,NL_HSPE_WATER_ALPHA);
+  #endif
   vec3 relPos = gPos - CAMERA_POS;
   vec3 vdir = normalize(VIEW_POS - relPos);
   vec2 lit = uv1*uv1;
@@ -196,6 +199,9 @@ vec4 nlHspeWaterPixel(nl_environment env, vec3 gPos, vec3 CAMERA_POS, vec3 VIEW_
 // hspe metal block reflection
 // dpx, dpy = dFdx/dFdy of position, st1, st2 = dFdx/dFdy of uv (computed in fragment shader)
 vec3 nlHspeMetal(nl_environment env, vec3 diffuse, vec3 albedo, vec3 texN, vec3 dpx, vec3 dpy, vec2 st1, vec2 st2, vec2 uv1, vec3 gPos, vec3 CAMERA_POS, highp float t) {
+  #ifdef NL_NO_REFLECTION
+    return diffuse;
+  #endif
   vec3 wp = gPos - CAMERA_POS;
   vec3 N = normalize(cross(dpx, dpy));
   if (dot(N, wp) > 0.0) {
