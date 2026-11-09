@@ -142,11 +142,12 @@ void main() {
         fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, NL_ATMO * dawnF);
       }
     #endif
-    fogColor.a = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
+    // Newb fog + HSPE fog dono ko screen-blend karo (max nahi),
+    // taaki dono ki depth/atmosphere sath me dikhe.
+    float newbFog = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
+    float hspeFog = nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
+    fogColor.a = 1.0 - (1.0 - newbFog)*(1.0 - hspeFog);
     fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
-    // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
-    // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
-    fogColor.a = max(fogColor.a, nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
 
     float sunSide = sin(6.2831853*TimeOfDay.x);
     float horizonFade = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
