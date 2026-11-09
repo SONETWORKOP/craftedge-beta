@@ -126,7 +126,7 @@ void main() {
       fogColor.rgb = mix(fogColor.rgb, NL_CRAFT_FOG_BROWN, NL_CRAFT_FOG_BROWN_AMOUNT*(1.0-env.rainFactor));
       fogColor.a += (1.0-fogColor.a)*edge;
       // HSPE distance/mist fog on top of YSS colour fog
-      float hspeFog = nlGetFog(relativeDist, vec2(0.14,0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
+      float hspeFog = nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
       fogColor.a = max(fogColor.a, hspeFog);
       fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
     } else
@@ -146,7 +146,7 @@ void main() {
     fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
     // fog.txt (Download/fog.txt): sunset/rain/nether/underwater curve.
     // Pack fade jahan halka hai wahan snippet jeetta hai (max), baaki same.
-    fogColor.a = max(fogColor.a, nlGetFog(relativeDist, vec2(0.14, 0.21), env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
+    fogColor.a = max(fogColor.a, nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether));
 
     float sunSide = sin(6.2831853*TimeOfDay.x);
     float horizonFade = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));

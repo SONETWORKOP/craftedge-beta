@@ -84,8 +84,10 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.90               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (bahut zyada fog)
-#define NL_MIST_DENSITY 0.35      // 0.0 no mist ~ 1.0 misty (bahut zyada mist)
+#define NL_FOG 0.95               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely (bahut zyada fog)
+#define NL_FOG_BASE 0.15          // baseline haze at any distance (0.0 off ~ 0.3 strong)
+#define NL_MIST_DENSITY 0.40      // 0.0 no mist ~ 1.0 misty (bahut zyada mist)
+#define NL_HSPE_FOG_DENSITY vec2(0.24, 0.36) // HSPE fog distance/quadratic density
 #define NL_CRAFT_FOG_BROWN vec3(0.46,0.31,0.19) // CraftEdge warm brown fog accent
 #define NL_CRAFT_FOG_BROWN_AMOUNT 0.20 // 0.0 off ~ 0.5 strong brown haze
 #define NL_END_FOG 1.2            // End-only extra fog thickness (1.0 = same as overworld)
@@ -93,7 +95,7 @@
 #define NL_CLOUDY_FOG 0.02        // [toggle] 0.0 subtle - 0.8 dense fog clouds (bahut kam fog)
 
 /* Height fog - ground-hugging mist that thins with altitude */
-#define NL_HEIGHT_FOG 0.35
+#define NL_HEIGHT_FOG 0.40
 #define NL_HEIGHT_FOG_START 56.0
 #define NL_HEIGHT_FOG_RANGE 55.0
 

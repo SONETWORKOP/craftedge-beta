@@ -13,7 +13,7 @@ float nlRenderFogFade(float relativeDist, vec3 FOG_COLOR, vec2 FOG_CONTROL, bool
     float density = NL_MIST_DENSITY*(19.0 - 18.0*FOG_COLOR.g);
     fade += (1.0-fade)*(0.3-0.3*exp(-relativeDist*relativeDist*density));
 
-    float fog = NL_FOG * fade;
+    float fog = max(NL_FOG * fade, NL_FOG_BASE);
     #ifdef NL_END_FOG
       fog *= isEnd ? NL_END_FOG : 1.0;
     #endif
