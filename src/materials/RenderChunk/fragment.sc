@@ -249,7 +249,7 @@ void main() {
   #endif
 
   // metal reflection
-  #if defined(NL_HSPE_METAL) && !defined(NL_NO_REFLECTION) && defined(OPAQUE) && !defined(SEASONS)
+  #if defined(NL_HSPE_METAL) && defined(OPAQUE) && !defined(SEASONS)
     bool metalFlag = texAlpha >= 0.97 && texAlpha < 0.98 && v_color1.a != 0.0;
     if (metalFlag) {
       nl_environment menv = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogAndDistanceControl.xyz);

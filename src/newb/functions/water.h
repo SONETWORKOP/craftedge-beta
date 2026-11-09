@@ -62,10 +62,6 @@ vec4 nlWater(
   float fractCposY, float camDist, highp float t
 ) {
 
-  #ifdef NL_NO_REFLECTION
-    return vec4(0.0,0.0,0.0,0.0);
-  #endif
-
   vec2 bump = vec2_splat(movingNoise2D(gPos.xz + gPos.yy, NL_WATER_WAVE_SPEED*t, 0.6));
 
   vec3 nrm;
