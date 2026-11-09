@@ -102,6 +102,31 @@ void main() {
   diffuse.rgb *= color.rgb;
   diffuse.rgb += glow;
 
+  #if defined(NL_SHADOW_QUALITY_STEPS) && !defined(SEASONS) && !defined(RENDER_AS_BILLBOARDS)
+    if (v_extra.b < 0.9) {
+      if (v_color1.a != 0.0) {
+        if (v_color1.g < 0.64) { diffuse.rgb *= vec3(0.96,0.96,0.96); }
+        if (v_color1.g < 0.639) { diffuse.rgb *= vec3(0.95,0.95,0.95); }
+        if (v_color1.g < 0.638) { diffuse.rgb *= vec3(0.95,0.95,0.95); }
+        if (v_color1.g < 0.637) { diffuse.rgb *= vec3(0.95,0.95,0.95); }
+        if (v_color1.g < 0.636) { diffuse.rgb *= vec3(0.95,0.95,0.95); }
+        if (v_color1.g < 0.635) { diffuse.rgb *= vec3(0.89,0.89,0.89); }
+        if (v_color1.g < 0.634) { diffuse.rgb *= vec3(0.89,0.89,0.89); }
+        if (v_color1.g < 0.633) { diffuse.rgb *= vec3(0.883,0.883,0.883); }
+        if (v_color1.g < 0.632) { diffuse.rgb *= vec3(0.88,0.88,0.88); }
+        if (v_color1.g < 0.631) { diffuse.rgb *= vec3(0.88,0.88,0.88); }
+        if (v_color1.g < 0.63) { diffuse.rgb *= vec3(0.887,0.887,0.887); }
+      }
+      if (v_color1.a == 0.0) {
+        diffuse.rgb *= 1.55;
+        diffuse.rgb *= v_color1.g*1.3;
+      }
+      float shadowC = v_color1.r;
+      if (v_color1.a <= 0.1) { shadowC = v_color1.g*1.999; }
+      if (shadowC < 0.638) { diffuse.rgb *= 0.9; }
+    }
+  #endif
+
   if (v_extra.b > 0.9) {
     diffuse.rgb *= NL_WATER_SURFACE_TINT;
     bool hspeWaterDone = false;
