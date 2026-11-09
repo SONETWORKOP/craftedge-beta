@@ -84,7 +84,7 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.2                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
+#define NL_FOG 0.10               // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
 #define NL_FOG_BASE 0.0           // baseline haze at any distance (0.0 off ~ 0.3 strong)
 #define NL_FOG_MIX 0.5            // Newb<->HSPE blend (0.5 = equal, lower = Newb-heavy)
 #define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty
