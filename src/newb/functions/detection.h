@@ -12,6 +12,7 @@ struct nl_environment {
   vec3 sunDir;      // normalized
   vec3 moonDir;     // normalized
   vec3 fogCol;      // [0.0, 1.0]
+  float sunsetSide; // 1.0 = setting sun, 0.0 = rising sun
 };
 
 bool detectEnd(vec3 FOG_COLOR) {
@@ -59,6 +60,7 @@ nl_environment calculateSunParams(nl_environment env, float TIME_OF_DAY) {
   vec3 sunDir = vec3(sin(t), cos(t), 0.0); 
   vec3 moonDir = vec3(-sunDir.x, -sunDir.y, 0.0);
   env.dayFactor = sunDir.y;
+  env.sunsetSide = smoothstep(-0.15, 0.15, sin(t));
 
   sunDir.yz = mul(rmat2(-degToRad(NL_SUN_PATH_TILT)), sunDir.yz);
   sunDir.xz = mul(rmat2(degToRad(NL_SUN_PATH_YAW)), sunDir.xz);
