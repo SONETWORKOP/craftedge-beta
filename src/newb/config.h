@@ -85,8 +85,9 @@
 
 /* Fog - realistic atmospheric depth (beta) */
 #define NL_FOG 0.2                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
-#define NL_FOG_BASE 0.15          // baseline haze at any distance (0.0 off ~ 0.3 strong)
-#define NL_MIST_DENSITY 0.40      // 0.0 no mist ~ 1.0 misty (bahut zyada mist)
+#define NL_FOG_BASE 0.0           // baseline haze at any distance (0.0 off ~ 0.3 strong)
+#define NL_FOG_MIX 0.5            // Newb<->HSPE blend (0.5 = equal, lower = Newb-heavy)
+#define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty
 #define NL_HSPE_FOG_DENSITY vec2(0.2, 0.2) // HSPE fog distance/quadratic density
 #define NL_CRAFT_FOG_BROWN vec3(0.46,0.31,0.19) // CraftEdge warm brown fog accent
 #define NL_CRAFT_FOG_BROWN_AMOUNT 0.20 // 0.0 off ~ 0.5 strong brown haze

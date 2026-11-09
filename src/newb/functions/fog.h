@@ -28,7 +28,7 @@ float nlRenderHeightFog(float fade, float worldHeight, float relativeDist) {
   #if defined(NL_FOG) && defined(NL_HEIGHT_FOG)
     // thicker fog near ground, thins out with altitude (valley mist look)
     float heightFactor = 1.0 - smoothstep(NL_HEIGHT_FOG_START, NL_HEIGHT_FOG_START+NL_HEIGHT_FOG_RANGE, worldHeight);
-    fade += (1.0-fade)*heightFactor*NL_HEIGHT_FOG*relativeDist;
+    fade += (1.0-fade)*heightFactor*NL_HEIGHT_FOG*relativeDist*NL_FOG;
     return clamp(fade, 0.0, 1.0);
   #else
     return fade;

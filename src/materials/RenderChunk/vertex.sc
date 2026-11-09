@@ -146,7 +146,7 @@ void main() {
     // taaki dono ki depth/atmosphere sath me dikhe.
     float newbFog = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
     float hspeFog = nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
-    fogColor.a = 1.0 - (1.0 - newbFog)*(1.0 - hspeFog);
+    fogColor.a = mix(newbFog, hspeFog, NL_FOG_MIX);
     fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
 
     float sunSide = sin(6.2831853*TimeOfDay.x);
