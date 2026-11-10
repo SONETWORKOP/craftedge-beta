@@ -352,9 +352,9 @@
 #define NL_MOON_TILT       90.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
 /* Godrays - strong volumetric light shafts (beta) */
-#define NL_GODRAY 0.12 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY 0.20 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   0.8 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   0.6 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
