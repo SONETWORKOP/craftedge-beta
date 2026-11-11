@@ -23,13 +23,13 @@ float nlHspeTexHeight(sampler2D tex, highp vec2 uv, vec2 texel) {
     vec2 a = clamp(uv - texel*fract(uv/texel), lo, hi);
     vec2 b = fract(uv/texel);
     b = b*b*(3.0-2.0*b);
-    vec3 s1 = texture2D(tex, a).rgb;
-    vec3 s2 = texture2D(tex, clamp(a + vec2(texel.x, 0.0), lo, hi)).rgb;
-    vec3 s3 = texture2D(tex, clamp(a + vec2(0.0, texel.y), lo, hi)).rgb;
-    vec3 s4 = texture2D(tex, clamp(a + texel, lo, hi)).rgb;
+    vec3 s1 = texture2DLod(tex, a, 0.0).rgb;
+    vec3 s2 = texture2DLod(tex, clamp(a + vec2(texel.x, 0.0), lo, hi), 0.0).rgb;
+    vec3 s3 = texture2DLod(tex, clamp(a + vec2(0.0, texel.y), lo, hi), 0.0).rgb;
+    vec3 s4 = texture2DLod(tex, clamp(a + texel, lo, hi), 0.0).rgb;
     return luminance(mix(mix(s1, s2, b.x), mix(s3, s4, b.x), b.y));
   #else
-    return luminance(texture2D(tex, uv).rgb);
+    return luminance(texture2DLod(tex, uv, 0.0).rgb);
   #endif
 }
 

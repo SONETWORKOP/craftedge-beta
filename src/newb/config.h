@@ -52,7 +52,7 @@
 /* Sun/moon light color */
 #define NL_DAWN_SUNLIGHT_COL   vec3(1.0,0.4,0.1)   // original HSPE sunrise sunlight
 #define NL_NOON_SUNLIGHT_COL   vec3(1.0,0.75,0.57)
-#define NL_NIGHT_MOONLIGHT_COL vec3(0.008,0.02,0.15)
+#define NL_NIGHT_MOONLIGHT_COL vec3(0.004,0.01,0.07)
 
 /* Torch colors */
 #define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.52,0.18)
@@ -65,14 +65,14 @@
 
 // sun light color
 #define NL_HSPE_LIGHT_DAY    vec3(1.4,1.2,1.1)
-#define NL_HSPE_LIGHT_NIGHT  vec3(0.18,0.34,0.58)
+#define NL_HSPE_LIGHT_NIGHT  vec3(0.09,0.16,0.30)
 #define NL_HSPE_LIGHT_DUSK   vec3(1.3,1.1,0.6)
 #define NL_HSPE_LIGHT_DRAIN  vec3(0.8,0.8,0.8)
 #define NL_HSPE_LIGHT_NRAIN  vec3(0.4,0.4,0.4)
 
 // shadow color
 #define NL_HSPE_SHADOW_DAY   vec3(0.5,0.65,0.82)
-#define NL_HSPE_SHADOW_NIGHT vec3(0.13,0.15,0.25)
+#define NL_HSPE_SHADOW_NIGHT vec3(0.045,0.055,0.11)
 #define NL_HSPE_SHADOW_DUSK  vec3(0.45,0.75,1.0)
 #define NL_HSPE_SHADOW_DRAIN vec3(0.6,0.6,0.6)
 #define NL_HSPE_SHADOW_NRAIN vec3(0.3,0.3,0.3)
@@ -352,7 +352,7 @@
 #define NL_MOON_TILT       90.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
 /* Godrays - strong volumetric light shafts (beta) */
-#define NL_GODRAY 0.12 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY 0.20 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
 #define NL_GODRAY_SENSITIVITY   0.09 // halke rays threshold (kam = zyada rays)
 
