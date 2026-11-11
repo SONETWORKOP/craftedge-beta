@@ -137,7 +137,7 @@
 #define NL_NIGHT_CLOUD_BLEND 0.65  // raat me kitna cyan mix ho
 #define NL_NIGHT_SKY_BRIGHTNESS 1.0
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
-#define NL_RAIN_HORIZON_COL  vec3(0.6,0.6,0.6)
+#define NL_RAIN_HORIZON_COL  vec3(0.30,0.48,0.70)
 
 #define NL_END_ZENITH_COL    vec3(0.20,0.003,0.26)
 #define NL_END_HORIZON_COL   vec3(0.78,0.025,0.85)
@@ -167,11 +167,11 @@
 #define NL_HSPE_DUSK_ZENITH   vec3(0.2,0.7,0.9)
 // day rain
 #define NL_HSPE_DRAIN_EDGE    vec3(1.0,1.0,1.0)
-#define NL_HSPE_DRAIN_HORIZON vec3(0.8,0.8,0.8)
+#define NL_HSPE_DRAIN_HORIZON vec3(0.18,0.42,0.70)
 #define NL_HSPE_DRAIN_ZENITH  vec3(0.5,0.5,0.5)
 // night rain
 #define NL_HSPE_NRAIN_EDGE    vec3(0.0,0.0,0.0)
-#define NL_HSPE_NRAIN_HORIZON vec3(0.1,0.1,0.1)
+#define NL_HSPE_NRAIN_HORIZON vec3(0.03,0.10,0.22)
 #define NL_HSPE_NRAIN_ZENITH  vec3(0.3,0.3,0.3)
 
 
@@ -354,12 +354,12 @@
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   1.0 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   1.1 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
 #define NL_GROUND_REFL 0.3              // reflection strength (beta: 0.3)
-#define NL_GROUND_RAIN_WETNESS 1.0     // puddle reflections while raining
+#define NL_GROUND_RAIN_WETNESS 1.2     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
 /* Rain reflection - strong wet/puddle mirror only while raining (beta) */

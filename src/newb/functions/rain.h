@@ -94,6 +94,11 @@ vec4 nlRefl(
   vec4 wetRefl = vec4(0.0,0.0,0.0,0.0);
 
   #ifdef NL_NO_GROUND_REFL
+    // ground mirror is off, but still show wet-surface darkening
+    if (env.rainFactor > 0.0) {
+      float wetness = lit.y*lit.y;
+      color.rgb *= 1.0 - clamp(0.4*wetness*env.rainFactor*NL_GROUND_RAIN_WETNESS, 0.0, 0.5);
+    }
     return wetRefl;
   #endif
 
