@@ -9,27 +9,19 @@
 
 // texture height
 float nlHspeTexHeight(sampler2D tex, highp vec2 uv, vec2 texel) {
-  // keep all height taps inside the current atlas tile
-  vec2 texSize = vec2(textureSize(tex, 0));
-  vec2 tileUV = vec2(1.0/64.0, 1.0/(64.0*texSize.y/texSize.x));
-  vec2 tile = floor(uv/tileUV);
-  vec2 lo = tile*tileUV + 0.5*texel;
-  vec2 hi = (tile+1.0)*tileUV - 0.5*texel;
-  uv = clamp(uv, lo, hi);
-
   #ifdef NL_HSPE_TEX_NORMAL_BLUR
     // smooth sample
     uv -= texel*0.5;
-    vec2 a = clamp(uv - texel*fract(uv/texel), lo, hi);
+    vec2 a = uv - texel*fract(uv/texel);
     vec2 b = fract(uv/texel);
     b = b*b*(3.0-2.0*b);
-    vec3 s1 = texture2DLod(tex, a, 0.0).rgb;
-    vec3 s2 = texture2DLod(tex, clamp(a + vec2(texel.x, 0.0), lo, hi), 0.0).rgb;
-    vec3 s3 = texture2DLod(tex, clamp(a + vec2(0.0, texel.y), lo, hi), 0.0).rgb;
-    vec3 s4 = texture2DLod(tex, clamp(a + texel, lo, hi), 0.0).rgb;
+    vec3 s1 = texture2D(tex, a).rgb;
+    vec3 s2 = texture2D(tex, a + vec2(texel.x, 0.0)).rgb;
+    vec3 s3 = texture2D(tex, a + vec2(0.0, texel.y)).rgb;
+    vec3 s4 = texture2D(tex, a + texel).rgb;
     return luminance(mix(mix(s1, s2, b.x), mix(s3, s4, b.x), b.y));
   #else
-    return luminance(texture2DLod(tex, uv, 0.0).rgb);
+    return luminance(texture2D(tex, uv).rgb);
   #endif
 }
 
