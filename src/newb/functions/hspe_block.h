@@ -27,12 +27,21 @@ float nlHspeTexHeight(sampler2D tex, highp vec2 uv, vec2 texel) {
 
 // texture normal (x, up, z)
 vec3 nlHspeTexNormal(sampler2D tex, highp vec2 uv) {
-  vec2 texel = 1.0/vec2(textureSize(tex, 0));
+  vec2 texSize = vec2(textureSize(tex, 0));
+  vec2 texel = 1.0/texSize;
   vec2 wave = vec2(NL_HSPE_TEX_NORMAL_OFFSET, NL_HSPE_TEX_NORMAL_OFFSET)*texel;
+
+  // atlas edge masks: nudge inward instead of sampling the neighbouring tile
+  float invTexW = 1.0/texSize.x;
+  vec2 f = fract(uv*vec2(64.0, 64.0*texSize.y*invTexW)) - 0.5;
+  vec2 st = sign(f)*step(vec2_splat(0.5 - 64.64*invTexW), abs(f));
+  vec2 allowPos = step(st, vec2_splat(0.0));
+  vec2 inward = vec2_splat(1.0) - 2.0*step(allowPos, vec2_splat(0.5));
+
   float a = nlHspeTexHeight(tex, uv, texel);
-  float b = nlHspeTexHeight(tex, uv + vec2(wave.x, 0.0), texel);
-  float c = nlHspeTexHeight(tex, uv + vec2(0.0, wave.y), texel);
-  return normalize(vec3((b-a)*0.5, 1.0/NL_HSPE_TEX_HEIGHT, (c-a)*0.5));
+  float b = nlHspeTexHeight(tex, uv + vec2(wave.x*inward.x, 0.0), texel);
+  float c = nlHspeTexHeight(tex, uv + vec2(0.0, wave.y*inward.y), texel);
+  return normalize(vec3((b-a)*0.5*inward.x, 1.0/NL_HSPE_TEX_HEIGHT, (c-a)*0.5*inward.y));
 }
 
 // BICUBIC subpack ("High (Realistic Clouds)"): blocks reflect the same
