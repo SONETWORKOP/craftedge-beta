@@ -17,40 +17,16 @@ float nlDuskF(float dayFactor) {
   return d*d*(1.0 - nightF);
 }
 
-// sky-following cloud tint: POORA rang sky-horizon se (din=safed-neela,
-// sunset=narangi-gulabi, raat=gehra neela+dark, barish=grey).
-// skyDye = skycol.horizon (din/dusk/raat/barish pehle se mixed).
-// NL_CLOUD_SKY_TINT off par purana night-mix behavior.
 vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFactor) {
   #ifdef NL_CLOUD_SKY_TINT
     float nightF = 1.0 - smoothstep(-0.08, 0.12, dayFactor);
-    float duskF = nlDuskF(dayFactor);
-    // poora dye: badal aasmaan ka hue pakde
     vec3 dye = skyDye*1.15 + vec3_splat(0.22);
     vec3 col = cloudCol*dye;
-    // sunset extra kiss (ATMO palette)
-    #ifdef NL_ATMO_SUNSET
-      vec3 duskCol = NL_ATMO_SUNSET*1.35 + vec3(0.28, 0.10, 0.10);
-    #else
-      vec3 duskCol = vec3(1.65, 0.75, 0.35);
-    #endif
-    #ifdef NL_CLOUD_DUSK_STRENGTH
-      float duskAmt = NL_CLOUD_DUSK_STRENGTH;
-    #else
-      float duskAmt = 0.8;
-    #endif
-    col = mix(col, cloudCol*duskCol*0.9 + duskCol*0.22, duskF*duskAmt);
-    // sirf high noon par white; baaki waqt sky colour follow
-    float noonF = smoothstep(0.55, 0.90, dayFactor);
-    noonF *= 1.0 - rainFactor;
-    col = mix(col, vec3_splat(1.0), noonF*0.85);
-    // raat: config cyan + thoda extra dark
     col = mix(col, NL_NIGHT_CLOUD_COL*0.7, nightF*NL_NIGHT_CLOUD_BLEND);
     col *= 1.0 - 0.72*nightF;
-    // barish: grey + dark
     float lum = dot(col, vec3(0.299, 0.587, 0.114));
-    col = mix(col, vec3_splat(lum)*vec3(0.72, 0.76, 0.82), rainFactor*0.7);
-    col *= 1.0 - 0.30*rainFactor;
+    col = mix(col, vec3_splat(lum)*vec3(0.72, 0.76, 0.82), rainFactor*0.35);
+    col *= 1.0 - 0.18*rainFactor;
     return col;
   #else
     return mix(cloudCol, NL_NIGHT_CLOUD_COL, nlNightF(dayFactor));
@@ -58,8 +34,6 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
 }
 
 // simple clouds 2D noise
-// BICUBIC ("High (Realistic Clouds)") cloud color: plain white in full day,
-// otherwise follow the sky tint (cyan night, warm dusk, grey rain).
 vec3 nlBsbeCloudColor(nl_skycolor skycol, nl_environment env) {
   return nlSkyCloudTint(vec3_splat(1.0), skycol.horizon, env.dayFactor, env.rainFactor);
 }
@@ -652,6 +626,7 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
   if (cloudAmount > 0.0) {
     vec3 mainSunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
     vec4 clouds = renderCloudsSimple(skycol, cloudPos.xyy, t, env.rainFactor, viewDir, mainSunDir, vec3(1.0,0.95,0.85));
+    clouds.rgb = nlSkyCloudTint(clouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
     clouds.a *= fade*cloudAmount;
     refl = vec4(mix(refl.rgb, clouds.rgb, clouds.a), min(refl.a + clouds.a, 1.0));
   }

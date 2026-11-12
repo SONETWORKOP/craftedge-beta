@@ -62,8 +62,7 @@ void main() {
       // saturation push so clouds keep sky-blue shadowing instead of flat grey
       float cLum = dot(color.rgb, vec3(0.299,0.587,0.114));
       color.rgb = mix(vec3_splat(cLum), color.rgb, 1.12);
-      color.rgb = mix(color.rgb, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
-      color.rgb *= 1.0 - 0.65*rain;
+      color.rgb = nlSkyCloudTint(color.rgb, skycol.horizon, env.dayFactor, rain);
       color.rgb = colorCorrection(color.rgb);
       color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
 
@@ -107,7 +106,7 @@ void main() {
         #endif
 
         color.a *= fade;
-        color.rgb = mix(color.rgb, NL_NIGHT_CLOUD_COL, nlNightF(env.dayFactor));
+        color.rgb = nlSkyCloudTint(color.rgb, skycol.horizon, env.dayFactor, rain);
         color.rgb = colorCorrection(color.rgb);
       #else // NL_CLOUD_TYPE 2
         v_fogColor = FogColor.rgb;

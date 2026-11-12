@@ -354,7 +354,7 @@
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   1.1 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   1.0 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
@@ -405,6 +405,10 @@
 #define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
 #define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
+#define NL_SKY_SUNRISE_MIX 0.65
+#define NL_SKY_SUNRISE_ZENITH  vec3(0.55,0.27,0.78)
+#define NL_SKY_SUNRISE_HORIZON vec3(3.3,0.95,1.05)
+#define NL_SKY_SUNRISE_EDGE    vec3(3.8,1.45,1.35)
 
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
