@@ -46,7 +46,12 @@
 #define NL_CLOUD_SHADOW      // [toggle] cloud shadow (simple clouds only)
 
 /* Ambient light for nether/end */
-#define NL_NETHER_AMBIENT vec3(3.0,2.16,1.89)
+#define NL_NETHER_AMBIENT vec3(2.0,1.32,1.02)
+#define NL_NETHER_AMBIENT_TINT 0.38
+#define NL_NETHER_LAVA_GLOW 0.28
+#define NL_NETHER_LAVA_HEIGHT 56.0
+#define NL_NETHER_LAVA_FADE 28.0
+#define NL_NETHER_LAVA_COL vec3(1.0,0.34,0.10)
 #define NL_END_AMBIENT    vec3(1.98,1.25,2.3)
 
 /* Sun/moon light color */
@@ -57,7 +62,8 @@
 /* Torch colors */
 #define NL_OVERWORLD_TORCH_COL  vec3(1.0,0.52,0.18)
 #define NL_UNDERWATER_TORCH_COL vec3(1.0,0.52,0.18)
-#define NL_NETHER_TORCH_COL     vec3(1.0,0.52,0.18)
+#define NL_NETHER_TORCH_COL     vec3(1.0,0.45,0.14)
+#define NL_NETHER_TORCH_LOW_COL vec3(0.55,0.12,0.03)
 #define NL_END_TORCH_COL        vec3(1.0,0.52,0.18)
 
 /* HSPE world light (ported from HSPE shader) */
@@ -99,7 +105,7 @@
 #define NL_HSPE_FOG_CLEAR 0.22    // HSPE clear-weather strength
 #define NL_HSPE_FOG_SUNSET 0.35   // HSPE sunset/sunrise strength
 #define NL_HSPE_FOG_RAIN 0.9      // HSPE rain strength
-#define NL_HSPE_FOG_NETHER 1.5    // HSPE nether strength
+#define NL_HSPE_FOG_NETHER 2.4    // HSPE nether strength
 #define NL_HSPE_FOG_CURVE 4.0     // HSPE exponential curve
 #define NL_HSPE_FOG_UNDERWATER 12.0 // HSPE underwater curve
 #define NL_CRAFT_FOG_BROWN vec3(0.46,0.31,0.19) // CraftEdge warm brown fog accent

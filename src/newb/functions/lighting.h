@@ -18,6 +18,18 @@ vec3 sunLightTint(float dayFactor, float rain) {
   return tint;
 }
 
+vec3 nlNetherAmbient(nl_environment env, vec3 wPos, float t) {
+  vec3 fog = max(env.fogCol, vec3_splat(0.0));
+  float fogMax = max(fog.r, max(fog.g, fog.b));
+  vec3 tint = fogMax > 0.0001 ? fog/fogMax : vec3_splat(1.0);
+  tint = clamp(tint, vec3_splat(0.0), vec3_splat(2.0));
+  vec3 amb = NL_NETHER_AMBIENT*mix(vec3_splat(1.0), tint, NL_NETHER_AMBIENT_TINT);
+  float low = 1.0 - smoothstep(NL_NETHER_LAVA_HEIGHT, NL_NETHER_LAVA_HEIGHT + NL_NETHER_LAVA_FADE, wPos.y);
+  float pulse = 0.94 + 0.06*sin(t*1.35 + 0.025*wPos.x + 0.02*wPos.z);
+  amb += low*pulse*NL_NETHER_LAVA_GLOW*NL_NETHER_LAVA_COL;
+  return amb;
+}
+
 vec3 nlLighting(
   sampler2D tex, nl_skycolor skycol, nl_environment env, vec3 wPos, out vec3 torchColor, vec3 COLOR,
   vec2 uv1, vec2 lit, bool isTree, float shade, highp float t, float renderdistance, float TIME_OF_DAY, vec3 CAMERA_POS
@@ -29,7 +41,7 @@ vec3 nlLighting(
   } else if (env.end) {
     torchColor = NL_END_TORCH_COL;
   } else if (env.nether) {
-    torchColor = NL_NETHER_TORCH_COL;
+    torchColor = mix(NL_NETHER_TORCH_LOW_COL, NL_NETHER_TORCH_COL, smoothstep(0.05, 0.85, uv1.x));
   } else {
     torchColor = NL_OVERWORLD_TORCH_COL;
   }
@@ -58,14 +70,15 @@ vec3 nlLighting(
   float lum = 0.0;
 
   if (env.nether || env.end) {
-    // nether & end lighting
-
-    light = env.end ? NL_END_AMBIENT : NL_NETHER_AMBIENT;
-    light *= gameBrightness;
-
-    lum = luminance(light);
-    light += skycol.horizon/(1.0+lum);
-
+    if (env.end) {
+      light = NL_END_AMBIENT;
+      light *= gameBrightness;
+      lum = luminance(light);
+      light += skycol.horizon/(1.0+lum);
+    } else {
+      light = nlNetherAmbient(env, wPos, t);
+      light *= gameBrightness;
+    }
   } else {
     // overworld lighting
     float nightFactor = step(env.dayFactor, 0.0);
@@ -163,12 +176,15 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
     tl = max(tl-0.6, 0.0);
     tl *= 21.0*tl;
 
-    // nether & end lighting
-    light = env.end ? NL_END_AMBIENT : NL_NETHER_AMBIENT;
-    light *= min(tileLightCol.b, 0.25);
-
-    lum = luminance(light);
-    light += skycol.horizon/(1.0+lum);
+    if (env.end) {
+      light = NL_END_AMBIENT;
+      light *= min(tileLightCol.b, 0.25);
+      lum = luminance(light);
+      light += skycol.horizon/(1.0+lum);
+    } else {
+      light = nlNetherAmbient(env, wPos, t);
+      light *= min(tileLightCol.b, 0.25);
+    }
   } else {
     tl = max(tl-0.08, 0.0);
     tl *= 4.0*tl;
@@ -201,7 +217,7 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   } else if (env.end) {
     torchColor = NL_END_TORCH_COL;
   } else if (env.nether) {
-    torchColor = NL_NETHER_TORCH_COL;
+    torchColor = mix(NL_NETHER_TORCH_LOW_COL, NL_NETHER_TORCH_COL, smoothstep(0.05, 0.75, tileLightCol.r));
   } else {
     torchColor = NL_OVERWORLD_TORCH_COL;
   }
