@@ -34,7 +34,33 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
 }
 
 #ifdef MEDIUM
-float nlCloudTxtHash(vec2 p) {
+float nlOptCloudHash(vec2 p) {
+  vec3 h = fract(vec3(p.xyx)*0.1031);
+  h += dot(h, h.yzx + 333.33);
+  return fract(h.x*h.y + h.z);
+}
+
+float nlOptCloudMask(vec3 dir, float t) {
+  float density = 0.0;
+  for (int layer = 0; layer < NL_MEDIUM_CLOUD_LAYERS; layer++) {
+    vec2 p = dir.xz/max(dir.y, NL_MEDIUM_CLOUD_MIN_Y);
+    p *= NL_MEDIUM_CLOUD_SCALE*(1.0 + float(layer)*0.012);
+    p += vec2(t*NL_MEDIUM_CLOUD_SPEED);
+    float cells = 0.0;
+    for (int dx = -2; dx <= 0; dx++) {
+      for (int dy = -2; dy <= 0; dy++) {
+        cells += step(NL_MEDIUM_CLOUD_THRESHOLD, nlOptCloudHash(floor(p + vec2(float(dx), float(dy)))));
+      }
+    }
+    density += cells/9.0;
+  }
+  density /= float(NL_MEDIUM_CLOUD_LAYERS);
+  return smoothstep(0.06, 0.42, density);
+}
+#endif
+
+#ifdef BLOCKY_CLOUDS
+float nlBlockyCloudHash(vec2 p) {
   p = mod(floor(p), 256.0);
   float r = fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);
   float rR = fract(sin(dot(mod(p + vec2(1.0, 0.0), 256.0), vec2(12.9898, 78.233))) * 43758.5453123);
@@ -42,34 +68,34 @@ float nlCloudTxtHash(vec2 p) {
   return step(0.64, (r*2.0 + rR + rU)/4.0);
 }
 
-vec2 nlCloudTxtSmoothBlend(vec2 x) {
+vec2 nlBlockyCloudSmoothBlend(vec2 x) {
   vec2 v = x*x*(3.0 - 2.0*x);
   return smoothstep(0.1, 0.95, v);
 }
 
-float nlCloudTxtGridSDF(vec2 uv) {
+float nlBlockyCloudGridSDF(vec2 uv) {
   vec2 f = fract(uv);
   vec2 i = floor(uv);
-  float bl = nlCloudTxtHash(i);
-  float br = nlCloudTxtHash(i + vec2(1.0, 0.0));
-  float tl = nlCloudTxtHash(i + vec2(0.0, 1.0));
-  float tr = nlCloudTxtHash(i + vec2(1.0, 1.0));
-  vec2 fade = nlCloudTxtSmoothBlend(f);
+  float bl = nlBlockyCloudHash(i);
+  float br = nlBlockyCloudHash(i + vec2(1.0, 0.0));
+  float tl = nlBlockyCloudHash(i + vec2(0.0, 1.0));
+  float tr = nlBlockyCloudHash(i + vec2(1.0, 1.0));
+  vec2 fade = nlBlockyCloudSmoothBlend(f);
   return mix(mix(bl, br, fade.x), mix(tl, tr, fade.x), fade.y);
 }
 
-float nlCloudTxtMask(vec2 uv, float timeVal) {
+float nlBlockyCloudMask(vec2 uv, float timeVal) {
   float a = 0.0;
   float isTime = -timeVal*0.02;
   vec2 shadeDirection = vec2(0.045, 0.035);
-  for (int i = 0; i < NL_MEDIUM_CLOUD_LAYERS; i++) {
+  for (int i = 0; i < NL_BLOCKY_CLOUD_LAYERS; i++) {
     uv /= 1.012;
-    a = max(a, nlCloudTxtGridSDF(uv + isTime));
+    a = max(a, nlBlockyCloudGridSDF(uv + isTime));
   }
-  float shadeShape = nlCloudTxtGridSDF(uv + isTime - shadeDirection);
+  float shadeShape = nlBlockyCloudGridSDF(uv + isTime - shadeDirection);
   float b = smoothstep(0.18, 0.23, shadeShape);
   a = smoothstep(0.1, 0.16, a);
-  a -= b*a*NL_MEDIUM_CLOUD_SHADOW;
+  a -= b*a*NL_BLOCKY_CLOUD_SHADOW;
   return clamp(a, 0.0, 1.0);
 }
 #endif

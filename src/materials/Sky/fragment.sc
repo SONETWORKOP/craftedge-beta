@@ -298,19 +298,28 @@ void main() {
       // Low (NO_REFLECTIONS): dome clean - box-mesh ESTN clouds cover karte
       // hain (double-draw nahi). Baaki sab rounded dome.
       #ifndef NO_REFLECTIONS
-      // MEDIUM: original newb rounded clouds (stock NL_CLOUD2_* settings) -
-      // raymarched, sky-rang me range hue
-      #ifdef MEDIUM
+      #ifdef BLOCKY_CLOUDS
       if (!env.underwater && viewDir.y > 0.001) {
         float t = v_underwaterRainTimeDay.z;
-        vec2 cloudPlane = viewDir.xz/max(viewDir.y, NL_MEDIUM_CLOUD_MIN_Y);
-        cloudPlane *= NL_MEDIUM_CLOUD_SCALE;
-        float cloudMask = nlCloudTxtMask(cloudPlane, t*NL_MEDIUM_CLOUD_SPEED);
+        vec2 cloudPlane = viewDir.xz/max(viewDir.y, NL_BLOCKY_CLOUD_MIN_Y);
+        cloudPlane *= NL_BLOCKY_CLOUD_SCALE;
+        float cloudMask = nlBlockyCloudMask(cloudPlane, t*NL_BLOCKY_CLOUD_SPEED);
+        float cloudShade = smoothstep(0.0, 0.85, cloudMask);
+        vec3 cloudCol = mix(NL_BLOCKY_CLOUD_SHADOW_COL, NL_BLOCKY_CLOUD_DAY_COL, cloudShade);
+        cloudCol = nlSkyCloudTint(cloudCol, skycol.horizon, env.dayFactor, env.rainFactor);
+        float horizonFade = smoothstep(0.02, 0.22, viewDir.y);
+        float cloudOpacity = clamp(cloudMask*NL_BLOCKY_CLOUD_OPACITY*horizonFade, 0.0, 0.95);
+        skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudOpacity);
+      }
+      #elif defined(MEDIUM)
+      if (!env.underwater && viewDir.y > 0.001) {
+        float t = v_underwaterRainTimeDay.z;
+        float cloudMask = nlOptCloudMask(viewDir, t);
         float cloudShade = smoothstep(0.0, 0.85, cloudMask);
         vec3 cloudCol = mix(NL_MEDIUM_CLOUD_SHADOW_COL, NL_MEDIUM_CLOUD_DAY_COL, cloudShade);
         cloudCol = nlSkyCloudTint(cloudCol, skycol.horizon, env.dayFactor, env.rainFactor);
         float horizonFade = smoothstep(0.02, 0.22, viewDir.y);
-        float cloudOpacity = clamp(cloudMask*NL_MEDIUM_CLOUD_OPACITY*horizonFade, 0.0, 0.92);
+        float cloudOpacity = clamp(cloudMask*NL_MEDIUM_CLOUD_OPACITY*horizonFade, 0.0, 0.9);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudOpacity);
       }
       // default (High): texture rounded dome
@@ -326,7 +335,7 @@ void main() {
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);
       }
-      #endif // MEDIUM
+      #endif // BLOCKY_CLOUDS / MEDIUM
       #endif // NO_REFLECTIONS
     #endif // NL_SKY_CLOUDS
     #endif // REALISTIC_CLOUDS

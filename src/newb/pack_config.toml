@@ -26,7 +26,7 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: Low, Medium, Rounded, Realistic (default).
+# subpacks: Low, Medium, Blocky, Rounded, Realistic (default).
 
 [[subpack]]
 define = "NO_REFLECTIONS"
@@ -42,8 +42,17 @@ define = "MEDIUM"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Medium
-Classic pixel clouds. Cloud & aurora reflections on water are turned off
+Optimized layered clouds. Cloud & aurora reflections on water are turned off
 for better performance. Sun/Moon mirror and ground reflections stay on.
+'''
+
+[[subpack]]
+define = "BLOCKY_CLOUDS"
+materials = ["RenderChunk", "Clouds", "Sky"]
+description = '''
+Blocky Clouds
+High & heavy blocky pixel clouds. Cloud & aurora reflections on water are
+turned off for better performance.
 '''
 
 [[subpack]]

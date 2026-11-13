@@ -509,14 +509,26 @@
 #ifdef MEDIUM
   // cloud + aurora mirror on water band (heaviest two reflection layers)
   #define NL_NO_WATER_CLOUD_AURORA_REFL
-  #define NL_MEDIUM_CLOUD_SCALE 1.8
+  #define NL_MEDIUM_CLOUD_SCALE 6.0
   #define NL_MEDIUM_CLOUD_MIN_Y 0.05
-  #define NL_MEDIUM_CLOUD_SPEED 3.5
-  #define NL_MEDIUM_CLOUD_LAYERS 7
-  #define NL_MEDIUM_CLOUD_OPACITY 0.9
-  #define NL_MEDIUM_CLOUD_SHADOW 0.32
-  #define NL_MEDIUM_CLOUD_DAY_COL vec3(1.0,1.0,1.0)
-  #define NL_MEDIUM_CLOUD_SHADOW_COL vec3(0.68,0.76,0.90)
+  #define NL_MEDIUM_CLOUD_SPEED 0.3
+  #define NL_MEDIUM_CLOUD_LAYERS 5
+  #define NL_MEDIUM_CLOUD_OPACITY 0.75
+  #define NL_MEDIUM_CLOUD_THRESHOLD 0.78
+  #define NL_MEDIUM_CLOUD_DAY_COL vec3(1.15,1.15,1.15)
+  #define NL_MEDIUM_CLOUD_SHADOW_COL vec3(0.8,0.7,0.6)
+#endif
+
+#ifdef BLOCKY_CLOUDS
+  #define NL_NO_WATER_CLOUD_AURORA_REFL
+  #define NL_BLOCKY_CLOUD_SCALE 1.8
+  #define NL_BLOCKY_CLOUD_MIN_Y 0.05
+  #define NL_BLOCKY_CLOUD_SPEED 3.5
+  #define NL_BLOCKY_CLOUD_LAYERS 7
+  #define NL_BLOCKY_CLOUD_OPACITY 0.95
+  #define NL_BLOCKY_CLOUD_SHADOW 0.32
+  #define NL_BLOCKY_CLOUD_DAY_COL vec3(1.0,1.0,1.0)
+  #define NL_BLOCKY_CLOUD_SHADOW_COL vec3(0.68,0.76,0.90)
 #endif
 
 #if defined(VIBRANT_CLOUD) || defined(NO_REFLECTIONS)
