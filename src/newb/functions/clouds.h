@@ -33,6 +33,47 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
   #endif
 }
 
+#ifdef MEDIUM
+float nlCloudTxtHash(vec2 p) {
+  p = mod(floor(p), 256.0);
+  float r = fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);
+  float rR = fract(sin(dot(mod(p + vec2(1.0, 0.0), 256.0), vec2(12.9898, 78.233))) * 43758.5453123);
+  float rU = fract(sin(dot(mod(p + vec2(0.0, 1.0), 256.0), vec2(12.9898, 78.233))) * 43758.5453123);
+  return step(0.64, (r*2.0 + rR + rU)/4.0);
+}
+
+vec2 nlCloudTxtSmoothBlend(vec2 x) {
+  vec2 v = x*x*(3.0 - 2.0*x);
+  return smoothstep(0.1, 0.95, v);
+}
+
+float nlCloudTxtGridSDF(vec2 uv) {
+  vec2 f = fract(uv);
+  vec2 i = floor(uv);
+  float bl = nlCloudTxtHash(i);
+  float br = nlCloudTxtHash(i + vec2(1.0, 0.0));
+  float tl = nlCloudTxtHash(i + vec2(0.0, 1.0));
+  float tr = nlCloudTxtHash(i + vec2(1.0, 1.0));
+  vec2 fade = nlCloudTxtSmoothBlend(f);
+  return mix(mix(bl, br, fade.x), mix(tl, tr, fade.x), fade.y);
+}
+
+float nlCloudTxtMask(vec2 uv, float timeVal) {
+  float a = 0.0;
+  float isTime = -timeVal*0.02;
+  vec2 shadeDirection = vec2(0.045, 0.035);
+  for (int i = 0; i < NL_MEDIUM_CLOUD_LAYERS; i++) {
+    uv /= 1.012;
+    a = max(a, nlCloudTxtGridSDF(uv + isTime));
+  }
+  float shadeShape = nlCloudTxtGridSDF(uv + isTime - shadeDirection);
+  float b = smoothstep(0.18, 0.23, shadeShape);
+  a = smoothstep(0.1, 0.16, a);
+  a -= b*a*NL_MEDIUM_CLOUD_SHADOW;
+  return clamp(a, 0.0, 1.0);
+}
+#endif
+
 // simple clouds 2D noise
 vec3 nlBsbeCloudColor(nl_skycolor skycol, nl_environment env) {
   return nlSkyCloudTint(vec3_splat(1.0), skycol.horizon, env.dayFactor, env.rainFactor);

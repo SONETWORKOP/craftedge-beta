@@ -509,6 +509,14 @@
 #ifdef MEDIUM
   // cloud + aurora mirror on water band (heaviest two reflection layers)
   #define NL_NO_WATER_CLOUD_AURORA_REFL
+  #define NL_MEDIUM_CLOUD_SCALE 1.8
+  #define NL_MEDIUM_CLOUD_MIN_Y 0.05
+  #define NL_MEDIUM_CLOUD_SPEED 3.5
+  #define NL_MEDIUM_CLOUD_LAYERS 7
+  #define NL_MEDIUM_CLOUD_OPACITY 0.9
+  #define NL_MEDIUM_CLOUD_SHADOW 0.32
+  #define NL_MEDIUM_CLOUD_DAY_COL vec3(1.0,1.0,1.0)
+  #define NL_MEDIUM_CLOUD_SHADOW_COL vec3(0.68,0.76,0.90)
 #endif
 
 #if defined(VIBRANT_CLOUD) || defined(NO_REFLECTIONS)

@@ -42,7 +42,7 @@ define = "MEDIUM"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Medium
-Rounded clouds. Cloud & aurora reflections on water are turned off
+Classic pixel clouds. Cloud & aurora reflections on water are turned off
 for better performance. Sun/Moon mirror and ground reflections stay on.
 '''
 
