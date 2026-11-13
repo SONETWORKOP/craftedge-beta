@@ -45,7 +45,7 @@ float nlOptCloudMask(vec3 dir, float t) {
   for (int layer = 0; layer < NL_MEDIUM_CLOUD_LAYERS; layer++) {
     vec2 p = dir.xz/max(dir.y, NL_MEDIUM_CLOUD_MIN_Y);
     p *= NL_MEDIUM_CLOUD_SCALE*(1.0 + float(layer)*0.012);
-    p += vec2(t*NL_MEDIUM_CLOUD_SPEED);
+    p += vec2_splat(t*NL_MEDIUM_CLOUD_SPEED);
     float cells = 0.0;
     for (int dx = -2; dx <= 0; dx++) {
       for (int dy = -2; dy <= 0; dy++) {
