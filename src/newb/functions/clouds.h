@@ -33,7 +33,7 @@ vec3 nlSkyCloudTint(vec3 cloudCol, vec3 skyDye, float dayFactor, float rainFacto
   #endif
 }
 
-#ifdef MEDIUM
+#if defined(MEDIUM) && !defined(NL_PIXEL_CLOUDS)
 float nlOptCloudHash(vec2 p) {
   vec3 h = fract(vec3(p.xyx)*0.1031);
   h += dot(h, h.yzx + 333.33);

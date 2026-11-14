@@ -259,6 +259,8 @@ void main() {
         skyColor.rgb = mix(skyColor.rgb, rc.rgb, clamp(rc.a*rcOp, 0.0, 1.0));
       }
     #else
+    // Low/Medium pixel mesh clouds Clouds material me draw hote hain.
+    #ifndef NL_PIXEL_CLOUDS
     // procedural vibrant clouds (cheap, no texture)
     #ifdef NL_SKY_CLOUDS
       if (!env.underwater && viewDir.y > 0.001) {
@@ -338,6 +340,7 @@ void main() {
       #endif // BLOCKY_CLOUDS / MEDIUM
       #endif // NO_REFLECTIONS
     #endif // NL_SKY_CLOUDS
+    #endif // NL_PIXEL_CLOUDS
     #endif // REALISTIC_CLOUDS
     #endif // BICUBIC_CLOUDS
     #endif // EDITOR_CLOUDS

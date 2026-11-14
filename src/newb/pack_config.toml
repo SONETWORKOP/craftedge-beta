@@ -33,8 +33,8 @@ define = "NO_REFLECTIONS"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Low
-Vibrant painted clouds. Ground, block & water reflections are turned off.
-The lightest option.
+Pixel noise clouds (lighter detail). Ground, block & water reflections are
+turned off. The lightest option.
 '''
 
 [[subpack]]
@@ -42,8 +42,9 @@ define = "MEDIUM"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
 Medium
-Optimized layered clouds. Cloud & aurora reflections on water are turned off
-for better performance. Sun/Moon mirror and ground reflections stay on.
+Pixel noise clouds with full detail. Cloud & aurora reflections on water are
+turned off for better performance. Sun/Moon mirror and ground reflections stay
+on.
 '''
 
 [[subpack]]

@@ -243,8 +243,11 @@
 #define NL_UNDERWATER_STREAKS 1.1            // [toggle] 0.8 subtle - 2.0 bright streaks from top
 #define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0) // fog tint color when underwater
 
-/* Cloud type - mesh clouds off, sky-dome dome clouds draw karte hain (beta) */
-#define NL_CLOUD_TYPE 0 // 0:vanilla, 1:soft, 2:rounded, 3:realistic, 4:HSPE (needs NL_HSPE_SKY)
+/* Cloud type - Low/Medium mesh pixel clouds; baaki subpacks sky-dome clouds (beta) */
+#define NL_CLOUD_TYPE 0 // 0:vanilla, 1:soft, 2:rounded/pixel (NL_PIXEL_CLOUDS), 3:realistic, 4:HSPE (needs NL_HSPE_SKY)
+
+/* Pixel mesh clouds - Low/Medium subpacks (Download/clouds port) */
+#define NL_PIXEL_CLOUD_NIGHT_COL vec3(0.14, 0.19, 0.26) // blue-grey night clouds
 
 /* Vanilla cloud settings - make sure to remove clouds.png when using this */
 #define NL_CLOUD0_THICKNESS 2.1      // 0.5 slim ~ 8.0 fat
@@ -507,16 +510,14 @@
 #endif
 
 #ifdef MEDIUM
+  // pixel mesh clouds (Download/clouds port), full 10-layer detail
+  #define NL_PIXEL_CLOUDS
+  #define NL_PIXEL_CLOUD_LAYERS 10
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 2
+  #undef NL_CLOUD_SHADOW
   // cloud + aurora mirror on water band (heaviest two reflection layers)
   #define NL_NO_WATER_CLOUD_AURORA_REFL
-  #define NL_MEDIUM_CLOUD_SCALE 6.0
-  #define NL_MEDIUM_CLOUD_MIN_Y 0.05
-  #define NL_MEDIUM_CLOUD_SPEED 0.3
-  #define NL_MEDIUM_CLOUD_LAYERS 5
-  #define NL_MEDIUM_CLOUD_OPACITY 0.75
-  #define NL_MEDIUM_CLOUD_THRESHOLD 0.78
-  #define NL_MEDIUM_CLOUD_DAY_COL vec3(1.15,1.15,1.15)
-  #define NL_MEDIUM_CLOUD_SHADOW_COL vec3(0.8,0.7,0.6)
 #endif
 
 #ifdef BLOCKY_CLOUDS
@@ -531,13 +532,20 @@
   #define NL_BLOCKY_CLOUD_SHADOW_COL vec3(0.68,0.76,0.90)
 #endif
 
-#if defined(VIBRANT_CLOUD) || defined(NO_REFLECTIONS)
+#ifdef VIBRANT_CLOUD
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 0
   #define NL_SKY_CLOUDS
 #endif
 
 #ifdef NO_REFLECTIONS
+  // pixel mesh clouds (Download/clouds port), lighter 6-layer detail
+  #define NL_PIXEL_CLOUDS
+  #define NL_PIXEL_CLOUD_LAYERS 6
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 2
+  #undef NL_CLOUD_SHADOW
+
   #undef NL_GROUND_REFL
   #undef NL_RAIN_REFL_STRENGTH
   #define NL_NO_GROUND_REFL
