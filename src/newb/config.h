@@ -163,10 +163,10 @@
 #define NL_HSPE_DAY_EDGE      vec3(0.8,0.9,1.0)
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
-// night (real-life blue-grey, HSPE gradient ke saath)
-#define NL_HSPE_NIGHT_EDGE    vec3(0.20,0.26,0.34)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.16,0.22,0.30)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.10,0.16,0.24)
+// night (beta cyan - HSPE gradient ke saath)
+#define NL_HSPE_NIGHT_EDGE    vec3(0.10,0.62,0.72)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -360,7 +360,7 @@
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   1.0 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   0.08 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
