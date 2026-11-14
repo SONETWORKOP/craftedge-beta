@@ -77,12 +77,18 @@ void main() {
       vec2 cloudPlane = worldPos.xz * 0.005;
       vec3 cloudNoise = nlPixelCloudShape(cloudPlane, timeVal);
 
-      float cloudAlpha = clamp(cloudNoise.r, 0.0, 1.0);
+      // soft edges: hard pixel threshold ko thoda wide smooth karo
+      float cloudAlpha = smoothstep(0.0, 0.55, cloudNoise.r);
       float internalShadow = smoothstep(0.0, 1.0, cloudNoise.r);
 
       vec3 dayColor = vec3(2.0, 2.0, 2.0);
       vec3 peachColor = vec3(1.5, 0.75, 0.65);
-      vec3 nightColor = NL_PIXEL_CLOUD_NIGHT_COL;
+
+      // Night clouds sky se hi rang lete hain (zenith + horizonEdge).
+      vec3 nightSky = mix(v_color1.rgb, v_color2.rgb, 0.50);
+      vec3 nightColor = nightSky * 2.0 + vec3_splat(0.008);
+      float nightLum = dot(nightColor, vec3(0.299, 0.587, 0.114));
+      nightColor = mix(nightColor, vec3_splat(nightLum), 0.22);
 
       float nightFactor = 1.0 - smoothstep(-0.08, 0.12, v_dayFactor);
       float peachFactor = 1.0 - smoothstep(0.0, 0.22, abs(v_dayFactor));
@@ -91,7 +97,7 @@ void main() {
       vec3 cloudCol = mix(dayColor, nightColor, nightFactor);
       cloudCol = mix(cloudCol, peachColor, peachFactor);
 
-      float shadowStrength = mix(0.78, 0.84, nightFactor);
+      float shadowStrength = mix(0.82, 0.90, nightFactor);
       cloudCol *= mix(shadowStrength, 1.0, internalShadow);
 
       // barish me thoda grey, taaki pixel clouds sky se alag na lage

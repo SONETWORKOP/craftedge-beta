@@ -163,10 +163,10 @@
 #define NL_HSPE_DAY_EDGE      vec3(0.8,0.9,1.0)
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
-// night (beta cyan - HSPE gradient ke saath)
-#define NL_HSPE_NIGHT_EDGE    vec3(0.10,0.62,0.72)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
+// night (real-life blue-grey, HSPE gradient ke saath)
+#define NL_HSPE_NIGHT_EDGE    vec3(0.20,0.26,0.34)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.16,0.22,0.30)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.10,0.16,0.24)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -245,9 +245,6 @@
 
 /* Cloud type - Low/Medium mesh pixel clouds; baaki subpacks sky-dome clouds (beta) */
 #define NL_CLOUD_TYPE 0 // 0:vanilla, 1:soft, 2:rounded/pixel (NL_PIXEL_CLOUDS), 3:realistic, 4:HSPE (needs NL_HSPE_SKY)
-
-/* Pixel mesh clouds - Low/Medium subpacks (Download/clouds port) */
-#define NL_PIXEL_CLOUD_NIGHT_COL vec3(0.14, 0.19, 0.26) // blue-grey night clouds
 
 /* Vanilla cloud settings - make sure to remove clouds.png when using this */
 #define NL_CLOUD0_THICKNESS 2.1      // 0.5 slim ~ 8.0 fat
