@@ -178,6 +178,10 @@ void main() {
       }
     }
 
+    #ifdef NL_EXTRA_STARS
+      skyColor += NL_EXTRA_STARS*nlRenderExtraStars(viewDir, env, v_underwaterRainTimeDay.z);
+    #endif
+
     #ifdef NL_YSS_COMET
     if (!env.underwater) {
       vec3 yssFp = viewDir*3.0/max(viewDir.y, 0.001);

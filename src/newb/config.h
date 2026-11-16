@@ -163,10 +163,10 @@
 #define NL_HSPE_DAY_EDGE      vec3(0.8,0.9,1.0)
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
-// night
-#define NL_HSPE_NIGHT_EDGE    vec3(0.13,0.22,0.40)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.08,0.15,0.29)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.10,0.20)
+// night (beta cyan - HSPE gradient ke saath)
+#define NL_HSPE_NIGHT_EDGE    vec3(0.10,0.62,0.72)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -339,12 +339,13 @@
 #define NL_SHOOTING_STAR_DELAY 0.0  // 0.0 no delay ~ 100.0 long time (100 secs)
 
 /* Galaxy */
-#define NL_GALAXY_STARS 1.15            // [toggle] 0.1 dim - 4.0 bright
-#define NL_GALAXY_VIBRANCE 0.20         // 0.0 white - 1.0 colorful
+#define NL_GALAXY_STARS 1.35            // [toggle] 0.1 dim - 4.0 bright
+#define NL_GALAXY_VIBRANCE 0.35         // 0.0 white - 1.0 colorful
 #define NL_GALAXY_SPEED 0.03            // 0.01 slow motion - 0.2 fast motion
 #define NL_GALAXY_DAY_VISIBILITY 0.0    // 0.0 invisible - 1.0 visible
-#define NL_GALAXY_TINT vec3(0.50,0.70,1.0)
+#define NL_GALAXY_TINT vec3(0.50,0.78,1.0)
 #define NL_STAR_BRIGHTNESS 1.30
+#define NL_EXTRA_STARS 1.0
 
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
