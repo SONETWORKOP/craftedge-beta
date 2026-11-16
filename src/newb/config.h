@@ -321,7 +321,7 @@
 
 /* Aurora settings (beta - texture curtain + water mirror) */
 #define NL_AURORA 1.3           // [toggle] 0.4 dim ~ 4.0 very bright
-#define NL_AURORA_TEX 1.15
+#define NL_AURORA_TEX 0.80
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
 #define NL_AURORA_TEX_COL1 vec3(0.45,5.5,10.0)
 #define NL_AURORA_TEX_COL2 vec3(0.12,2.6,7.5)
@@ -340,10 +340,10 @@
 
 /* Galaxy */
 #define NL_GALAXY_STARS 1.15            // [toggle] 0.1 dim - 4.0 bright
-#define NL_GALAXY_VIBRANCE 0.25         // 0.0 white - 1.0 colorful
+#define NL_GALAXY_VIBRANCE 0.20         // 0.0 white - 1.0 colorful
 #define NL_GALAXY_SPEED 0.03            // 0.01 slow motion - 0.2 fast motion
 #define NL_GALAXY_DAY_VISIBILITY 0.0    // 0.0 invisible - 1.0 visible
-#define NL_GALAXY_TINT vec3(0.70,0.86,1.0)
+#define NL_GALAXY_TINT vec3(0.50,0.70,1.0)
 #define NL_STAR_BRIGHTNESS 1.30
 
 /* Chunk loading slide in animation */
