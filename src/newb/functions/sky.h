@@ -357,9 +357,9 @@ vec3 nlRenderGalaxy(vec3 vdir, vec3 fogColor, nl_environment env, float t) {
   vec3 gfcol = normalize(vec3(n0, cos(2.0*vdir.y), sin(vdir.x+n0)));
   stars += (0.4*gf + 0.012)*mix(vec3(0.5, 0.5, 0.5), gfcol*gfcol, NL_GALAXY_VIBRANCE);
 
-  stars *= mix(1.0, NL_GALAXY_DAY_VISIBILITY, env.dayFactor);
+  stars *= mix(1.0, NL_GALAXY_DAY_VISIBILITY, clamp(env.dayFactor, 0.0, 1.0));
 
-  return stars*(1.0-env.rainFactor);
+  return stars*(1.0-env.rainFactor)*NL_GALAXY_TINT;
 }
 
 

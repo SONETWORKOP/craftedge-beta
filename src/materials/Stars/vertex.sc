@@ -2,6 +2,7 @@ $input a_color0, a_position
 $output v_color0
 
 #include <bgfx_shader.sh>
+#include <newb/config.h>
 
 uniform vec4 StarsColor;
 
@@ -12,7 +13,7 @@ void main() {
 
   vec4 color = a_color0;
   color.rgb *= 0.6 + 0.4*sin(2.0*pos);
-  color.rgb *= StarsColor.rgb;
+  color.rgb *= StarsColor.rgb*NL_STAR_BRIGHTNESS;
 
   v_color0 = color;
   gl_Position = mul(u_viewProj, vec4(worldPos, 1.0));

@@ -163,10 +163,10 @@
 #define NL_HSPE_DAY_EDGE      vec3(0.8,0.9,1.0)
 #define NL_HSPE_DAY_HORIZON   vec3(0.2,0.65,0.95)
 #define NL_HSPE_DAY_ZENITH    vec3(0.2,0.45,0.75)
-// night (beta cyan - HSPE gradient ke saath)
-#define NL_HSPE_NIGHT_EDGE    vec3(0.10,0.62,0.72)
-#define NL_HSPE_NIGHT_HORIZON vec3(0.07,0.50,0.64)
-#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.38,0.54)
+// night
+#define NL_HSPE_NIGHT_EDGE    vec3(0.13,0.22,0.40)
+#define NL_HSPE_NIGHT_HORIZON vec3(0.08,0.15,0.29)
+#define NL_HSPE_NIGHT_ZENITH  vec3(0.04,0.10,0.20)
 // dusk / dawn
 #define NL_HSPE_DUSK_EDGE     vec3(1.1,0.95,0.7)
 #define NL_HSPE_DUSK_HORIZON  vec3(1.0,1.0,1.0)
@@ -321,10 +321,10 @@
 
 /* Aurora settings (beta - texture curtain + water mirror) */
 #define NL_AURORA 1.3           // [toggle] 0.4 dim ~ 4.0 very bright
-#define NL_AURORA_TEX 1.0          // original
+#define NL_AURORA_TEX 1.15
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
-#define NL_AURORA_TEX_COL1 vec3(0.6,7.5,9.5)  // original cyan
-#define NL_AURORA_TEX_COL2 vec3(0.2,4.2,8.0)  // original teal-blue
+#define NL_AURORA_TEX_COL1 vec3(0.45,5.5,10.0)
+#define NL_AURORA_TEX_COL2 vec3(0.12,2.6,7.5)
 #define NL_AURORA_VELOCITY 0.03 // 0.0 static ~ 0.3 very fast
 #define NL_AURORA_SCALE 0.04    // 0.002 large ~ 0.4 tiny
 #define NL_AURORA_WIDTH 0.18    // 0.04 thin line ~ 0.4 thick lines
@@ -339,10 +339,12 @@
 #define NL_SHOOTING_STAR_DELAY 0.0  // 0.0 no delay ~ 100.0 long time (100 secs)
 
 /* Galaxy */
-//#define NL_GALAXY_STARS 2.0           // [toggle] 0.1 dim - 4.0 bright
-#define NL_GALAXY_VIBRANCE 0.7          // 0.0 white - 1.0 colorful
+#define NL_GALAXY_STARS 1.15            // [toggle] 0.1 dim - 4.0 bright
+#define NL_GALAXY_VIBRANCE 0.25         // 0.0 white - 1.0 colorful
 #define NL_GALAXY_SPEED 0.03            // 0.01 slow motion - 0.2 fast motion
 #define NL_GALAXY_DAY_VISIBILITY 0.0    // 0.0 invisible - 1.0 visible
+#define NL_GALAXY_TINT vec3(0.70,0.86,1.0)
+#define NL_STAR_BRIGHTNESS 1.30
 
 /* Chunk loading slide in animation */
 //#define NL_CHUNK_LOAD_ANIM 100.0 // [toggle] -600.0 fall from top ~ 600.0 rise from bottom
