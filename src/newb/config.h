@@ -321,7 +321,7 @@
 
 /* Aurora settings (beta - texture curtain + water mirror) */
 #define NL_AURORA 1.3           // [toggle] 0.4 dim ~ 4.0 very bright
-#define NL_AURORA_TEX 0.80
+#define NL_AURORA_TEX 1.15
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
 #define NL_AURORA_TEX_COL1 vec3(0.45,5.5,10.0)
 #define NL_AURORA_TEX_COL2 vec3(0.12,2.6,7.5)

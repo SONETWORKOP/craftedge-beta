@@ -337,12 +337,16 @@ vec3 nlRenderGalaxy(vec3 vdir, vec3 fogColor, nl_environment env, float t) {
   float n0 = 0.5 + 0.5*sin(5.0*vdir.x)*sin(5.0*vdir.y - 0.5*t)*sin(5.0*vdir.z + 0.5*t);
   float n1 = noise3D(15.0*vdir + sin(0.85*t + 1.3));
   float n2 = noise3D(50.0*vdir + 1.0*n1 + sin(0.7*t + 1.0));
+  float n3 = noise3D(140.0*vdir + sin(0.9*t));
 
-  float band = 1.0 - smoothstep(0.02, 0.20, abs(vdir.x + 0.06*vdir.y + 0.02*sin(3.0*vdir.z + 0.2*t)));
-  band *= 0.55 + 0.45*n1;
-  band *= 0.75 + 0.25*n2;
-  vec3 gfcol = normalize(vec3(n0, cos(2.0*vdir.y), sin(vdir.x+n0)));
-  vec3 stars = (0.55*band + 0.004)*mix(vec3(0.5, 0.5, 0.5), gfcol*gfcol, NL_GALAXY_VIBRANCE);
+  float bandCoord = abs(vdir.x + 0.06*vdir.y + 0.03*sin(3.0*vdir.z + 0.2*t));
+  float core = 1.0 - smoothstep(0.02, 0.34, bandCoord);
+  float halo = 1.0 - smoothstep(0.0, 0.70, bandCoord);
+  core *= 0.50 + 0.50*n1;
+  halo *= 0.65 + 0.35*n2;
+  float speckle = smoothstep(0.72, 0.92, n3);
+  speckle *= speckle*(0.75 + 0.25*n0);
+  vec3 stars = (0.55*core + 0.08*halo + 1.35*speckle*core)*mix(NL_GALAXY_TINT, vec3(0.85, 0.92, 1.0), NL_GALAXY_VIBRANCE);
 
   stars *= mix(1.0, NL_GALAXY_DAY_VISIBILITY, clamp(env.dayFactor, 0.0, 1.0));
 
