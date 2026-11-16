@@ -320,18 +320,6 @@ vec3 nlRenderShootingStar(vec3 viewDir, vec3 FOG_COLOR, float t) {
   return s*vec3(0.8, 0.9, 1.0);
 }
 
-float nlGalaxyFbm(vec2 p) {
-  float v = 0.0;
-  v += noise2D(p)*0.50;
-  p = p*2.0 + vec2(17.1, 9.2);
-  v += noise2D(p)*0.25;
-  p = p*2.0 + vec2(8.3, 14.7);
-  v += noise2D(p)*0.125;
-  p = p*2.0 + vec2(4.1, 7.6);
-  v += noise2D(p)*0.0625;
-  return v;
-}
-
 float nlStarLayer(vec2 p, float scale, float threshold, float speed, float seed, float t) {
   vec2 g = p*scale;
   vec2 id = floor(g);
@@ -365,6 +353,7 @@ vec3 nlRenderExtraStars(vec3 vdir, nl_environment env, float t) {
   return col*night*(1.0-env.rainFactor);
 }
 
+// Galaxy stars - needs further optimization
 vec3 nlRenderGalaxy(vec3 vdir, vec3 fogColor, nl_environment env, float t) {
   if (env.underwater) {
     return vec3_splat(0.0);
@@ -372,34 +361,38 @@ vec3 nlRenderGalaxy(vec3 vdir, vec3 fogColor, nl_environment env, float t) {
 
   t *= NL_GALAXY_SPEED;
 
-  float ca = cos(0.82);
-  float sa = sin(0.82);
-  vec2 g = mul(mat2(ca, -sa, sa, ca), vec2(vdir.x, vdir.y));
-  g.x += t*0.15;
+  // rotate space
+  float cosb = sin(0.2*t);
+  float sinb = cos(0.2*t);
+  vdir.xy = mul(mat2(cosb, sinb, -sinb, cosb), vdir.xy);
 
-  float x = abs(g.x);
-  float core = exp(-x*x*18.0);
-  float glow = exp(-x*x*4.0);
+  // noise
+  float n0 = 0.5 + 0.5*sin(5.0*vdir.x)*sin(5.0*vdir.y - 0.5*t)*sin(5.0*vdir.z + 0.5*t);
+  float n1 = noise3D(15.0*vdir + sin(0.85*t + 1.3));
+  float n2 = noise3D(50.0*vdir + 1.0*n1 + sin(0.7*t + 1.0));
+  float n3 = noise3D(200.0*vdir - 10.0*sin(0.4*t + 0.500));
 
-  vec2 uv = vec2(g.x*2.2, g.y*1.3);
-  float warp = nlGalaxyFbm(uv*0.7 + vec2(t*0.1, 0.0));
-  vec2 wuv = uv + vec2(warp-0.5)*0.16;
-  float neb = nlGalaxyFbm(wuv*1.8);
-  float dust = nlGalaxyFbm(wuv*2.0 + vec2(3.7, 5.1));
-  float rift = smoothstep(0.35, 0.78, dust);
-  float density = clamp(neb*core*(1.0-rift*0.38), 0.0, 1.0);
+  // stars
+  n3 = smoothstep(0.04,0.3,n3+0.02*n2);
+  float gd = vdir.x + 0.1*vdir.y + 0.1*sin(10.0*vdir.z + 0.2*t);
+  float st = n1*n2*n3*n3*(1.0+70.0*gd*gd);
+  st = (1.0-st)/(1.0+400.0*st);
+  vec3 stars = (0.8 + 0.2*sin(vec3(8.0,6.0,10.0)*(2.0*n1+0.8*n2) + vec3(0.0,0.4,0.82)))*st;
 
-  vec3 deep = vec3(0.06, 0.14, 0.42);
-  vec3 mid = vec3(0.14, 0.36, 0.82);
-  vec3 light = vec3(0.45, 0.72, 1.05);
-  vec3 col = mix(deep, mid, smoothstep(0.10, 0.50, density));
-  col = mix(col, light, smoothstep(0.45, 0.85, density));
-  col = col*density*1.5 + glow*vec3(0.04, 0.08, 0.18);
-  col = mix(vec3_splat(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.75 + 0.25*NL_GALAXY_VIBRANCE);
-  col *= mix(vec3_splat(1.0), NL_GALAXY_TINT, 0.35);
-  col *= mix(1.0, NL_GALAXY_DAY_VISIBILITY, clamp(env.dayFactor, 0.0, 1.0));
+  // glow
+  float gfmask = abs(vdir.x)-0.15*n1+0.04*n2+0.25*n0;
+  float gf = 1.0 - (vdir.x*vdir.x + 0.03*n1 + 0.2*n0);
+  gf *= gf;
+  gf *= gf*gf;
+  gf *= 1.0-0.3*smoothstep(0.2, 0.3, gfmask);
+  gf *= 1.0-0.2*smoothstep(0.3, 0.4, gfmask);
+  gf *= 1.0-0.1*smoothstep(0.2, 0.1, gfmask);
+  vec3 gfcol = normalize(vec3(n0, cos(2.0*vdir.y), sin(vdir.x+n0)));
+  stars += (0.4*gf + 0.012)*mix(vec3(0.5, 0.5, 0.5), gfcol*gfcol, NL_GALAXY_VIBRANCE);
 
-  return col*(1.0-env.rainFactor);
+  stars *= mix(1.0, NL_GALAXY_DAY_VISIBILITY, env.dayFactor);
+
+  return stars*(1.0-env.rainFactor);
 }
 
 
