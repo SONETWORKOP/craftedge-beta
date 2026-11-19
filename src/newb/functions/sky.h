@@ -234,29 +234,54 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   return sky;
 }
 
+vec3 nlEndBeam(float frequency, float thickness, vec2 pos, float t, vec3 tint, float strength) {
+  float oscillation = sin(pos.x*frequency + t*0.5);
+  float pattern = 0.5 + oscillation*0.5;
+
+  vec2 scaledPos = pos*vec2(thickness, 2.0);
+  float attenuation = exp(-dot(scaledPos, scaledPos));
+
+  float edgeFade = 1.0 - abs(pos.y);
+  float mask = smoothstep(0.0, 1.0, edgeFade);
+
+  float intensity = pow(pattern*attenuation, 1.5)*mask;
+  return tint*(intensity*strength);
+}
+
 vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
-  t *= 0.1;
-  float a = atan2(viewDir.x, viewDir.z);
+  t *= 0.35;
 
-  float n1 = 0.5 + 0.5*sin(3.0*a + t + 10.0*viewDir.x*viewDir.y);
-  float n2 = 0.5 + 0.5*sin(5.0*a + 0.5*t + 5.0*n1 + 0.1*sin(40.0*a -4.0*t));
+  viewDir.y = smoothstep(-1.0, 1.6, abs(viewDir.y));
 
-  float waves = 0.7*n2*n1 + 0.3*n1;
+  float verticalBlend = smoothstep(-0.3, 0.9, viewDir.y);
+  vec3 result = mix(horizonCol, zenithCol, verticalBlend);
 
-  float grad = 0.5 + 0.5*viewDir.y;
-  float streaks = waves*(1.0 - grad*grad*grad);
-  streaks += (1.0-streaks)*smoothstep(1.0-waves, -1.0, viewDir.y);
+  float angle = atan2(viewDir.x, viewDir.z);
 
-  float f = 0.3*streaks + 0.7*smoothstep(1.0, -0.5, viewDir.y);
-  float h = streaks*streaks;
-  float g = h*h;
-  g *= g;
+  float pulse = sin(angle*60.0 + t);
+  float modulation = pulse*pulse;
+  modulation *= 0.52*sin(angle*30.0);
 
-  vec3 sky = mix(zenithCol, horizonCol, f*f);
-  sky += (0.1*streaks + 2.0*g*g*g + h*h*h)*vec3(2.0,0.5,0.0);
-  sky += 0.25*streaks*spectrum(sin(2.0*viewDir.x*viewDir.y+t));
+  float elevation = asin(clamp(viewDir.y, -1.0, 1.0));
+  vec2 coordinates = vec2(
+    angle*(1.6/2.14159265),
+    elevation*(1.6/1.57079633)
+  );
 
-  return sky;
+  float horizonMask = exp(-pow(abs(coordinates.y)*2.0, 2.2));
+  vec3 horizonLight = vec3(0.6, 0.325, 0.5)*(1.8*horizonMask);
+  vec3 lightRays = vec3(0.0);
+
+  lightRays += nlEndBeam(-24.0, 0.4, coordinates, t, vec3(1.1, 0.4, 0.4), 0.55);
+  lightRays += nlEndBeam(-46.0, 0.2, coordinates, t, vec3(1.0, 0.4, 0.5), 0.6);
+  lightRays += nlEndBeam(-66.0, 0.1, coordinates, t, vec3(1.0, 0.4, 1.0), 0.5);
+  lightRays += nlEndBeam(-35.0, 0.3, coordinates, t, vec3(1.0, 0.5, 1.0), 0.6);
+  lightRays += nlEndBeam(-80.0, 0.0, coordinates, t, vec3(1.0, 0.4, 0.25), 0.4);
+
+  result += horizonLight;
+  result += lightRays*(2.8*(1.0 + modulation));
+
+  return result;
 }
 
 vec3 nlRenderSky(nl_skycolor skycol, nl_environment env, vec3 viewDir, float t, bool isSkyPlane) {
