@@ -145,8 +145,8 @@
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.30,0.48,0.70)
 
-#define NL_END_ZENITH_COL    vec3(0.035,0.002,0.075)
-#define NL_END_HORIZON_COL   vec3(0.22,0.008,0.42)
+#define NL_END_ZENITH_COL    vec3(0.20,0.003,0.26)
+#define NL_END_HORIZON_COL   vec3(0.78,0.025,0.85)
 
 /* End black hole */
 #define NL_END_BLACK_HOLE
@@ -374,8 +374,8 @@
 #define NL_RAIN_REFL_STRENGTH 1.0      // 0 = off, higher = stronger wet ground mirror
 
 /* End reflection boost - End me pink mirror (beta) */
-#define NL_END_REFL_TINT vec3(1.55,0.15,1.25) // pink/magenta reflection tint
-#define NL_END_REFL_BOOST 4.00         // 1.0 = no change, zyada = brighter pink mirror
+#define NL_END_REFL_TINT vec3(1.25,0.20,0.95) // pink/magenta reflection tint
+#define NL_END_REFL_BOOST 1.45         // 1.0 = no change, zyada = brighter pink mirror
 
 /* Rain drop ripples on block surfaces (top faces, only while raining) */
 #define NL_RAIN_RIPPLE 1.0          // [toggle] 0.3 subtle ~ 1.5 strong ripples

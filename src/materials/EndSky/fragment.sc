@@ -9,6 +9,7 @@ $input v_texcoord0, v_posTime
   #ifdef NL_END_BLACK_HOLE
     #include <newb/functions/blackhole.h>
   #endif
+  #include <newb/functions/end_sky_beams.h>
 
   SAMPLER2D_AUTOREG(s_SkyTexture);
 #endif
@@ -18,7 +19,7 @@ void main() {
     vec4 diffuse = texture2D(s_SkyTexture, v_texcoord0);
 
     vec3 viewDir = normalize(v_posTime.xyz);
-    vec3 color = renderEndSky(getEndHorizonCol(), getEndZenithCol(), viewDir, v_posTime.w);
+    vec3 color = renderEndSkyBeams(getEndHorizonCol(), getEndZenithCol(), viewDir, v_posTime.w);
     color += 2.8*diffuse.rgb; // stars
 
     #ifdef NL_END_BLACK_HOLE
