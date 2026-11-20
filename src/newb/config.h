@@ -75,7 +75,8 @@
 #define NL_HSPE_LIGHT_DUSK   vec3(1.3,1.1,0.6)
 #define NL_HSPE_LIGHT_DRAIN  vec3(0.8,0.8,0.8)
 #define NL_HSPE_LIGHT_NRAIN  vec3(0.4,0.4,0.4)
-#define NL_DAWN_DIM 0.18
+#define NL_DAWN_DIM 0.32
+#define NL_DAWN_SKY_DIM 0.28
 
 // shadow color
 #define NL_HSPE_SHADOW_DAY   vec3(0.5,0.65,0.82)
@@ -147,9 +148,9 @@
 /* Night sky band - simple dusty band only, no galaxy texture/stars */
 #define NL_NIGHT_BAND
 #define NL_NIGHT_BAND_WIDTH 2.2    // 1.0 thin line ~ 3.0 wide band
-#define NL_NIGHT_BAND_POWER 0.8    // 0.3 subtle ~ 1.2 strong
-#define NL_NIGHT_BAND_COL vec3(0.44,0.18,0.30)      // display-space deep plum
-#define NL_NIGHT_BAND_GLOW_COL vec3(0.22,0.08,0.20) // display-space soft glow
+#define NL_NIGHT_BAND_POWER 0.55   // 0.3 subtle ~ 1.2 strong
+#define NL_NIGHT_BAND_COL vec3(0.40,0.20,0.52)      // display-space deep violet
+#define NL_NIGHT_BAND_GLOW_COL vec3(0.16,0.07,0.30) // display-space indigo glow
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.30,0.48,0.70)
 

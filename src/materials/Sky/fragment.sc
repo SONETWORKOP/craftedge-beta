@@ -370,6 +370,12 @@ void main() {
 
     skyColor = colorCorrection(skyColor);
 
+    if (!env.underwater) {
+      float duskDim = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+      duskDim *= 1.0 - 0.5*env.rainFactor;
+      skyColor *= 1.0 - NL_DAWN_SKY_DIM*duskDim;
+    }
+
     gl_FragColor = vec4(skyColor, 1.0);
   #else
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
