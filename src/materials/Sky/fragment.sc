@@ -20,6 +20,7 @@
   #define NL_AURORA_REFLECTION
   #include <newb/main.sh>
   #include <newb/functions/yss_stars.h>
+  #include <newb/functions/night_band.h>
   #ifdef ULTRA_CLOUDS
     #include <newb/functions/yss_clouds.h>
   #endif
@@ -162,6 +163,17 @@ void main() {
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
+    #endif
+
+    #ifdef NL_NIGHT_BAND
+    if (!env.underwater) {
+      float bandNight = 1.0 - smoothstep(-0.05, 0.18, env.dayFactor);
+      float bandVis = smoothstep(0.0, 0.18, viewDir.y);
+      float bandFade = bandNight*bandVis*(1.0-env.rainFactor);
+      if (bandFade > 0.001) {
+        skyColor += NL_NIGHT_BAND_POWER*bandFade*nlRenderNightBand(viewDir, v_underwaterRainTimeDay.z);
+      }
+    }
     #endif
 
     // aurora borealis (night only, hidden by rain and underwater)

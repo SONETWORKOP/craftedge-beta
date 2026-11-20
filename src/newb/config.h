@@ -142,6 +142,13 @@
 #define NL_NIGHT_CLOUD_COL   vec3(0.55,0.75,0.88)    // halka cyan night clouds
 #define NL_NIGHT_CLOUD_BLEND 0.65  // raat me kitna cyan mix ho
 #define NL_NIGHT_SKY_BRIGHTNESS 1.0
+
+/* Night sky band - simple dusty band only, no galaxy texture/stars */
+#define NL_NIGHT_BAND
+#define NL_NIGHT_BAND_WIDTH 2.2    // 1.0 thin line ~ 3.0 wide band
+#define NL_NIGHT_BAND_POWER 0.8    // 0.3 subtle ~ 1.2 strong
+#define NL_NIGHT_BAND_COL vec3(0.56,0.28,0.38)      // display-space dusty pink/mauve
+#define NL_NIGHT_BAND_GLOW_COL vec3(0.30,0.14,0.26) // display-space soft glow
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.30,0.48,0.70)
 
