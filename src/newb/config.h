@@ -75,6 +75,7 @@
 #define NL_HSPE_LIGHT_DUSK   vec3(1.3,1.1,0.6)
 #define NL_HSPE_LIGHT_DRAIN  vec3(0.8,0.8,0.8)
 #define NL_HSPE_LIGHT_NRAIN  vec3(0.4,0.4,0.4)
+#define NL_DAWN_DIM 0.18
 
 // shadow color
 #define NL_HSPE_SHADOW_DAY   vec3(0.5,0.65,0.82)
@@ -147,8 +148,8 @@
 #define NL_NIGHT_BAND
 #define NL_NIGHT_BAND_WIDTH 2.2    // 1.0 thin line ~ 3.0 wide band
 #define NL_NIGHT_BAND_POWER 0.8    // 0.3 subtle ~ 1.2 strong
-#define NL_NIGHT_BAND_COL vec3(0.56,0.28,0.38)      // display-space dusty pink/mauve
-#define NL_NIGHT_BAND_GLOW_COL vec3(0.30,0.14,0.26) // display-space soft glow
+#define NL_NIGHT_BAND_COL vec3(0.44,0.18,0.30)      // display-space deep plum
+#define NL_NIGHT_BAND_GLOW_COL vec3(0.22,0.08,0.20) // display-space soft glow
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.30,0.48,0.70)
 
@@ -368,8 +369,8 @@
 
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
-#define NL_GODRAY_MULTIPLICATOR 2.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   0.08 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_MULTIPLICATOR 1.5 // final tez (1.0 normal)
+#define NL_GODRAY_SENSITIVITY   0.09 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
