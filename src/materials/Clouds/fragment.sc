@@ -107,6 +107,8 @@ void main() {
 
       float tightFade = smoothstep(0.0, 0.4, fadeFactor);
       cloudCol = colorCorrection(cloudCol);
+      float duskDim = 1.0 - smoothstep(0.0, 0.4, abs(v_dayFactor));
+      cloudCol *= 1.0 - NL_DAWN_SKY_DIM*duskDim;
       gl_FragColor = vec4(cloudCol, cloudAlpha * tightFade);
     #endif
   #endif

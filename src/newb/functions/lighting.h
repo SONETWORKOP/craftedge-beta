@@ -127,8 +127,6 @@ vec3 nlLighting(
       lum = luminance(light);
       light += (skycol.horizon + skycol.zenith)*(uv1.y/(1.0+lum));
     }
-
-    light *= 1.0 - NL_DAWN_DIM*dawnFactor;
   }
 
   // torch light

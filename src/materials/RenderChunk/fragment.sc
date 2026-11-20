@@ -9,6 +9,7 @@ SAMPLER2D_AUTOREG(s_NoiseTexture);
 #define NL_ROUNDED_CLOUDS
 #define NL_AURORA_REFLECTION
 #include <newb/main.sh>
+#include <newb/functions/sun_glow.h>
 
 uniform vec4 ViewPositionAndTime;
 uniform vec4 FogColor;
@@ -269,7 +270,22 @@ void main() {
     diffuse.rgb = nlUnderwaterScatter(diffuse.rgb, normalize(v_reflSun.xyz), uwWaterFlag);
   }
 
+  #ifdef NL_TERRAIN_SUN_GLOW
+    nl_environment genv = nlDetectEnvironment(TimeOfDay.x, FogColor.rgb, FogAndDistanceControl.xyz);
+    if (!genv.end && !genv.nether && !genv.underwater) {
+      float glowSunset = 1.0 - smoothstep(0.0, 0.30, abs(genv.dayFactor));
+      vec3 glowCol = mix(NL_TERRAIN_GLOW_DAY, NL_TERRAIN_GLOW_DUSK, glowSunset);
+      diffuse.rgb = nlApplyTerrainSunGlow(
+        diffuse.rgb, normalize(-v_reflPbr.xyz), normalize(v_reflSun.xyz), glowCol,
+        glowSunset, v_reflPbr.w, NL_TERRAIN_SUN_GLOW
+      );
+    }
+  #endif
+
   diffuse.rgb = colorCorrection(diffuse.rgb);
+
+  float duskDim = 1.0 - smoothstep(0.0, 0.4, abs(cos(6.2831853*TimeOfDay.x)));
+  diffuse.rgb *= 1.0 - NL_DAWN_DIM*duskDim;
 
   gl_FragColor = diffuse;
 }

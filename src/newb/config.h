@@ -368,6 +368,11 @@
 #define NL_SUN_TILT        0.0       // 0.0 elimina la inclinacion del eje del sol
 #define NL_MOON_TILT       90.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
+/* Terrain sun glow (sun.txt) */
+#define NL_TERRAIN_SUN_GLOW 0.6
+#define NL_TERRAIN_GLOW_DAY vec3(1.0,0.92,0.72)
+#define NL_TERRAIN_GLOW_DUSK vec3(1.0,0.55,0.28)
+
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 1.5 // final tez (1.0 normal)
