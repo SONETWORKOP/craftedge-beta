@@ -69,3 +69,11 @@ materials = ["RenderChunk", "Sky"]
 description = '''
 Realistic Clouds (Default)
 '''
+
+[[subpack]]
+define = "NARESH_CLOUDS"
+materials = ["Sky"]
+description = '''
+Heavy Clouds (Naresh Ultra)
+Naresh Ultra ke 5-octave soft heavy clouds + high cirrus.
+'''

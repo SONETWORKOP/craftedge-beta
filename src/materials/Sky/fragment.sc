@@ -167,8 +167,14 @@ void main() {
       float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
       if (nrsDusk > 0.001) {
         vec3 nrsSky = nlNrsSkyBase(viewDir, env.sunDir, env.rainFactor);
-        nrsSky += nlNrsSunGlow(viewDir, env.sunDir);
         skyColor = mix(skyColor, nrsSky, nrsDusk);
+      }
+    #endif
+
+    #ifdef NL_NARESH_SUN_MOON
+      if (!env.underwater) {
+        skyColor += nlNrsSunLayer(viewDir, env.sunDir, env.rainFactor);
+        skyColor += nlNrsMoonLayer(viewDir, env.sunDir, 1.0, env.rainFactor);
       }
     #endif
 
@@ -217,7 +223,11 @@ void main() {
     }
     #endif
 
-    #ifdef ULTRA_CLOUDS
+    #if defined(NL_NARESH_CLOUDS)
+      if (!env.underwater && viewDir.y > 0.001) {
+        skyColor = nlNrsCloudLayers(skyColor, viewDir, env, v_underwaterRainTimeDay.z, 1.0);
+      }
+    #elif defined(ULTRA_CLOUDS)
       if (!env.underwater && viewDir.y > 0.001) {
         vec4 yssClouds = yssRenderClouds(viewDir, v_underwaterRainTimeDay.z, env.dayFactor, env.rainFactor);
         skyColor.rgb = mix(skyColor.rgb, yssClouds.rgb, clamp(yssClouds.a, 0.0, 1.0));

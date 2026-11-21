@@ -18,6 +18,41 @@ float nlNrsSkyCurve(float uvy) {
   return pow(saturate(uvy*(16.0/15.0)), 2.3);
 }
 
+float nlNrsLuma(vec3 c) {
+  return dot(c, vec3(0.2126, 0.7152, 0.0722));
+}
+
+float nlNrsHash(vec2 p) {
+  vec3 p3 = fract(vec3(p.x, p.y, p.x)*vec3(0.1139, 0.1071, 0.0953));
+  p3 += dot(p3, p3.yzx + 31.7);
+  return fract((p3.x + p3.y)*p3.z);
+}
+
+float nlNrsNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f*f*(3.0 - 2.0*f);
+  float a = nlNrsHash(i);
+  float b = nlNrsHash(i + vec2(1.0, 0.0));
+  float c = nlNrsHash(i + vec2(0.0, 1.0));
+  float d = nlNrsHash(i + vec2_splat(1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float nlNrsFbm(vec2 p, float octaves) {
+  float s = 0.0;
+  float a = 0.5;
+  float w = 0.0;
+  for (float i = 0.0; i < 5.0; i++) {
+    if (i >= octaves) break;
+    s += a*nlNrsNoise(p);
+    w += a;
+    p = vec2(0.8*p.x - 0.6*p.y, 0.6*p.x + 0.8*p.y)*2.02 + vec2(7.3, 3.1);
+    a *= 0.5;
+  }
+  return s*(0.9375/max(w, 0.0001));
+}
+
 vec3 nlNrsSkyBase(vec3 d, vec3 S, float rain) {
   float day = nlNrsDayAmt(S.y);
   float dusk = nlNrsDuskAmt(S.y);
@@ -49,6 +84,48 @@ vec3 nlNrsSunGlow(vec3 d, vec3 S) {
   float up = smoothstep(-0.10, 0.04, S.y);
   float g = pow(sd, 6.0)*0.20 + pow(sd, 48.0)*0.7;
   return vec3(1.0, 0.82, 0.55)*(g*up);
+}
+
+vec3 nlNrsSunLayer(vec3 d, vec3 S, float rain) {
+  float sd = max(dot(d, S), 0.0);
+  float up = smoothstep(-0.10, 0.04, S.y);
+  float cr = cos(NL_NARESH_SUN_SIZE);
+  float disc = smoothstep(cr - 0.0010, cr + 0.0003, sd);
+  return (nlNrsSunGlow(d, S) + vec3(1.0, 0.93, 0.8)*(disc*NL_NARESH_SUN_POWER*up))*(1.0 - rain);
+}
+
+vec3 nlNrsMoonLayer(vec3 d, vec3 S, float q, float rain) {
+  vec3 M = -S;
+  float up = smoothstep(-0.12, 0.10, M.y)*(1.0 - rain);
+  if (up <= 0.0) return vec3_splat(0.0);
+
+  float dayfade = 1.0 - 0.85*nlNrsDayAmt(S.y);
+  float md = dot(d, M);
+  float ang = 1.0 - md;
+
+  float g = exp(-ang/0.0045)*0.9 + exp(-ang/0.03)*0.35 + exp(-ang/0.18)*0.10;
+  vec3 col = vec3(0.55, 0.68, 1.0)*(g*NL_NARESH_MOON_GLOW);
+
+  float r = NL_NARESH_MOON_SIZE;
+  if (md > cos(r*1.2)) {
+    vec3 T = abs(M.y) > 0.999 ? vec3(1.0, 0.0, 0.0) : normalize(cross(vec3(0.0, 1.0, 0.0), M));
+    vec3 B = cross(M, T);
+    float u = dot(d, T)/r;
+    float v = dot(d, B)/r;
+    float rr = sqrt(u*u + v*v);
+    float inside = 1.0 - smoothstep(0.95, 1.0, rr);
+
+    float mar = nlNrsFbm(vec2(u, v)*2.2 + vec2(3.0, 1.0), q > 0.75 ? 3.0 : 2.0);
+    float dark = smoothstep(0.42, 0.62, mar)*0.38;
+    float cr = nlNrsFbm(vec2(u, v)*7.0, 2.0);
+    dark += smoothstep(0.55, 0.70, cr)*0.10;
+
+    float nz = sqrt(max(1.0 - rr*rr, 0.0));
+    float shade = (0.78 + 0.22*nz)*(1.0 - dark);
+    col += vec3(0.95, 0.97, 1.05)*(NL_NARESH_MOON_POWER*shade*inside);
+  }
+
+  return col*(up*dayfade);
 }
 
 vec3 nlNrsHorizonColor(vec3 dir, vec3 S, float rain) {

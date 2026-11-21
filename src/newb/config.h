@@ -429,6 +429,18 @@
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
 #define NL_NARESH_SKY_MIX 1.0         // 0.0 off ~ 1.0 full Naresh dusk look
 
+/* Naresh sun/moon discs (vanilla SunMoon material hide hota hai) */
+#define NL_NARESH_SUN_MOON
+#define NL_NARESH_SUN_SIZE 0.045       // radians
+#define NL_NARESH_SUN_POWER 14.0
+#define NL_NARESH_MOON_SIZE 0.075      // big Naresh moon
+#define NL_NARESH_MOON_GLOW 1.0
+#define NL_NARESH_MOON_POWER 2.4
+
+/* Low-sun terrain warmth, no darkening */
+#define NL_NARESH_LOW_SUN
+#define NL_NARESH_LOW_SUN_MIX 0.35
+
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
@@ -565,6 +577,19 @@
 #ifdef EDITOR_CLOUDS
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 2
+#endif
+
+/* Naresh Ultra clouds - heavy soft cloud layer + cirrus */
+#ifdef NARESH_CLOUDS
+  #define NL_NARESH_CLOUDS
+  #define NL_NARESH_CLOUD_OCTAVES 5.0
+  #define NL_NARESH_CLOUD_COVER 0.53
+  #define NL_NARESH_CLOUD_SCALE 0.95
+  #define NL_NARESH_CLOUD_SPEED vec2(0.02, 0.05)
+  #define NL_NARESH_CLOUD_SUN_POWER 3.4
+  #define NL_NARESH_CLOUD_MOON_POWER 0.34
+  #define NL_NARESH_CIRRUS 1
+  #define NL_NO_WATER_CLOUD_AURORA_REFL
 #endif
 
 #endif

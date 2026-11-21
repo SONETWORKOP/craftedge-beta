@@ -129,6 +129,13 @@ vec3 nlLighting(
     }
   }
 
+  #ifdef NL_NARESH_LOW_SUN
+    if (!env.nether && !env.end && !env.underwater) {
+      float nrsLow = nlNrsDuskStrength(env)*NL_NARESH_LOW_SUN_MIX;
+      light *= mix(vec3_splat(1.0), vec3(1.08, 0.84, 0.70), nrsLow);
+    }
+  #endif
+
   // torch light
   lum = luminance(light);
   if (hspeOn) {
