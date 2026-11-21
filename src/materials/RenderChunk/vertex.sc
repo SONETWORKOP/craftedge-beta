@@ -165,12 +165,6 @@ void main() {
       vec4 yssFog = nlYssFog(env, relativeDist);
       fogColor.rgb = mix(fogColor.rgb, yssFog.rgb, yssSunset*NL_YSS_SUNSET_MIX);
     }
-
-    if (!env.end && !env.nether && !env.underwater) {
-      float duskDim = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-      duskDim *= 1.0 - 0.5*env.rainFactor;
-      fogColor.rgb *= 1.0 - NL_DAWN_SKY_DIM*duskDim;
-    }
   }
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
