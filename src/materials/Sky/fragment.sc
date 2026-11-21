@@ -161,6 +161,17 @@ void main() {
     nl_skycolor skycol = nlOverworldSkyColors(env);
 
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
+
+    #ifdef NL_NARESH_SKY
+      // Naresh dusk sky: same base + sun glow that drives the horizon fog.
+      float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
+      if (nrsDusk > 0.001) {
+        vec3 nrsSky = nlNrsSkyBase(viewDir, env.sunDir, env.rainFactor);
+        nrsSky += nlNrsSunGlow(viewDir, env.sunDir);
+        skyColor = mix(skyColor, nrsSky, nrsDusk);
+      }
+    #endif
+
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif

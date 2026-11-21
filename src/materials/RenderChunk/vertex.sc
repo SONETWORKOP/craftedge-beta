@@ -166,6 +166,19 @@ void main() {
       fogColor.rgb = mix(fogColor.rgb, yssFog.rgb, yssSunset*NL_YSS_SUNSET_MIX);
     }
   }
+
+  #ifdef NL_NARESH_SKY
+    // Naresh dusk fog: same horizon colour as the sky, scaled by sky light.
+    if (!env.underwater && !env.end && !env.nether) {
+      float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
+      if (nrsDusk > 0.001) {
+        vec3 nrsFog = nlNrsHorizonColor(-viewDir, env.sunDir, env.rainFactor);
+        nrsFog *= 0.04 + 0.96*nlNrsSkyCurve(uv1.y);
+        fogColor.rgb = mix(fogColor.rgb, nrsFog, nrsDusk);
+      }
+    }
+  #endif
+
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);
     fogColor.rgb = mix(fogColor.rgb, nlGodRayTint(FogColor.rgb), godRayAmount);

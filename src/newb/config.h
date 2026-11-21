@@ -425,6 +425,10 @@
 #define NL_SKY_SUNRISE_HORIZON vec3(3.3,0.95,1.05)
 #define NL_SKY_SUNRISE_EDGE    vec3(3.8,1.45,1.35)
 
+/* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
+#define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
+#define NL_NARESH_SKY_MIX 1.0         // 0.0 off ~ 1.0 full Naresh dusk look
+
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1

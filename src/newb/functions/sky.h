@@ -4,6 +4,7 @@
 #include "detection.h"
 #include "noise.h"
 #include "yss_port.h"
+#include "naresh_sky.h"
 
 struct nl_skycolor {
   vec3 zenith;
