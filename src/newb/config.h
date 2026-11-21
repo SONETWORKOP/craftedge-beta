@@ -28,13 +28,23 @@
 */
 
 /* Color correction */
-#define NL_TONEMAP_TYPE 5              // 1:Exponential, 2:Reinhard, 3:Extended Reinhard, 4:ACES, 5:HSPE ACES, 6:HSPE Filmic
+#define NL_TONEMAP_TYPE 7              // 1:Exponential, 2:Reinhard, 3:Extended Reinhard, 4:ACES, 5:HSPE ACES, 6:HSPE Filmic, 7:Naresh hybrid
 #define NL_GAMMA 2.0                   // 0.3 low ~ 2.0 high (HSPE uses 2.0)
 //#define NL_EXPOSURE 1.3              // [toggle] 0.5 dark ~ 3.0 bright
 #define NL_SATURATION 1.125            // [toggle] 0.0 grayscale ~ 4.0 super saturated (HSPE block saturation)
 //#define NL_TINT                      // [toggle] enable light/dark tone tinting
 #define NL_TINT_LOW  vec3(0.3,0.5,1.4) // color tint for dark tone
 #define NL_TINT_HIGH vec3(1.4,0.7,0.3) // color tint for light tone
+
+/* Naresh hybrid tonemap (type 7) */
+#define NL_NRS_TM_SOFT 0.50
+#define NL_NRS_TM_FILMIC 0.25
+#define NL_NRS_TM_ACES 0.15
+#define NL_NRS_TM_REINHARD 0.10
+#define NL_NRS_TM_CONTRAST 0.22
+#define NL_NRS_TM_SATURATION 1.12
+#define NL_NRS_TM_WARMTH 0.03
+#define NL_NRS_GAMMA 2.2
 
 /* Lighting */
 #define NL_SUNLIGHT_INTENSITY   3.3  // 1.0 weak ~ 5.0 bright
@@ -148,9 +158,9 @@
 /* Night sky band - simple dusty band only, no galaxy texture/stars */
 #define NL_NIGHT_BAND
 #define NL_NIGHT_BAND_WIDTH 2.2    // 1.0 thin line ~ 3.0 wide band
-#define NL_NIGHT_BAND_POWER 0.55   // 0.3 subtle ~ 1.2 strong
-#define NL_NIGHT_BAND_COL vec3(0.40,0.20,0.52)      // display-space deep violet
-#define NL_NIGHT_BAND_GLOW_COL vec3(0.16,0.07,0.30) // display-space indigo glow
+#define NL_NIGHT_BAND_POWER 0.75   // 0.3 subtle ~ 1.2 strong
+#define NL_NIGHT_BAND_COL vec3(0.44,0.18,0.30)      // display-space deep plum
+#define NL_NIGHT_BAND_GLOW_COL vec3(0.22,0.08,0.20) // display-space soft glow
 #define NL_RAIN_ZENITH_COL   vec3(0.47,0.51,0.56)
 #define NL_RAIN_HORIZON_COL  vec3(0.30,0.48,0.70)
 

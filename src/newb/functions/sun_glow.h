@@ -16,12 +16,14 @@ vec3 nlApplyTerrainSunGlow(
   float s16 = s4*s4;
   float s64 = s16*s16*s16*s16;
   float azPos = max(az*0.5 + 0.5, 1e-4);
-  float band = exp(-abs(rd.y)*6.0)*pow(azPos, 1.5)*sunsetFactor*(1.0 - rainFactor);
-  float glowWeight = band*0.40 + s4*0.18 + s16*0.32 + s64*0.45;
-  glowWeight *= strength*smoothstep(-0.10, 0.03, sunDir.y);
+  float band = exp(-abs(rd.y)*6.0)*pow(azPos, 1.5)*sunsetFactor;
+  float weather = 1.0 - 0.85*rainFactor;
+  float sunUp = smoothstep(-0.10, 0.03, sunDir.y);
+  float glowWeight = (band*0.40 + s4*0.18 + s16*0.32 + s64*0.45)*weather*sunUp*strength;
   float horFade = smoothstep(-0.20, 0.05, rd.y);
   float finalGlow = glowWeight*horFade;
-  return color*(1.0 - clamp(glowWeight*0.70, 0.0, 0.50)*horFade) + glowColor*finalGlow;
+  float extinction = clamp(glowWeight*0.45, 0.0, 0.30)*horFade;
+  return color*(1.0 - extinction) + glowColor*finalGlow;
 }
 
 #endif
