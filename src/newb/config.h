@@ -429,8 +429,8 @@
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
 #define NL_NARESH_SKY_MIX 1.0         // 0.0 off ~ 1.0 full Naresh dusk look
 
-/* Naresh sun/moon discs (vanilla SunMoon material hide hota hai) */
-#define NL_NARESH_SUN_MOON
+/* Naresh sun/moon discs (OFF: vanilla/user SunMoon material use hota hai) */
+//#define NL_NARESH_SUN_MOON
 #define NL_NARESH_SUN_SIZE 0.045       // radians
 #define NL_NARESH_SUN_POWER 14.0
 #define NL_NARESH_MOON_SIZE 0.075      // big Naresh moon

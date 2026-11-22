@@ -21,6 +21,7 @@
   #include <newb/main.sh>
   #include <newb/functions/yss_stars.h>
   #include <newb/functions/night_band.h>
+  #include <newb/functions/sun_glow.h>
   #ifdef ULTRA_CLOUDS
     #include <newb/functions/yss_clouds.h>
   #endif
@@ -171,10 +172,11 @@ void main() {
       }
     #endif
 
-    #ifdef NL_NARESH_SUN_MOON
+    #if defined(NL_RC_SUN_GLOW) && !defined(NL_NARESH_SUN_MOON)
       if (!env.underwater) {
-        skyColor += nlNrsSunLayer(viewDir, env.sunDir, env.rainFactor);
-        skyColor += nlNrsMoonLayer(viewDir, env.sunDir, 1.0, env.rainFactor);
+        float rcSunset = clamp(1.0 - abs(env.sunDir.y)*NL_RC_SUN_GLOW_SUNSET_WIDTH, 0.0, 1.0);
+        vec3 rcGlow = mix(NL_RC_SUN_GLOW_DAY, NL_RC_SUN_GLOW_SUNSET, rcSunset);
+        skyColor = nlRcApplySunGlow(viewDir, env.sunDir, skyColor, rcGlow, rcSunset, env.rainFactor);
       }
     #endif
 
