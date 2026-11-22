@@ -79,6 +79,14 @@ vec3 nlNrsSkyBase(vec3 d, vec3 S, float rain) {
   return col;
 }
 
+vec3 nlNrsTerrainAmbient(vec3 pos, vec3 S, float rain) {
+  vec3 d = normalize(vec3(pos.x, 0.03, pos.z));
+  vec3 amb = nlNrsSkyBase(d, S, rain) * vec3(1.104, 1.15, 1.219);
+  amb = mix(amb, vec3_splat(nlNrsLuma(amb))*vec3(0.96, 1.0, 1.06), rain*0.55);
+  amb *= (1.0 + rain)*(1.0 - 0.20*rain);
+  return amb;
+}
+
 vec3 nlNrsSunGlow(vec3 d, vec3 S) {
   float sd = max(dot(d, S), 0.0);
   float up = smoothstep(-0.10, 0.04, S.y);

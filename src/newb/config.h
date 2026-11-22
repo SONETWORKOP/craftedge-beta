@@ -367,9 +367,9 @@
 #define NL_MOON_TILT       90.0 // 0.0 no tilt ~ 90.0 tilt of 90 degrees
 
 /* Godrays - strong volumetric light shafts (beta) */
-#define NL_GODRAY 0.25 // [toggle] 0.1 subtle ~ 0.8 strong
-#define NL_GODRAY_MULTIPLICATOR 1.5 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   0.09 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY 0.12 // [toggle] 0.1 subtle ~ 0.8 strong
+#define NL_GODRAY_MULTIPLICATOR 1.0 // final tez (1.0 normal)
+#define NL_GODRAY_SENSITIVITY   1.0 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 #define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
@@ -440,6 +440,7 @@
 /* Low-sun terrain warmth, no darkening */
 #define NL_NARESH_LOW_SUN
 #define NL_NARESH_LOW_SUN_MIX 0.35
+#define NL_NARESH_AMBIENT_MIX 1.0      // Naresh sky ambient on terrain/entities at dusk
 
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix

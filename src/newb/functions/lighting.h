@@ -124,8 +124,15 @@ vec3 nlLighting(
       light = (NL_SUNLIGHT_INTENSITY*shadow*sunLightAttenuation)*sunLightTint(env.dayFactor, env.rainFactor);
 
       // sky ambient
+      vec3 ambient = skycol.horizon + skycol.zenith;
+      #ifdef NL_NARESH_SKY
+        float nrsAmbMix = nlNrsDuskStrength(env)*NL_NARESH_AMBIENT_MIX;
+        if (nrsAmbMix > 0.001) {
+          ambient = mix(ambient, nlNrsTerrainAmbient(wPos, env.sunDir, env.rainFactor), nrsAmbMix);
+        }
+      #endif
       lum = luminance(light);
-      light += (skycol.horizon + skycol.zenith)*(uv1.y/(1.0+lum));
+      light += ambient*(uv1.y/(1.0+lum));
     }
   }
 
@@ -212,8 +219,15 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
     light *= 0.9 + max(N.y, 0.0);
 
     // sky ambient
+    vec3 ambient = skycol.horizon + skycol.zenith;
+    #ifdef NL_NARESH_SKY
+      float nrsAmbMix = nlNrsDuskStrength(env)*NL_NARESH_AMBIENT_MIX;
+      if (nrsAmbMix > 0.001) {
+        ambient = mix(ambient, nlNrsTerrainAmbient(wPos, env.sunDir, env.rainFactor), nrsAmbMix);
+      }
+    #endif
     lum = luminance(light);
-    light += (skycol.horizon + skycol.zenith)*(l/(1.0+lum));
+    light += ambient*(l/(1.0+lum));
   }
 
   // torch light
