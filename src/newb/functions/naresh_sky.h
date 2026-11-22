@@ -87,6 +87,13 @@ vec3 nlNrsTerrainAmbient(vec3 pos, vec3 S, float rain) {
   return amb;
 }
 
+vec3 nlNrsSunLight(vec3 S, float rain) {
+  float up = smoothstep(-0.04, 0.16, S.y);
+  float warm = smoothstep(0.0, 0.5, S.y);
+  vec3 c = mix(vec3(1.0, 0.38, 0.12), vec3(1.1, 0.98, 0.84), warm);
+  return c*(3.4*up)*(1.0 - 0.92*rain);
+}
+
 vec3 nlNrsSunGlow(vec3 d, vec3 S) {
   float sd = max(dot(d, S), 0.0);
   float up = smoothstep(-0.10, 0.04, S.y);
