@@ -441,13 +441,6 @@
 #define NL_NARESH_LOW_SUN
 #define NL_NARESH_LOW_SUN_MIX 0.35
 
-/* RenderChunk sun glow (sun.txt port) - sunset haze/fog glow */
-#define NL_RC_SUN_GLOW
-#define NL_RC_SUN_GLOW_STRENGTH 1.0
-#define NL_RC_SUN_GLOW_DAY vec3(1.0, 0.95, 0.85)
-#define NL_RC_SUN_GLOW_SUNSET vec3(1.0, 0.55, 0.20)
-#define NL_RC_SUN_GLOW_SUNSET_WIDTH 3.0
-
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1

@@ -21,7 +21,6 @@
   #include <newb/main.sh>
   #include <newb/functions/yss_stars.h>
   #include <newb/functions/night_band.h>
-  #include <newb/functions/sun_glow.h>
   #ifdef ULTRA_CLOUDS
     #include <newb/functions/yss_clouds.h>
   #endif
@@ -164,19 +163,11 @@ void main() {
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
 
     #ifdef NL_NARESH_SKY
-      // Naresh dusk sky: same base + sun glow that drives the horizon fog.
+      // Naresh dusk sky: same base + dusk tint that drives the horizon fog.
       float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
       if (nrsDusk > 0.001) {
         vec3 nrsSky = nlNrsSkyBase(viewDir, env.sunDir, env.rainFactor);
         skyColor = mix(skyColor, nrsSky, nrsDusk);
-      }
-    #endif
-
-    #if defined(NL_RC_SUN_GLOW) && !defined(NL_NARESH_SUN_MOON)
-      if (!env.underwater) {
-        float rcSunset = clamp(1.0 - abs(env.sunDir.y)*NL_RC_SUN_GLOW_SUNSET_WIDTH, 0.0, 1.0);
-        vec3 rcGlow = mix(NL_RC_SUN_GLOW_DAY, NL_RC_SUN_GLOW_SUNSET, rcSunset);
-        skyColor = nlRcApplySunGlow(viewDir, env.sunDir, skyColor, rcGlow, rcSunset, env.rainFactor);
       }
     #endif
 
