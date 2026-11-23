@@ -160,7 +160,7 @@ void main() {
 
     nl_skycolor skycol = nlOverworldSkyColors(env);
 
-    vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true, 1.0);
+    vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
 
     #ifdef NL_NARESH_SKY
       // Naresh dusk sky: same base + dusk tint that drives the horizon fog.

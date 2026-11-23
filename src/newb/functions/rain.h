@@ -132,7 +132,7 @@ vec4 nlRefl(
       // End reflection. Keep it for the overworld and enable End explicitly.
       if (wPos.y < 0.0 || env.end) {
         viewDir.y = -viewDir.y;
-        wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false, 0.0);
+        wetRefl.rgb = nlRenderSky(skycol, env, viewDir, t, false);
 
         #ifdef NL_CLOUD_AURORA_REFLECTION
           vec4 cloudRefl = nlCloudAuroraReflection(skycol, env, viewDir, wPos, CAMERA_POS, t, 1.0);

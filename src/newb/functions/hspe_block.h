@@ -114,7 +114,7 @@ float nlBsbeCloudAlpha(vec3 nPos, highp float t) {
 
 // reflection (r = negated true direction, same as nlRenderSky)
 vec3 nlHspeReflection(nl_skycolor skycol, nl_environment env, vec3 r, vec3 relPos, vec3 CAMERA_POS, highp float t) {
-  vec3 col = nlRenderSky(skycol, env, r, t, false, 1.0);
+  vec3 col = nlRenderSky(skycol, env, r, t, false);
   #ifdef NL_CLOUD_AURORA_REFLECTION
     if (r.y < 0.0) {
       vec4 cr = nlCloudAuroraReflection(skycol, env, r, relPos, CAMERA_POS, t, 1.0);
@@ -126,7 +126,7 @@ vec3 nlHspeReflection(nl_skycolor skycol, nl_environment env, vec3 r, vec3 relPo
 
 // dome reflection
 vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMERA_POS, highp float t) {
-  vec3 col = nlRenderSky(skycol, env, -R, t, false, 1.0);
+  vec3 col = nlRenderSky(skycol, env, -R, t, false);
 
   if (R.y > 0.001) {
     // clouds
