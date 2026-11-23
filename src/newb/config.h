@@ -372,7 +372,7 @@
 #define NL_GODRAY_SENSITIVITY   1.0 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
-//#define NL_NO_GROUND_REFL            // [toggle] disable ground/rain reflections only
+#define NL_NO_GROUND_REFL              // [toggle] disable ground/rain reflections only
 #define NL_GROUND_REFL 0.3              // reflection strength (beta: 0.3)
 #define NL_GROUND_RAIN_WETNESS 1.2     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
@@ -441,13 +441,6 @@
 #define NL_NARESH_LOW_SUN
 #define NL_NARESH_LOW_SUN_MIX 0.35
 #define NL_NARESH_AMBIENT_MIX 1.0      // Naresh sky ambient on terrain/entities at dusk
-
-/* RenderChunk sun glow (moved out of sky.h) - sunset haze/fog + ground reflection glow */
-#define NL_RC_SUN_GLOW
-#define NL_RC_SUN_GLOW_STRENGTH 1.0
-#define NL_RC_SUN_GLOW_DAY vec3(1.0, 0.95, 0.85)
-#define NL_RC_SUN_GLOW_SUNSET vec3(1.0, 0.55, 0.20)
-#define NL_RC_SUN_GLOW_SUNSET_WIDTH 3.0
 
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix

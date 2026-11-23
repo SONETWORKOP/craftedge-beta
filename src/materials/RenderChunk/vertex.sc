@@ -6,7 +6,6 @@ $output v_color0, v_color1, v_fog, v_refl, v_texcoord0, v_lightmapUV, v_extra, v
 
 #include <bgfx_shader.sh>
 #include <newb/main.sh>
-#include <newb/functions/sun_glow.h>
 
 uniform vec4 RenderChunkFogAlpha;
 uniform vec4 FogAndDistanceControl;
@@ -177,14 +176,6 @@ void main() {
         nrsFog *= 0.04 + 0.96*nlNrsSkyCurve(uv1.y);
         fogColor.rgb = mix(fogColor.rgb, nrsFog, nrsDusk);
       }
-    }
-  #endif
-
-  #ifdef NL_RC_SUN_GLOW
-    if (!env.underwater && !env.end && !env.nether) {
-      float rcSunset = clamp(1.0 - abs(env.sunDir.y)*NL_RC_SUN_GLOW_SUNSET_WIDTH, 0.0, 1.0);
-      vec3 rcGlow = mix(NL_RC_SUN_GLOW_DAY, NL_RC_SUN_GLOW_SUNSET, rcSunset);
-      fogColor.rgb = nlRcApplySunGlow(-viewDir, env.sunDir, fogColor.rgb, rcGlow, rcSunset, env.rainFactor);
     }
   #endif
 
