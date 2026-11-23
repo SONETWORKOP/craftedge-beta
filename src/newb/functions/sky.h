@@ -168,7 +168,7 @@ nl_skycolor nlSkyColors(nl_environment env) {
 }
 
 
-vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bool isSkyPlane) {
+vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bool isSkyPlane, float bloom) {
   float avy = abs(viewDir.y);
   float mask = 0.5 + (0.5*viewDir.y/(0.4 + avy));
 
@@ -177,7 +177,10 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   vec2 g2 = g1*g1;
   vec2 g4 = g2*g2;
   vec2 g8 = g4*g4;
-  float mg8 = (g8.x+g8.y)*mask*(1.0-0.9*env.rainFactor);
+  float mg8 = 0.0;
+  if (bloom > 0.0) {
+    mg8 = (g8.x+g8.y)*mask*(1.0-0.9*env.rainFactor)*bloom;
+  }
 
   // hspe gradient
   #ifdef NL_HSPE_SKY
@@ -260,14 +263,14 @@ vec3 renderEndSky(vec3 horizonCol, vec3 zenithCol, vec3 viewDir, float t) {
   return sky;
 }
 
-vec3 nlRenderSky(nl_skycolor skycol, nl_environment env, vec3 viewDir, float t, bool isSkyPlane) {
+vec3 nlRenderSky(nl_skycolor skycol, nl_environment env, vec3 viewDir, float t, bool isSkyPlane, float bloom) {
   vec3 sky;
   viewDir.y = -viewDir.y;
 
   if (env.end) {
     sky = renderEndSky(skycol.horizon, skycol.zenith, viewDir, t);
   } else {
-    sky = renderOverworldSky(skycol, env, viewDir, isSkyPlane);
+    sky = renderOverworldSky(skycol, env, viewDir, isSkyPlane, bloom);
     #ifdef NL_UNDERWATER_STREAKS
       // if (env.underwater) {
       //   float a = atan2(viewDir.x, viewDir.z);
