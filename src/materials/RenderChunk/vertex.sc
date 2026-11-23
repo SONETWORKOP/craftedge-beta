@@ -132,7 +132,7 @@ void main() {
     } else
   #endif
   {
-    fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
+    fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true, 0.0);
     // ATMO sunset palette (ESTN jaisa): dawn/dusk me kohra sunset-rang pakde.
     // Sirf overworld, paani/nether/end me nahi. dawnF: noon+night 0, dusk 1.
     #ifdef NL_ATMO
