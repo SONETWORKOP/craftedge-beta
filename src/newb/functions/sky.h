@@ -185,14 +185,7 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   skyline *= skyline;
   float farF = clamp(1.0 - viewDir.y, 0.0, 1.0);
   vec3 sky = mix(mix(skyCol.zenith, skyCol.horizon, farF), skyCol.horizonEdge, skyline);
-  sky *= 1.0 + NL_HSPE_SUN_GLOW*(2.0*mg8 + 7.0*mg8*mg8)*mask;
-
-  if (!isSkyPlane) {
-    float source = max(0.0, (mg8-0.22)/0.78);
-    source *= source;
-    source *= source;
-    sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
-  }
+  // sun bloom removed from sky.h - now applied in RenderChunk vertex (sun_glow.h)
   #else
   float vh = 1.0 - viewDir.y*viewDir.y;
   float vh2 = vh*vh;
@@ -212,14 +205,8 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   sky = mix(skyCol.zenith, sky, gradient2*df);
 
   sky *= 0.5+0.5*gradient2;
-  sky *= (1.0 + (2.0*mg8 + 7.0*mg8*mg8)*mask)*mix(1.0, mask, NL_SKY_VOID_DARKNESS);
-
-  if (!isSkyPlane) {
-    float source = max(0.0, (mg8-0.22)/0.78);
-    source *= source;
-    source *= source;
-    sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
-  }
+  // sun bloom removed from sky.h - now applied in RenderChunk vertex (sun_glow.h)
+  sky *= mix(1.0, mask, NL_SKY_VOID_DARKNESS);
   #endif
 
   #ifdef NL_RAINBOW
