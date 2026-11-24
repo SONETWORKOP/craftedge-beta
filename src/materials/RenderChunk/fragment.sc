@@ -229,7 +229,7 @@ void main() {
       float mask = v_refl.a*(clamp(v_extra.r*10.0,8.2,8.8)-7.8);
 
       diffuse.rgb *= 1.0 - 0.75*mask;
-      diffuse.rgb += v_refl.rgb*mask*1.15;
+      diffuse.rgb += v_refl.rgb*mask*0.95;
     }
   }
 
