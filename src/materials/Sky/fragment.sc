@@ -189,7 +189,7 @@ void main() {
     // aurora borealis (night only, hidden by rain and underwater)
     if (!env.underwater) {
       float VdotU = clamp(viewDir.y, 0.0, 1.0);
-      float nightFactor = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
+      float nightFactor = nlAuroraNightFactor(env.dayFactor);
       if (nightFactor > 0.001 && VdotU > 0.15) {
         float dither = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec3 aurora = nlAuroraBorealis(

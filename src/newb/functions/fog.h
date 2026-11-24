@@ -4,10 +4,10 @@
 #ifdef NL_NARESH_FOG
 // Naresh-style atmospheric distance falloff (from naresh-renderdragon nrsFogAmount)
 float nlNrsFogAmount(float dist, float rain) {
-  float range = NL_NARESH_FOG_RANGE*(1.0 - 0.35*rain);
+  float range = NL_NARESH_FOG_RANGE*(1.0 - NL_NARESH_FOG_RAIN_RANGE*rain);
   float x = dist/max(range, 0.001);
-  float f = 1.0 - exp(-2.5*x*x*x);
-  return clamp(f + 0.03*(1.0 - exp(-dist*(1.0/80.0))), 0.0, 1.0);
+  float f = 1.0 - exp(-NL_NARESH_FOG_CURVE*x*x*x);
+  return clamp(f + NL_NARESH_FOG_NEAR_AMOUNT*(1.0 - exp(-dist*(1.0/NL_NARESH_FOG_NEAR_DIST))), 0.0, 1.0);
 }
 #endif
 

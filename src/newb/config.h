@@ -95,6 +95,10 @@
 #define NL_FOG_MIX 0.5            // Newb<->HSPE blend (0.5 = equal, lower = Newb-heavy)
 #define NL_NARESH_FOG             // [toggle] Naresh exponential distance fog
 #define NL_NARESH_FOG_RANGE 160.0 // blocks where Naresh fog is almost full
+#define NL_NARESH_FOG_CURVE 2.5   // exponential falloff sharpness
+#define NL_NARESH_FOG_RAIN_RANGE 0.35 // how much rain pulls the fog in
+#define NL_NARESH_FOG_NEAR_AMOUNT 0.03 // low-distance haze amount
+#define NL_NARESH_FOG_NEAR_DIST 80.0 // low-distance haze distance
 #define NL_NARESH_FOG_STRENGTH 0.75 // 0.0 off ~ 1.0 full Naresh fog amount
 #define NL_NARESH_FOG_MIX 0.5     // 0 = old fog only, 1 = Naresh fog only
 #define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty
@@ -333,6 +337,8 @@
 /* Aurora settings (beta - texture curtain + water mirror) */
 #define NL_AURORA 1.3           // [toggle] 0.4 dim ~ 4.0 very bright
 #define NL_AURORA_TEX 1.15
+#define NL_AURORA_FADE_START -0.10 // dayFactor where aurora starts fading out
+#define NL_AURORA_FADE_END 0.12    // dayFactor where aurora is fully gone (before sunrise)
 #define NL_AURORA_TEX_LAYERS 10    // curtain layers - main cost knob (2 taps each)
 #define NL_AURORA_TEX_COL1 vec3(0.45,5.5,10.0)
 #define NL_AURORA_TEX_COL2 vec3(0.12,2.6,7.5)
@@ -373,7 +379,7 @@
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.12 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 1.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   1.0 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   0.9 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 //#define NL_NO_GROUND_REFL            // [toggle] disable ground/rain reflections only
