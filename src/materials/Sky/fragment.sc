@@ -171,6 +171,16 @@ void main() {
       }
     #endif
 
+    #ifdef NL_DUSK_GRADIENT
+      if (!env.nether && !env.underwater) {
+        float duskGrad = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+        duskGrad *= (1.0 - env.rainFactor)*NL_DUSK_GRAD_MIX;
+        if (duskGrad > 0.001) {
+          skyColor = mix(skyColor, nlDuskSkyGradient(viewDir, env.sunDir), duskGrad);
+        }
+      }
+    #endif
+
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif

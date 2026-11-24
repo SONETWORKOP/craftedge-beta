@@ -236,16 +236,6 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
   }
   #endif
 
-  #ifdef NL_DUSK_GRADIENT
-    if (!env.nether && !env.underwater) {
-      float duskGrad = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-      duskGrad *= (1.0 - env.rainFactor)*NL_DUSK_GRAD_MIX;
-      if (duskGrad > 0.001) {
-        sky = mix(sky, nlDuskSkyGradient(viewDir, env.sunDir), duskGrad);
-      }
-    }
-  #endif
-
   #ifdef NL_RAINBOW
     if (!env.underwater) {
       float rainbowFade = 0.5 + 0.5*viewDir.y;

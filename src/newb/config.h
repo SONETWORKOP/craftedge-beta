@@ -439,7 +439,7 @@
 
 /* Sunrise/sunset smooth sky gradient (peach horizon -> pink/lavender -> blue top) */
 #define NL_DUSK_GRADIENT               // [toggle] smooth sunrise/sunset gradient
-#define NL_DUSK_GRAD_MIX 0.68          // 0.0 off ~ 1.0 full gradient
+#define NL_DUSK_GRAD_MIX 0.75          // 0.0 off ~ 1.0 full gradient
 #define NL_DUSK_GRAD_TOP vec3(0.16,0.30,0.62) // blue zenith
 #define NL_DUSK_GRAD_MID vec3(0.58,0.42,0.62) // pink/lavender
 #define NL_DUSK_GRAD_LOW vec3(0.95,0.55,0.45) // peach horizon
