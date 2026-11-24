@@ -439,7 +439,7 @@
 
 /* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
-#define NL_NARESH_SKY_MIX 1.0         // 0.0 off ~ 1.0 full Naresh dusk look
+#define NL_NARESH_SKY_MIX 0.6         // 0.0 off ~ 1.0 full Naresh dusk look
 
 /* Naresh sun/moon discs (OFF: vanilla/user SunMoon material use hota hai) */
 //#define NL_NARESH_SUN_MOON
@@ -452,7 +452,7 @@
 /* Low-sun terrain warmth, no darkening */
 #define NL_NARESH_LOW_SUN
 #define NL_NARESH_LOW_SUN_MIX 0.35
-#define NL_NARESH_AMBIENT_MIX 1.0      // Naresh sky ambient on terrain/entities at dusk
+#define NL_NARESH_AMBIENT_MIX 0.5      // Naresh sky ambient on terrain/entities at dusk
 
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
