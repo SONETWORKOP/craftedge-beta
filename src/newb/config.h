@@ -93,16 +93,16 @@
 #define NL_FOG 0.4                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
 #define NL_FOG_BASE 0.0           // baseline haze at any distance (0.0 off ~ 0.3 strong)
 #define NL_FOG_MIX 0.5            // Newb<->HSPE blend (0.5 = equal, lower = Newb-heavy)
-#define NL_NARESH_FOG             // [toggle] Naresh exponential distance fog
-#define NL_NARESH_FOG_RANGE 160.0 // blocks where Naresh fog is almost full
-#define NL_NARESH_FOG_CURVE 2.5   // exponential falloff sharpness
-#define NL_NARESH_FOG_RAIN_RANGE 0.35 // how much rain pulls the fog in
-#define NL_NARESH_FOG_NEAR_AMOUNT 0.03 // low-distance haze amount
-#define NL_NARESH_FOG_NEAR_DIST 80.0 // low-distance haze distance
-#define NL_NARESH_FOG_STRENGTH 0.75 // 0.0 off ~ 1.0 full Naresh fog amount
-#define NL_NARESH_FOG_MIX 0.5     // 0 = old fog only, 1 = Naresh fog only
 #define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty
 #define NL_HSPE_FOG_DENSITY vec2(0.5, 0.5) // HSPE fog distance/quadratic density
+
+/* Fog colour/fade constants (previously hardcoded) */
+#define NL_NARESH_FOG_SKY_CURVE_BASE 0.04 // Naresh fog colour floor
+#define NL_NARESH_FOG_SKY_CURVE_SCALE 0.96 // Naresh fog colour sky-curve strength
+#define NL_SUNRISE_FOG_MIX 0.45           // sunrise haze blend strength
+#define NL_SUNSET_GLOW_SENSITIVITY 3.0    // sunset red-blue cue strength
+#define NL_RAIN_FOG_DIST_FADE 2.0         // rain ripple fog distance multiplier
+#define NL_RAIN_FOG_DIST_POWER 2.0        // rain ripple fog fade curve
 
 /* Fog curve constants (no longer hardcoded in fog.h) */
 #define NL_FOG_EXP_FALLOFF 0.9    // Newb exponential distance curve
@@ -257,6 +257,8 @@
 #define NL_UNDERWATER_WAVE 0.11              // [toggle] 0.02 subtle ~ 0.6 trippy
 #define NL_UNDERWATER_STREAKS 1.1            // [toggle] 0.8 subtle - 2.0 bright streaks from top
 #define NL_UNDERWATER_TINT vec3(0.8,0.95,1.0) // fog tint color when underwater
+#define NL_UNDERWATER_FOG_GAIN 2.0 // underwater fog colour gain
+#define NL_UNDERWATER_FOG_MIX 0.8  // fog-to-sky blend underwater
 
 /* Cloud type - Low/Medium mesh pixel clouds; baaki subpacks sky-dome clouds (beta) */
 #define NL_CLOUD_TYPE 0 // 0:vanilla, 1:soft, 2:rounded/pixel (NL_PIXEL_CLOUDS), 3:realistic, 4:HSPE (needs NL_HSPE_SKY)

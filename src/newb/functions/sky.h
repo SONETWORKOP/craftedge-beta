@@ -145,8 +145,8 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
 
   if (env.underwater) {
     vec3 underwaterFog = env.fogCol*env.fogCol*NL_UNDERWATER_TINT;
-    s.zenith = mix(2.0*underwaterFog, underwaterFog*zh, 0.8);
-    s.horizon = mix(2.0*underwaterFog, underwaterFog*hh, 0.8);
+    s.zenith = mix(NL_UNDERWATER_FOG_GAIN*underwaterFog, underwaterFog*zh, NL_UNDERWATER_FOG_MIX);
+    s.horizon = mix(NL_UNDERWATER_FOG_GAIN*underwaterFog, underwaterFog*hh, NL_UNDERWATER_FOG_MIX);
     s.horizonEdge = s.horizon;
   }
 

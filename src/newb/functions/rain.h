@@ -75,7 +75,7 @@ vec4 nlRainRippleShade(highp vec2 worldXZ, highp float t, float rippleStrength, 
   patchy = mix(1.0, patchy, NL_RAIN_RIPPLE_PATCHY);
 
   // fade with distance (fog)
-  float distFade = pow(clamp(1.0 - fogA*2.0, 0.0, 1.0), 2.0);
+  float distFade = pow(clamp(1.0 - fogA*NL_RAIN_FOG_DIST_FADE, 0.0, 1.0), NL_RAIN_FOG_DIST_POWER);
 
   float k = rippleStrength * patchy * distFade;
   float spec = pow(clamp(dot(n, normalize(vec3(1.0, 0.7, 0.5))), 0.0, 1.0), 6.0);

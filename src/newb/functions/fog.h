@@ -1,17 +1,7 @@
 #ifndef FOG_H
 #define FOG_H
 
-#ifdef NL_NARESH_FOG
-// Naresh-style atmospheric distance falloff (from naresh-renderdragon nrsFogAmount)
-float nlNrsFogAmount(float dist, float rain) {
-  float range = NL_NARESH_FOG_RANGE*(1.0 - NL_NARESH_FOG_RAIN_RANGE*rain);
-  float x = dist/max(range, 0.001);
-  float f = 1.0 - exp(-NL_NARESH_FOG_CURVE*x*x*x);
-  return clamp(f + NL_NARESH_FOG_NEAR_AMOUNT*(1.0 - exp(-dist*(1.0/NL_NARESH_FOG_NEAR_DIST))), 0.0, 1.0);
-}
-#endif
-
-float nlRenderFogFade(float relativeDist, vec3 FOG_COLOR, vec2 FOG_CONTROL, bool isEnd, float rain, float distBlocks) {
+float nlRenderFogFade(float relativeDist, vec3 FOG_COLOR, vec2 FOG_CONTROL, bool isEnd) {
   #ifdef NL_FOG
     float fade = smoothstep(FOG_CONTROL.x, FOG_CONTROL.y, relativeDist);
 
@@ -22,11 +12,6 @@ float nlRenderFogFade(float relativeDist, vec3 FOG_COLOR, vec2 FOG_CONTROL, bool
     // misty effect
     float density = NL_MIST_DENSITY*(NL_FOG_MIST_GREEN_BASE - NL_FOG_MIST_GREEN_SCALE*FOG_COLOR.g);
     fade += (1.0-fade)*NL_FOG_MIST_WEIGHT*(1.0-exp(-relativeDist*relativeDist*density));
-
-    #ifdef NL_NARESH_FOG
-      float nrsFog = nlNrsFogAmount(distBlocks, rain)*NL_NARESH_FOG_STRENGTH;
-      fade = mix(fade, max(fade, nrsFog), NL_NARESH_FOG_MIX);
-    #endif
 
     float fog = max(NL_FOG * fade, NL_FOG_BASE);
     #ifdef NL_END_FOG
@@ -78,7 +63,7 @@ float nlRenderGodRayIntensity(vec3 cPos, vec3 worldPos, float t, vec2 uv1, float
 vec3 nlGodRayTint(vec3 FOG_COLOR) {
   // warm yellow-gold tint for light shafts, blending toward deeper orange
   // at dawn/dusk when FOG_COLOR itself is already warm (higher red-blue diff)
-  float dawnDusk = clamp(3.0*(FOG_COLOR.r-FOG_COLOR.b), 0.0, 1.0);
+  float dawnDusk = clamp(NL_SUNSET_GLOW_SENSITIVITY*(FOG_COLOR.r-FOG_COLOR.b), 0.0, 1.0);
   vec3 dayRayTint = vec3(1.0, 0.92, 0.55);
   vec3 dawnRayTint = vec3(1.0, 0.75, 0.35);
   return mix(dayRayTint, dawnRayTint, dawnDusk);
@@ -87,7 +72,7 @@ vec3 nlGodRayTint(vec3 FOG_COLOR) {
 // ---- fog.txt port (Download/fog.txt) ----
 // Sunset glow cue 0..1 from fog color (godrays wali same trick).
 float nlSunsetGlow(vec3 fogColor) {
-  return clamp(3.0*(fogColor.r - fogColor.b), 0.0, 1.0);
+  return clamp(NL_SUNSET_GLOW_SENSITIVITY*(fogColor.r - fogColor.b), 0.0, 1.0);
 }
 // fog.txt getFog(): linear+quadratic exp fog with sunset/rain/nether/
 // underwater rules. Engine-scale numbers pack space me map kiye:

@@ -144,7 +144,7 @@ void main() {
     #endif
     // Newb fog + HSPE fog dono ko screen-blend karo (max nahi),
     // taaki dono ki depth/atmosphere sath me dikhe.
-    float newbFog = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end, env.rainFactor, camDis);
+    float newbFog = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
     float hspeFog = nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
     fogColor.a = mix(newbFog, hspeFog, NL_FOG_MIX);
     fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
@@ -156,7 +156,7 @@ void main() {
     // Sunrise: HSPE golden haze (YSS stays sunset-only).
     float sunriseSide = 1.0 - smoothstep(-0.15, 0.15, sunSide);
     float sunriseGlow = sunriseSide*horizonFade*(1.0-env.rainFactor);
-    fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, 0.45*sunriseGlow);
+    fogColor.rgb = mix(fogColor.rgb, NL_ATMO_SUNSET, NL_SUNRISE_FOG_MIX*sunriseGlow);
 
     // Sunset: YSS colour returns only on the setting-sun side.
     float sunsetSide = smoothstep(-0.15, 0.15, sunSide);
@@ -173,7 +173,7 @@ void main() {
       float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
       if (nrsDusk > 0.001) {
         vec3 nrsFog = nlNrsHorizonColor(-viewDir, env.sunDir, env.rainFactor);
-        nrsFog *= 0.04 + 0.96*nlNrsSkyCurve(uv1.y);
+        nrsFog *= NL_NARESH_FOG_SKY_CURVE_BASE + NL_NARESH_FOG_SKY_CURVE_SCALE*nlNrsSkyCurve(uv1.y);
         fogColor.rgb = mix(fogColor.rgb, nrsFog, nrsDusk);
       }
     }
