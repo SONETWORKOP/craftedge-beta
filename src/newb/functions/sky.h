@@ -167,6 +167,24 @@ nl_skycolor nlSkyColors(nl_environment env) {
   return nlOverworldSkyColors(env);
 }
 
+vec3 nlDuskSkyGradient(vec3 viewDir, vec3 sunDir, float sunsetSide) {
+  float h = clamp(viewDir.y, 0.0, 1.0);
+
+  vec3 low = mix(NL_DUSK_GRAD_SUNRISE_LOW, NL_DUSK_GRAD_SUNSET_LOW, sunsetSide);
+  vec3 mid = mix(NL_DUSK_GRAD_SUNRISE_MID, NL_DUSK_GRAD_SUNSET_MID, sunsetSide);
+  vec3 top = mix(NL_DUSK_GRAD_SUNRISE_TOP, NL_DUSK_GRAD_SUNSET_TOP, sunsetSide);
+
+  vec3 grad = mix(low, mid, smoothstep(0.0, 0.30, h));
+  grad = mix(grad, top, smoothstep(0.25, 1.0, h));
+
+  vec2 dxz = viewDir.xz/max(length(viewDir.xz), 0.0001);
+  vec2 sxz = sunDir.xz/max(length(sunDir.xz), 0.0001);
+  float sunSide = clamp(dot(dxz, sxz)*0.5 + 0.5, 0.0, 1.0);
+  sunSide *= sunSide;
+  grad = mix(grad, grad*vec3(1.12, 0.92, 0.82), sunSide*0.35);
+  return grad;
+}
+
 
 vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bool isSkyPlane) {
   float avy = abs(viewDir.y);
@@ -220,6 +238,17 @@ vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bo
     source *= source;
     sky *= 1.0 + 15.0*source*(1.0-env.rainFactor);
   }
+  #endif
+
+  #ifdef NL_DUSK_GRADIENT
+    if (!env.nether && !env.underwater) {
+      float duskGrad = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+      duskGrad *= (1.0 - env.rainFactor)*NL_DUSK_GRAD_MIX;
+      if (duskGrad > 0.001) {
+        vec3 grad = nlDuskSkyGradient(viewDir, env.sunDir, env.sunsetSide);
+        sky = mix(sky, grad, duskGrad);
+      }
+    }
   #endif
 
   #ifdef NL_RAINBOW
