@@ -437,16 +437,6 @@
 #define NL_SKY_SUNRISE_HORIZON vec3(3.3,0.95,1.05)
 #define NL_SKY_SUNRISE_EDGE    vec3(3.8,1.45,1.35)
 
-/* Sunrise/sunset multi-colour sky gradient */
-#define NL_DUSK_GRADIENT               // [toggle] sunrise/sunset gradient overlay
-#define NL_DUSK_GRAD_MIX 0.55          // 0.0 off ~ 1.0 full gradient
-#define NL_DUSK_GRAD_SUNRISE_TOP vec3(0.10,0.14,0.40) // cool blue-violet
-#define NL_DUSK_GRAD_SUNRISE_MID vec3(0.75,0.36,0.58) // pink
-#define NL_DUSK_GRAD_SUNRISE_LOW vec3(1.15,0.62,0.30) // peach-gold
-#define NL_DUSK_GRAD_SUNSET_TOP  vec3(0.14,0.07,0.34) // deep violet
-#define NL_DUSK_GRAD_SUNSET_MID  vec3(0.85,0.28,0.38) // rose-red
-#define NL_DUSK_GRAD_SUNSET_LOW  vec3(1.20,0.45,0.14) // orange
-
 /* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
 #define NL_NARESH_SKY_MIX 0.6         // 0.0 off ~ 1.0 full Naresh dusk look
