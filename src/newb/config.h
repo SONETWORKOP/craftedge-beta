@@ -90,9 +90,13 @@
 #define NL_HSPE_TORCH_CAVE   vec3(3.0,1.35,0.0)
 
 /* Fog - realistic atmospheric depth (beta) */
-#define NL_FOG 0.5                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
+#define NL_FOG 0.4                // [toggle] 0.1 subtle ~ 1.0 blend with sky completely
 #define NL_FOG_BASE 0.0           // baseline haze at any distance (0.0 off ~ 0.3 strong)
 #define NL_FOG_MIX 0.5            // Newb<->HSPE blend (0.5 = equal, lower = Newb-heavy)
+#define NL_NARESH_FOG             // [toggle] Naresh exponential distance fog
+#define NL_NARESH_FOG_RANGE 160.0 // blocks where Naresh fog is almost full
+#define NL_NARESH_FOG_STRENGTH 0.75 // 0.0 off ~ 1.0 full Naresh fog amount
+#define NL_NARESH_FOG_MIX 0.5     // 0 = old fog only, 1 = Naresh fog only
 #define NL_MIST_DENSITY 0.10      // 0.0 no mist ~ 1.0 misty
 #define NL_HSPE_FOG_DENSITY vec2(0.5, 0.5) // HSPE fog distance/quadratic density
 
@@ -102,8 +106,8 @@
 #define NL_FOG_MIST_WEIGHT 0.3     // Newb mist contribution
 #define NL_FOG_MIST_GREEN_BASE 19.0 // mist colour response base
 #define NL_FOG_MIST_GREEN_SCALE 18.0 // mist colour response scale
-#define NL_HSPE_FOG_CLEAR 0.22    // HSPE clear-weather strength
-#define NL_HSPE_FOG_SUNSET 0.35   // HSPE sunset/sunrise strength
+#define NL_HSPE_FOG_CLEAR 0.18    // HSPE clear-weather strength
+#define NL_HSPE_FOG_SUNSET 0.30   // HSPE sunset/sunrise strength
 #define NL_HSPE_FOG_RAIN 0.9      // HSPE rain strength
 #define NL_HSPE_FOG_NETHER 2.4    // HSPE nether strength
 #define NL_HSPE_FOG_CURVE 4.0     // HSPE exponential curve
@@ -115,7 +119,7 @@
 #define NL_CLOUDY_FOG 0.02        // [toggle] 0.0 subtle - 0.8 dense fog clouds (bahut kam fog)
 
 /* Height fog - ground-hugging mist that thins with altitude */
-#define NL_HEIGHT_FOG 0.40
+#define NL_HEIGHT_FOG 0.34
 #define NL_HEIGHT_FOG_START 56.0
 #define NL_HEIGHT_FOG_RANGE 55.0
 

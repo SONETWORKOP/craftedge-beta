@@ -144,7 +144,7 @@ void main() {
     #endif
     // Newb fog + HSPE fog dono ko screen-blend karo (max nahi),
     // taaki dono ki depth/atmosphere sath me dikhe.
-    float newbFog = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end);
+    float newbFog = nlRenderFogFade(relativeDist, FogColor.rgb, FogAndDistanceControl.xy, env.end, env.rainFactor, camDis);
     float hspeFog = nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
     fogColor.a = mix(newbFog, hspeFog, NL_FOG_MIX);
     fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
