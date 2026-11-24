@@ -373,7 +373,7 @@
 
 /* Ground reflection - reflective wet ground (beta) */
 //#define NL_NO_GROUND_REFL            // [toggle] disable ground/rain reflections only
-#define NL_GROUND_REFL 0.30             // reflection strength (beta: 0.3)
+#define NL_GROUND_REFL 1.0              // reflection strength (beta: 0.3)
 #define NL_GROUND_RAIN_WETNESS 1.2     // puddle reflections while raining
 #define NL_GROUND_RAIN_PUDDLES 0.9     // more scattered, natural puddle shapes
 
