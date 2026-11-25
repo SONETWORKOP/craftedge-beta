@@ -163,7 +163,7 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
     // aurora
     #if defined(NL_AURORA_REFLECTION) && !defined(REALISTIC_CLOUDS) && !defined(EDITOR_CLOUDS)
       float aurUp = clamp(R.y, 0.0, 1.0);
-      float aurNight = nlAuroraNightFactor(env.dayFactor);
+      float aurNight = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
       if (aurNight > 0.001 && aurUp > 0.15) {
         float dither = fract(sin(dot(R.xy, vec2(12.9898, 78.233))) * 43758.5453);
         col += NL_AURORA_TEX*aurNight*nlAuroraBorealis(R, aurUp, dither, env.rainFactor, CAMERA_POS.xz, t);

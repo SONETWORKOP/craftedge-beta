@@ -171,16 +171,6 @@ void main() {
       }
     #endif
 
-    #ifdef NL_DUSK_GRADIENT
-      if (!env.nether && !env.underwater) {
-        float duskGrad = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-        duskGrad *= (1.0 - env.rainFactor)*NL_DUSK_GRAD_MIX;
-        if (duskGrad > 0.001) {
-          skyColor = mix(skyColor, nlDuskSkyGradient(viewDir, env.sunDir), duskGrad);
-        }
-      }
-    #endif
-
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
@@ -199,7 +189,7 @@ void main() {
     // aurora borealis (night only, hidden by rain and underwater)
     if (!env.underwater) {
       float VdotU = clamp(viewDir.y, 0.0, 1.0);
-      float nightFactor = nlAuroraNightFactor(env.dayFactor);
+      float nightFactor = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
       if (nightFactor > 0.001 && VdotU > 0.15) {
         float dither = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec3 aurora = nlAuroraBorealis(
@@ -390,6 +380,12 @@ void main() {
     #ifdef NL_SHOOTING_STAR
       float nlStarNight = 1.0 - smoothstep(-0.08, 0.12, env.dayFactor);
       skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z)*nlStarNight;
+    #endif
+
+    #ifdef NL_DUSK_DARKEN
+      float duskDark = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
+      duskDark *= 1.0 - 0.5*env.rainFactor;
+      skyColor *= mix(1.0, NL_DUSK_DARKNESS, duskDark);
     #endif
 
     skyColor = colorCorrection(skyColor);

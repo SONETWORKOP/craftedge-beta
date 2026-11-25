@@ -602,12 +602,6 @@ vec4 renderAurora(vec3 p, float t, float rain, vec3 FOG_COLOR) {
 }
 #endif
 
-// Shared day-factor fade: sky, water and metal aurora all disappear before
-// sunrise instead of lingering into the dawn light.
-float nlAuroraNightFactor(float dayFactor) {
-  return 1.0 - smoothstep(NL_AURORA_FADE_START, NL_AURORA_FADE_END, dayFactor);
-}
-
 // Texture-based aurora borealis - the night sky's curtain. Moved out of the
 // Sky fragment (which alone used to draw it) so the water mirror in RenderChunk
 // can sample the identical shape. Requires the material to bind s_NoiseVoxel.
@@ -673,7 +667,7 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
       // at night, so the water mirror never showed anything)
       vec3 aurV = viewDir.y < 0.0 ? -viewDir : viewDir;
       float aurUp = clamp(aurV.y, 0.0, 1.0);
-      float aurNight = nlAuroraNightFactor(env.dayFactor);
+      float aurNight = 1.0 - smoothstep(-0.02, 0.32, env.dayFactor);
       if (aurNight > 0.001 && aurUp > 0.15) {
         float dither = fract(sin(dot(aurV.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec3 aur = NL_AURORA_TEX*aurNight*nlAuroraBorealis(

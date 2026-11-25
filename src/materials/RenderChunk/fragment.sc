@@ -170,7 +170,7 @@ void main() {
             vec3 aurReflDir = vec3(-aurV.x, aurV.y, -aurV.z);
             if (aurReflDir.y > 0.004) {
               float aurVdotU = clamp(aurReflDir.y, 0.0, 1.0);
-              float aurNight = nlAuroraNightFactor(wenv.dayFactor);
+              float aurNight = 1.0 - smoothstep(-0.02, 0.32, wenv.dayFactor);
               if (aurNight > 0.001 && aurVdotU > 0.15) {
                 float aurDither = fract(sin(dot(aurReflDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
                 vec3 aurora = NL_AURORA_TEX*aurNight*nlAuroraBorealis(

@@ -167,21 +167,6 @@ nl_skycolor nlSkyColors(nl_environment env) {
   return nlOverworldSkyColors(env);
 }
 
-vec3 nlDuskSkyGradient(vec3 viewDir, vec3 sunDir) {
-  float h = clamp(viewDir.y, 0.0, 1.0);
-
-  vec3 grad = mix(NL_DUSK_GRAD_LOW, NL_DUSK_GRAD_MID, smoothstep(0.0, 0.42, h));
-  grad = mix(grad, NL_DUSK_GRAD_TOP, smoothstep(0.30, 0.95, h));
-
-  vec2 dxz = viewDir.xz/max(length(viewDir.xz), 0.0001);
-  vec2 sxz = sunDir.xz/max(length(sunDir.xz), 0.0001);
-  float sunSide = clamp(dot(dxz, sxz)*0.5 + 0.5, 0.0, 1.0);
-  sunSide *= sunSide;
-  grad = mix(grad, grad*vec3(1.08, 0.96, 0.90), sunSide*NL_DUSK_GRAD_SUNSIDE);
-  return grad;
-}
-
-
 vec3 renderOverworldSky(nl_skycolor skyCol, nl_environment env, vec3 viewDir, bool isSkyPlane) {
   float avy = abs(viewDir.y);
   float mask = 0.5 + (0.5*viewDir.y/(0.4 + avy));
