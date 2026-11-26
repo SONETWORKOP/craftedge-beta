@@ -153,13 +153,10 @@ void main() {
     float horizonFade = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
     fogColor.rgb = mix(fogColor.rgb, NL_CRAFT_FOG_BROWN, NL_CRAFT_FOG_BROWN_AMOUNT*(1.0-env.rainFactor));
 
-    // Sunrise: same YSS dusk fog as sunset.
+    // Sunrise: pink-red haze.
     float sunriseSide = 1.0 - smoothstep(-0.15, 0.15, sunSide);
     float sunriseGlow = sunriseSide*horizonFade*(1.0-env.rainFactor);
-    if (sunriseGlow > 0.001) {
-      vec4 yssFog = nlYssFog(env, relativeDist);
-      fogColor.rgb = mix(fogColor.rgb, yssFog.rgb, sunriseGlow*NL_SUNRISE_FOG_MIX);
-    }
+    fogColor.rgb = mix(fogColor.rgb, NL_SUNRISE_FOG_COL, sunriseGlow*NL_SUNRISE_FOG_MIX);
 
     // Sunset: YSS colour returns only on the setting-sun side.
     float sunsetSide = smoothstep(-0.15, 0.15, sunSide);
