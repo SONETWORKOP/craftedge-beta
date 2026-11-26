@@ -99,7 +99,7 @@
 /* Fog colour/fade constants (previously hardcoded) */
 #define NL_NARESH_FOG_SKY_CURVE_BASE 0.04 // Naresh fog colour floor
 #define NL_NARESH_FOG_SKY_CURVE_SCALE 0.96 // Naresh fog colour sky-curve strength
-#define NL_SUNRISE_FOG_MIX 0.45           // sunrise haze blend strength
+#define NL_SUNRISE_FOG_MIX 0.85           // sunrise haze blend strength (matches sunset)
 #define NL_SUNSET_GLOW_SENSITIVITY 3.0    // sunset red-blue cue strength
 #define NL_RAIN_FOG_DIST_FADE 2.0         // rain ripple fog distance multiplier
 #define NL_RAIN_FOG_DIST_POWER 2.0        // rain ripple fog fade curve
@@ -430,10 +430,10 @@
 #define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
 #define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
-#define NL_SKY_SUNRISE_MIX 0.65
-#define NL_SKY_SUNRISE_ZENITH  vec3(0.55,0.27,0.78)
-#define NL_SKY_SUNRISE_HORIZON vec3(3.3,0.95,1.05)
-#define NL_SKY_SUNRISE_EDGE    vec3(3.8,1.45,1.35)
+#define NL_SKY_SUNRISE_MIX 1.0
+#define NL_SKY_SUNRISE_ZENITH  vec3(0.55,0.27,0.78) // unused: sunrise keeps natural zenith
+#define NL_SKY_SUNRISE_HORIZON vec3(1.0,0.55,0.2) // same as sunset
+#define NL_SKY_SUNRISE_EDGE    vec3(1.0,0.5,0.2)   // same as sunset
 
 /* Sunrise/sunset darkness */
 //#define NL_DUSK_DARKEN                 // [toggle] darken sky at sunrise/sunset
