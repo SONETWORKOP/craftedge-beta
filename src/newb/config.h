@@ -134,7 +134,7 @@
 
 /* ATMO sunset palette (ESTN jaisa): dawn/dusk kohra-rang, 0.0 off */
 #define NL_ATMO 0.0
-#define NL_ATMO_SUNSET vec3(1.21,0.9025,0.49)  // HSPE DUSK_EDGE*c2 sunset haze
+#define NL_ATMO_SUNSET vec3(1.18,0.66,0.52)  // HSPE DUSK_EDGE*c2 sunset haze (deep red-pink)
 
 /* Sky colors - zenith=top, horizon=bottom */
 #define NL_DAWN_ZENITH_COL   vec3(0.1,0.4,0.7)   // original HSPE dawn zenith
@@ -378,8 +378,8 @@
 
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.12 // [toggle] 0.1 subtle ~ 0.8 strong
-#define NL_GODRAY_MULTIPLICATOR 1.0 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   0.05 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_MULTIPLICATOR 1.3 // final tez (1.0 normal)
+#define NL_GODRAY_SENSITIVITY   0.03 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 //#define NL_NO_GROUND_REFL            // [toggle] disable ground/rain reflections only
@@ -428,20 +428,20 @@
 #define NL_SKY_NOON_ZENITH    vec3(0.2525,0.3843,0.5247)*1.1
 #define NL_SKY_NOON_HORIZON   vec3(0.5686,0.6667,0.7059)*1.1
 #define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
-#define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
-#define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
+#define NL_SKY_SUNSET_HORIZON vec3(1.12,0.42,0.32)
+#define NL_SKY_SUNSET_EDGE    vec3(1.05,0.38,0.30)
 #define NL_SKY_SUNRISE_MIX 0.65
 #define NL_SKY_SUNRISE_ZENITH  vec3(0.55,0.27,0.78)
-#define NL_SKY_SUNRISE_HORIZON vec3(3.3,0.95,1.05)
-#define NL_SKY_SUNRISE_EDGE    vec3(3.8,1.45,1.35)
+#define NL_SKY_SUNRISE_HORIZON vec3(3.3,0.88,1.12)
+#define NL_SKY_SUNRISE_EDGE    vec3(3.8,1.35,1.55)
 
 /* Sunrise/sunset darkness */
 #define NL_DUSK_DARKEN                 // [toggle] darken sky at sunrise/sunset
-#define NL_DUSK_DARKNESS 0.35          // 0.0 black ~ 1.0 unchanged
+#define NL_DUSK_DARKNESS 0.85          // 0.0 black ~ 1.0 unchanged
 
 /* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
-#define NL_NARESH_SKY_MIX 0.4         // 0.0 off ~ 1.0 full Naresh dusk look
+#define NL_NARESH_SKY_MIX 0.55        // 0.0 off ~ 1.0 full Naresh dusk look
 
 /* Naresh sun/moon discs (OFF: vanilla/user SunMoon material use hota hai) */
 //#define NL_NARESH_SUN_MOON
@@ -454,7 +454,7 @@
 /* Low-sun terrain warmth, no darkening */
 #define NL_NARESH_LOW_SUN
 #define NL_NARESH_LOW_SUN_MIX 0.35
-#define NL_NARESH_AMBIENT_MIX 0.25     // Naresh sky ambient on terrain/entities at dusk
+#define NL_NARESH_AMBIENT_MIX 0.35     // Naresh sky ambient on terrain/entities at dusk
 
 //#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
 #define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
