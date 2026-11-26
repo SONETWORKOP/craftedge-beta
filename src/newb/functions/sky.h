@@ -129,6 +129,7 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
     float sunrise = (1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor))) * (1.0 - env.sunsetSide);
     sunrise *= (1.0 - env.rainFactor) * NL_SKY_SUNRISE_MIX;
     if (sunrise > 0.0001) {
+      s.zenith = mix(s.zenith, NL_SKY_SUNRISE_ZENITH, sunrise);
       s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_SUNRISE_HORIZON), sunrise);
       s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_SUNRISE_EDGE), sunrise);
     }

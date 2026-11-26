@@ -432,7 +432,7 @@
 #define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
 #define NL_SKY_SUNRISE_MIX 1.0
-#define NL_SKY_SUNRISE_ZENITH  vec3(0.55,0.27,0.78) // unused: sunrise keeps natural zenith
+#define NL_SKY_SUNRISE_ZENITH  vec3(0.55,0.27,0.78) // sunrise zenith purple-pink tint
 #define NL_SKY_SUNRISE_HORIZON vec3(1.0,0.36,0.40) // sunrise pink-red
 #define NL_SKY_SUNRISE_EDGE    vec3(0.9,0.30,0.36)  // sunrise pink-red edge
 
