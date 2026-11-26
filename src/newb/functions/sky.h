@@ -3,8 +3,6 @@
 
 #include "detection.h"
 #include "noise.h"
-#include "yss_port.h"
-#include "naresh_sky.h"
 
 struct nl_skycolor {
   vec3 zenith;
@@ -113,34 +111,6 @@ nl_skycolor nlOverworldSkyColors(nl_environment env) {
   s.zenith = mix(s.zenith, NL_RAIN_ZENITH_COL*zh, rainMix);
   s.horizon = mix(s.horizon, NL_RAIN_HORIZON_COL*hh, rainMix);
   s.horizonEdge = mix(s.horizonEdge, s.horizon, env.rainFactor);
-  #endif
-
-  // Fixed YSS sky accents: noon palette and sunrise/sunset horizon.
-  #ifdef NL_SKY_ACCENTS
-  if (!env.nether && !env.underwater) {
-    float noon = smoothstep(0.35, 0.85, env.dayFactor);
-    noon *= (1.0 - env.rainFactor) * NL_SKY_NOON_MIX;
-    if (noon > 0.0001) {
-      s.zenith = mix(s.zenith, nlYssToLinear(NL_SKY_NOON_ZENITH), noon);
-      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_NOON_HORIZON), noon);
-      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_NOON_EDGE), noon);
-    }
-
-    float sunrise = (1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor))) * (1.0 - env.sunsetSide);
-    sunrise *= (1.0 - env.rainFactor) * NL_SKY_SUNRISE_MIX;
-    if (sunrise > 0.0001) {
-      s.zenith = mix(s.zenith, NL_SKY_SUNRISE_ZENITH, sunrise);
-      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_SUNRISE_HORIZON), sunrise);
-      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_SUNRISE_EDGE), sunrise);
-    }
-
-    float sunset = (1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor))) * env.sunsetSide;
-    sunset *= (1.0 - env.rainFactor) * NL_SKY_SUNSET_MIX;
-    if (sunset > 0.0001) {
-      s.horizon = mix(s.horizon, nlYssToLinear(NL_SKY_SUNSET_HORIZON), sunset);
-      s.horizonEdge = mix(s.horizonEdge, nlYssToLinear(NL_SKY_SUNSET_EDGE), sunset);
-    }
-  }
   #endif
 
   if (env.underwater) {

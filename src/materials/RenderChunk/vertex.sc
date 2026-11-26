@@ -115,22 +115,6 @@ void main() {
   relativeDist += RenderChunkFogAlpha.x;
 
   vec4 fogColor;
-  #if defined(NL_YSS_FOG) && defined(NL_FOG)
-    if (!env.underwater && !env.end && !env.nether) {
-      // YSS fog: time-of-day colour, fades into the sky at range
-      vec3 yssVd = vec3(viewDir.x, -viewDir.y, viewDir.z);
-      fogColor = nlYssFog(env, relativeDist);
-      float edge = NL_YSS_FOG_EDGE_FADE*smoothstep(FogAndDistanceControl.x, FogAndDistanceControl.y, relativeDist);
-      fogColor.rgb = mix(fogColor.rgb, nlSkyEdgeColor(skycol, yssVd.y), edge);
-      // CraftEdge warm brown accent in the YSS fog
-      fogColor.rgb = mix(fogColor.rgb, NL_CRAFT_FOG_BROWN, NL_CRAFT_FOG_BROWN_AMOUNT*(1.0-env.rainFactor));
-      fogColor.a += (1.0-fogColor.a)*edge;
-      // HSPE distance/mist fog on top of YSS colour fog
-      float hspeFog = nlGetFog(relativeDist, NL_HSPE_FOG_DENSITY, env.rainFactor, nlSunsetGlow(FogColor.rgb), env.underwater, env.nether);
-      fogColor.a = max(fogColor.a, hspeFog);
-      fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
-    } else
-  #endif
   {
     fogColor.rgb = nlRenderSky(skycol, env, viewDir, t, true);
     // ATMO sunset palette (ESTN jaisa): dawn/dusk me kohra sunset-rang pakde.
@@ -149,35 +133,8 @@ void main() {
     fogColor.a = mix(newbFog, hspeFog, NL_FOG_MIX);
     fogColor.a = nlRenderHeightFog(fogColor.a, worldPos.y, relativeDist);
 
-    float sunSide = sin(6.2831853*TimeOfDay.x);
-    float horizonFade = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
     fogColor.rgb = mix(fogColor.rgb, NL_CRAFT_FOG_BROWN, NL_CRAFT_FOG_BROWN_AMOUNT*(1.0-env.rainFactor));
-
-    // Sunrise: pink-red haze.
-    float sunriseSide = 1.0 - smoothstep(-0.15, 0.15, sunSide);
-    float sunriseGlow = sunriseSide*horizonFade*(1.0-env.rainFactor);
-    fogColor.rgb = mix(fogColor.rgb, NL_SUNRISE_FOG_COL, sunriseGlow*NL_SUNRISE_FOG_MIX);
-
-    // Sunset: YSS colour returns only on the setting-sun side.
-    float sunsetSide = smoothstep(-0.15, 0.15, sunSide);
-    float yssSunset = sunsetSide*horizonFade*(1.0-env.rainFactor);
-    if (yssSunset > 0.001) {
-      vec4 yssFog = nlYssFog(env, relativeDist);
-      fogColor.rgb = mix(fogColor.rgb, yssFog.rgb, yssSunset*NL_YSS_SUNSET_MIX);
-    }
   }
-
-  #ifdef NL_NARESH_SKY
-    // Naresh dusk fog: same horizon colour as the sky, scaled by sky light.
-    if (!env.underwater && !env.end && !env.nether) {
-      float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
-      if (nrsDusk > 0.001) {
-        vec3 nrsFog = nlNrsHorizonColor(-viewDir, env.sunDir, env.rainFactor);
-        nrsFog *= NL_NARESH_FOG_SKY_CURVE_BASE + NL_NARESH_FOG_SKY_CURVE_SCALE*nlNrsSkyCurve(uv1.y);
-        fogColor.rgb = mix(fogColor.rgb, nrsFog, nrsDusk);
-      }
-    }
-  #endif
 
   #if defined(NL_GODRAY) && defined(NL_FOG)
     float godRayAmount = min(NL_GODRAY*nlRenderGodRayIntensity(cPos, worldPos, t, uv1, relativeDist, FogColor.rgb), 1.0);

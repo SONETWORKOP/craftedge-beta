@@ -19,11 +19,7 @@
   #define NL_ROUNDED_CLOUDS
   #define NL_AURORA_REFLECTION
   #include <newb/main.sh>
-  #include <newb/functions/yss_stars.h>
   #include <newb/functions/night_band.h>
-  #ifdef ULTRA_CLOUDS
-    #include <newb/functions/yss_clouds.h>
-  #endif
   uniform vec4 TimeOfDay;
   uniform vec4 FogColor;
   uniform vec4 FogAndDistanceControl;
@@ -162,15 +158,6 @@ void main() {
 
     vec3 skyColor = nlRenderSky(skycol, env, -viewDir, v_underwaterRainTimeDay.z, true);
 
-    #ifdef NL_NARESH_SKY
-      // Naresh dusk sky: same base + dusk tint that drives the horizon fog.
-      float nrsDusk = nlNrsDuskStrength(env)*NL_NARESH_SKY_MIX;
-      if (nrsDusk > 0.001) {
-        vec3 nrsSky = nlNrsSkyBase(viewDir, env.sunDir, env.rainFactor);
-        skyColor = mix(skyColor, nrsSky, nrsDusk);
-      }
-    #endif
-
     #ifdef NL_GALAXY_STARS
       skyColor += NL_GALAXY_STARS*nlRenderGalaxy(viewDir, env.fogCol, env, v_underwaterRainTimeDay.z);
     #endif
@@ -204,28 +191,6 @@ void main() {
       skyColor += NL_EXTRA_STARS*nlRenderExtraStars(viewDir, env, v_underwaterRainTimeDay.z);
     #endif
 
-    #ifdef NL_YSS_COMET
-    if (!env.underwater) {
-      vec3 yssFp = viewDir*3.0/max(viewDir.y, 0.001);
-      float yssStp = nlYssLinestep(40.0, 20.0, length(yssFp.xz));
-      float yssNt = nlYssNight(env.dayFactor)*(1.0-env.rainFactor);
-      if (yssNt > 0.001 && viewDir.y > 0.0) {
-        vec3 yssComet = nlYssToLinear(vec3(1.1,1.9,2.5));
-        skyColor = mix(skyColor, yssComet, yssStarMove(yssFp.xz, v_underwaterRainTimeDay.z)*yssStp*yssNt);
-      }
-    }
-    #endif
-
-    #if defined(NL_NARESH_CLOUDS)
-      if (!env.underwater && viewDir.y > 0.001) {
-        skyColor = nlNrsCloudLayers(skyColor, viewDir, env, v_underwaterRainTimeDay.z, 1.0);
-      }
-    #elif defined(ULTRA_CLOUDS)
-      if (!env.underwater && viewDir.y > 0.001) {
-        vec4 yssClouds = yssRenderClouds(viewDir, v_underwaterRainTimeDay.z, env.dayFactor, env.rainFactor);
-        skyColor.rgb = mix(skyColor.rgb, yssClouds.rgb, clamp(yssClouds.a, 0.0, 1.0));
-      }
-    #else
     #ifdef EDITOR_CLOUDS
     // ok.txt main() FULL PORT - 5-step raymarch + horizon-fade.
     // ok.txt: rd from uv, sun fixed, sky-gradient + pow(sd,32)*0.6, t0/t1 with max(rd.y,0.08), jitter fragCoord,
@@ -374,18 +339,11 @@ void main() {
     #endif // REALISTIC_CLOUDS
     #endif // BICUBIC_CLOUDS
     #endif // EDITOR_CLOUDS
-    #endif // ULTRA_CLOUDS
 
     // stars/shooting stars last so clouds don't hide them
     #ifdef NL_SHOOTING_STAR
       float nlStarNight = 1.0 - smoothstep(-0.08, 0.12, env.dayFactor);
       skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z)*nlStarNight;
-    #endif
-
-    #ifdef NL_DUSK_DARKEN
-      float duskDark = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-      duskDark *= 1.0 - 0.5*env.rainFactor;
-      skyColor *= mix(1.0, NL_DUSK_DARKNESS, duskDark);
     #endif
 
     skyColor = colorCorrection(skyColor);

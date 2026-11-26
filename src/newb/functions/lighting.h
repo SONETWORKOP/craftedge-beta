@@ -35,8 +35,6 @@ vec3 nlLighting(
   vec2 uv1, vec2 lit, bool isTree, float shade, highp float t, float renderdistance, float TIME_OF_DAY, vec3 CAMERA_POS
 ) {
   vec3 light;
-  float nrsLightMix = 0.0;
-  vec3 nrsLight = vec3_splat(0.0);
 
   if (env.underwater) {
     torchColor = NL_UNDERWATER_TORCH_COL;
@@ -127,40 +125,10 @@ vec3 nlLighting(
 
       // sky ambient
       vec3 ambient = skycol.horizon + skycol.zenith;
-      #ifdef NL_NARESH_SKY
-        float nrsAmbMix = nlNrsDuskStrength(env)*NL_NARESH_AMBIENT_MIX;
-        if (nrsAmbMix > 0.001) {
-          ambient = mix(ambient, nlNrsTerrainAmbient(wPos, env.sunDir, env.rainFactor), nrsAmbMix);
-        }
-      #endif
       lum = luminance(light);
       light += ambient*(uv1.y/(1.0+lum));
     }
-
-    #ifdef NL_NARESH_SKY
-      nrsLightMix = nlNrsDuskStrength(env)*NL_NARESH_AMBIENT_MIX;
-      if (nrsLightMix > 0.001) {
-        float nrsSky = pow(clamp(uv1.y*1.066667, 0.0, 1.0), 2.3);
-        float nrsNdl = clamp((env.sunDir.y + 0.35)/1.35, 0.0, 1.0);
-        nrsLight = nlNrsTerrainAmbient(wPos, env.sunDir, env.rainFactor)*nrsSky
-                 + nlNrsSunLight(env.sunDir, env.rainFactor)*(shadow*sunLightAttenuation*nrsNdl)
-                 + vec3(0.012, 0.014, 0.02);
-      }
-    #endif
   }
-
-  #ifdef NL_NARESH_LOW_SUN
-    if (!env.nether && !env.end && !env.underwater) {
-      float nrsLow = nlNrsDuskStrength(env)*NL_NARESH_LOW_SUN_MIX;
-      light *= mix(vec3_splat(1.0), vec3(1.08, 0.84, 0.70), nrsLow);
-    }
-  #endif
-
-  #ifdef NL_NARESH_SKY
-    if (nrsLightMix > 0.001) {
-      light = mix(light, nrsLight, nrsLightMix);
-    }
-  #endif
 
   // torch light
   lum = luminance(light);
@@ -173,7 +141,7 @@ vec3 nlLighting(
   // game min brightness
   if (!(env.nether || env.end)) {
     lum = luminance(light);
-    light += vec3_splat(gameBrightness*(NL_MIN_LIGHTING_BOOST/(1.0+lum))*(1.0 - 0.9*nrsLightMix));
+    light += vec3_splat(gameBrightness*(NL_MIN_LIGHTING_BOOST/(1.0+lum)));
   }
 
   // darken at crevices
@@ -204,8 +172,6 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   float tl = tileLightCol.r;
   float lum;
   vec3 light;
-  float nrsLightMix = 0.0;
-  vec3 nrsLight = vec3_splat(0.0);
   if (env.nether || env.end) {
     tl = max(tl-0.6, 0.0);
     tl *= 21.0*tl;
@@ -241,32 +207,9 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
 
     // sky ambient
     vec3 ambient = skycol.horizon + skycol.zenith;
-    #ifdef NL_NARESH_SKY
-      float nrsAmbMix = nlNrsDuskStrength(env)*NL_NARESH_AMBIENT_MIX;
-      if (nrsAmbMix > 0.001) {
-        ambient = mix(ambient, nlNrsTerrainAmbient(wPos, env.sunDir, env.rainFactor), nrsAmbMix);
-      }
-    #endif
     lum = luminance(light);
     light += ambient*(l/(1.0+lum));
-
-    #ifdef NL_NARESH_SKY
-      nrsLightMix = nlNrsDuskStrength(env)*NL_NARESH_AMBIENT_MIX;
-      if (nrsLightMix > 0.001) {
-        float nrsSky = pow(clamp(l*1.066667, 0.0, 1.0), 2.3);
-        float nrsNdl = clamp((dot(N, env.sunDir) + 0.35)/1.35, 0.0, 1.0);
-        nrsLight = nlNrsTerrainAmbient(wPos, env.sunDir, env.rainFactor)*nrsSky
-                 + nlNrsSunLight(env.sunDir, env.rainFactor)*(sunLightAttenuation*nrsNdl)
-                 + vec3(0.012, 0.014, 0.02);
-      }
-    #endif
   }
-
-  #ifdef NL_NARESH_SKY
-    if (nrsLightMix > 0.001) {
-      light = mix(light, nrsLight, nrsLightMix);
-    }
-  #endif
 
   // torch light
   vec3 torchColor;
@@ -287,7 +230,7 @@ vec3 nlEntityLighting(nl_skycolor skycol, nl_environment env, vec3 pos, vec4 nor
   lum = luminance(light);
   if (!(env.nether || env.end)) {
     lum = luminance(light);
-    light += vec3_splat(min(tileLightCol.r, 0.15)*(NL_MIN_LIGHTING_BOOST/(1.0+lum))*(1.0 - 0.9*nrsLightMix));
+    light += vec3_splat(min(tileLightCol.r, 0.15)*(NL_MIN_LIGHTING_BOOST/(1.0+lum)));
   }
 
   if (env.underwater) {

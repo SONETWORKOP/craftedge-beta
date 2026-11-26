@@ -4,7 +4,6 @@
 #include "detection.h"
 #include "noise.h"
 #include "sky.h"
-#include "naresh_clouds.h"
 
 // suraj-based night factor (-1 raat .. 1 din). brightness se nahi,
 // seedha dayFactor se - raat ke boost se dhokha nahi khata (horror pattern).
