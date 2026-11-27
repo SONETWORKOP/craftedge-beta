@@ -99,8 +99,6 @@
 /* Fog colour/fade constants (previously hardcoded) */
 #define NL_NARESH_FOG_SKY_CURVE_BASE 0.04 // Naresh fog colour floor
 #define NL_NARESH_FOG_SKY_CURVE_SCALE 0.96 // Naresh fog colour sky-curve strength
-#define NL_SUNRISE_FOG_MIX 0.70           // sunrise haze blend strength
-#define NL_SUNRISE_FOG_COL vec3(0.96,0.60,0.48) // sunrise pink-red haze
 #define NL_SUNSET_GLOW_SENSITIVITY 3.0    // sunset red-blue cue strength
 #define NL_RAIN_FOG_DIST_FADE 2.0         // rain ripple fog distance multiplier
 #define NL_RAIN_FOG_DIST_POWER 2.0        // rain ripple fog fade curve
@@ -295,6 +293,19 @@
 #define NL_CLOUD2_LAYER2_DENSITY 25.0           // 1.0 blurry ~ 100.0 sharp
 #define NL_CLOUD2_LAYER2_VELOCITY 0.8           // 0.0 static ~ 4.0 very fast
 
+/* Reimagined volumetric clouds (Download/clouds port) */
+#define NL_CLOUDS_SHAPE_DENSITY 0.5       // starting cloud height/density
+#define NL_CLOUDS_SHADOW_INTENSITY 1.0    // 0.0 flat ~ 1.0 deep volumetric shading
+#define NL_CLOUDS_BRIGHTNESS 1.0          // sunlit cloud brightness
+#define NL_CLOUD2_DAY_AMBIENT_COL   vec3(0.78,0.86,1.0)
+#define NL_CLOUD2_DAWN_AMBIENT_COL  vec3(1.0,0.58,0.4)
+#define NL_CLOUD2_NIGHT_AMBIENT_COL vec3(0.08,0.14,0.28)
+#define NL_CLOUD2_DAY_LIGHT_COL     vec3(1.08,1.1,1.15)
+#define NL_CLOUD2_DAWN_LIGHT_COL    vec3(1.25,0.72,0.5)
+#define NL_CLOUD2_NIGHT_LIGHT_COL   vec3(0.3,0.42,0.62)
+#define NL_CLOUD2_RAIN_AMBIENT_COL  vec3(0.4,0.44,0.52)
+#define NL_CLOUD2_RAIN_LIGHT_COL    vec3(0.62,0.66,0.74)
+
 /* Realistic cloud settings */
 #define NL_CLOUD3_SCALE vec2(0.03, 0.03) // 0.003 large ~ 1.0 tiny
 #define NL_CLOUD3_SPEED 0.005            // 0.0 static ~ 4.0 fast moving
@@ -431,14 +442,6 @@
 #define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
 #define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
-#define NL_SKY_SUNRISE_MIX 0.90
-#define NL_SKY_SUNRISE_ZENITH  vec3(0.42,0.30,0.62) // sunrise zenith purple-pink tint
-#define NL_SKY_SUNRISE_HORIZON vec3(1.00,0.48,0.36) // sunrise pink-red
-#define NL_SKY_SUNRISE_EDGE    vec3(0.82,0.36,0.52)  // sunrise pink-red edge
-
-/* Sunrise/sunset darkness */
-#define NL_DUSK_DARKEN                 // [toggle] darken sky at sunrise/sunset
-#define NL_DUSK_DARKNESS 0.92          // 0.0 black ~ 1.0 unchanged
 
 /* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
@@ -457,8 +460,7 @@
 #define NL_NARESH_LOW_SUN_MIX 0.25
 #define NL_NARESH_AMBIENT_MIX 0.25     // Naresh sky ambient on terrain/entities at dusk
 
-//#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
-#define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
+#define NL_YSS_FOG                    // [toggle] YSS fog colours
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
 #define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
 #define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3
@@ -545,6 +547,13 @@
   #define NL_SKY_CLOUDS_AMBIENT_MIX 0.2
   #define NL_SKY_CLOUDS_BRIGHTNESS 1.5
   #define NL_SKY_CLOUDS_HORIZON_FADE 0.5
+#endif
+
+#ifdef REIMAGINED_CLOUDS
+  // Download/clouds Reimagined volumetric mesh clouds
+  #undef NL_CLOUD_TYPE
+  #define NL_CLOUD_TYPE 2
+  #undef NL_CLOUD_SHADOW
 #endif
 
 #ifdef MEDIUM

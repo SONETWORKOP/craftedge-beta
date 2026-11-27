@@ -382,12 +382,6 @@ void main() {
       skyColor += NL_SHOOTING_STAR*nlRenderShootingStar(viewDir, env.fogCol, v_underwaterRainTimeDay.z)*nlStarNight;
     #endif
 
-    #ifdef NL_DUSK_DARKEN
-      float duskDark = 1.0 - smoothstep(0.0, 0.4, abs(env.dayFactor));
-      duskDark *= 1.0 - 0.5*env.rainFactor;
-      skyColor *= mix(1.0, NL_DUSK_DARKNESS, duskDark);
-    #endif
-
     skyColor = colorCorrection(skyColor);
 
     gl_FragColor = vec4(skyColor, 1.0);

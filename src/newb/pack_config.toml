@@ -26,54 +26,64 @@ credits = '''
 Based on Newb Shader by devendrn (https://github.com/devendrn/newb-x-mcbe)
 '''
 
-# subpacks: Low, Medium, Blocky, Rounded, Realistic (default).
+# subpacks: Featherlight, Reimagined, Silver Drift, Pixel Cumulus,
+# Cottoncloud Classics, Naresh Painted, Silk Horizon (default).
 
 [[subpack]]
 define = "NO_REFLECTIONS"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
-Low
-Pixel noise clouds (lighter detail). Ground, block & water reflections are
-turned off. The lightest option.
+Featherlight Clouds
+Soft pixel-noise clouds with lighter detail. Reflections are off for maximum
+performance.
+'''
+
+[[subpack]]
+define = "REIMAGINED_CLOUDS"
+materials = ["RenderChunk", "Clouds", "Sky"]
+description = '''
+Reimagined Clouds 2.0
+Volumetric mesh clouds with warm dawn silver linings, moonlit edges and a
+painterly sunset glow.
 '''
 
 [[subpack]]
 define = "MEDIUM"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
-Medium
-Pixel noise clouds with full detail. Cloud & aurora reflections on water are
-turned off for better performance. Sun/Moon mirror and ground reflections stay
-on.
+Silver Drift Clouds
+Full-detail pixel-noise clouds with soft silver shading. Heavy water reflections
+are trimmed for smoother performance.
 '''
 
 [[subpack]]
 define = "BLOCKY_CLOUDS"
 materials = ["RenderChunk", "Clouds", "Sky"]
 description = '''
-Blocky Clouds
-High & heavy blocky pixel clouds. Cloud & aurora reflections on water are
-turned off for better performance.
+Pixel Cumulus Clouds
+Bold, blocky pixel clouds with a heavy, sculpted look for dramatic skies.
 '''
 
 [[subpack]]
 define = "DEFAULT"
 materials = []
 description = '''
-Rounded Clouds
+Cottoncloud Classics
+The classic rounded clouds with clean, soft edges and balanced shading.
 '''
 
 [[subpack]]
 define = "NARESH_CLOUDS"
 materials = ["Sky"]
 description = '''
-Textured Clouds
-5-octave textured clouds + high cirrus.
+Naresh Painted Clouds
+5-octave painted clouds with high wisps of cirrus and a hand-painted sky feel.
 '''
 
 [[subpack]]
 define = "BICUBIC_CLOUDS"
 materials = ["RenderChunk", "Sky"]
 description = '''
-Realistic Clouds (Default)
+Silk Horizon Clouds (Default)
+Smooth bicubic painted clouds with a silky horizon and realistic depth.
 '''

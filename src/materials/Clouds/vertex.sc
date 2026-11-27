@@ -41,6 +41,17 @@ void main() {
   env = calculateSunParams(env, TimeOfDay.x);
 
   nl_skycolor skycol = nlOverworldSkyColors(env);
+  #ifdef REIMAGINED_CLOUDS
+    vec3 cloudAmbient = nlCloudStageColor(env.dayFactor, NL_CLOUD2_DAY_AMBIENT_COL, NL_CLOUD2_DAWN_AMBIENT_COL, NL_CLOUD2_NIGHT_AMBIENT_COL);
+    vec3 cloudLight = nlCloudStageColor(env.dayFactor, NL_CLOUD2_DAY_LIGHT_COL, NL_CLOUD2_DAWN_LIGHT_COL, NL_CLOUD2_NIGHT_LIGHT_COL);
+    vec3 rainAmbient = NL_CLOUD2_RAIN_AMBIENT_COL*dot(cloudAmbient, vec3_splat(0.333));
+    vec3 rainLight = NL_CLOUD2_RAIN_LIGHT_COL*dot(cloudLight, vec3_splat(0.333));
+    cloudAmbient = mix(cloudAmbient, rainAmbient, rain);
+    cloudLight = mix(cloudLight, rainLight, rain);
+    skycol.zenith = cloudAmbient;
+    skycol.horizon = cloudLight;
+    skycol.horizonEdge = cloudLight;
+  #endif
   v_dayFactor = env.dayFactor; // suraj-based (-1 raat), horror pattern
   vec3 pos = a_position;
   vec3 worldPos;
