@@ -64,6 +64,14 @@ Rounded Clouds
 '''
 
 [[subpack]]
+define = "NARESH_CLOUDS"
+materials = ["Sky"]
+description = '''
+Textured Clouds
+5-octave textured clouds + high cirrus.
+'''
+
+[[subpack]]
 define = "BICUBIC_CLOUDS"
 materials = ["RenderChunk", "Sky"]
 description = '''

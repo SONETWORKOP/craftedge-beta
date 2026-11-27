@@ -97,6 +97,10 @@
 #define NL_HSPE_FOG_DENSITY vec2(0.5, 0.5) // HSPE fog distance/quadratic density
 
 /* Fog colour/fade constants (previously hardcoded) */
+#define NL_NARESH_FOG_SKY_CURVE_BASE 0.04 // Naresh fog colour floor
+#define NL_NARESH_FOG_SKY_CURVE_SCALE 0.96 // Naresh fog colour sky-curve strength
+#define NL_SUNRISE_FOG_MIX 0.70           // sunrise haze blend strength
+#define NL_SUNRISE_FOG_COL vec3(0.96,0.60,0.48) // sunrise pink-red haze
 #define NL_SUNSET_GLOW_SENSITIVITY 3.0    // sunset red-blue cue strength
 #define NL_RAIN_FOG_DIST_FADE 2.0         // rain ripple fog distance multiplier
 #define NL_RAIN_FOG_DIST_POWER 2.0        // rain ripple fog fade curve
@@ -413,6 +417,70 @@
 #define NL_LAVA_NOISE_SPEED 0.2  // 0.0 still ~ 0.8 fast
 
 /*
+  YSS FOG + SKY COLOURS - no YSS sun/moon disc or sky overlay
+*/
+
+#define NL_YSS_GAMMA 2.2
+
+/* Fixed YSS noon / sunrise-sunset sky accents */
+#define NL_SKY_ACCENTS                // [toggle] noon + sunrise/sunset sky accents
+#define NL_SKY_NOON_MIX 1.0           // 0.0 HSPE day sky ~ 1.0 YSS noon colours
+#define NL_SKY_SUNSET_MIX 1.0         // strength of the YSS sunrise/sunset horizon
+#define NL_SKY_NOON_ZENITH    vec3(0.2525,0.3843,0.5247)*1.1
+#define NL_SKY_NOON_HORIZON   vec3(0.5686,0.6667,0.7059)*1.1
+#define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
+#define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
+#define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
+#define NL_SKY_SUNRISE_MIX 0.90
+#define NL_SKY_SUNRISE_ZENITH  vec3(0.42,0.30,0.62) // sunrise zenith purple-pink tint
+#define NL_SKY_SUNRISE_HORIZON vec3(1.00,0.48,0.36) // sunrise pink-red
+#define NL_SKY_SUNRISE_EDGE    vec3(0.82,0.36,0.52)  // sunrise pink-red edge
+
+/* Sunrise/sunset darkness */
+#define NL_DUSK_DARKEN                 // [toggle] darken sky at sunrise/sunset
+#define NL_DUSK_DARKNESS 0.92          // 0.0 black ~ 1.0 unchanged
+
+/* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
+#define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
+#define NL_NARESH_SKY_MIX 0.40        // 0.0 off ~ 1.0 full Naresh dusk look
+
+/* Naresh sun/moon discs (OFF: vanilla/user SunMoon material use hota hai) */
+//#define NL_NARESH_SUN_MOON
+#define NL_NARESH_SUN_SIZE 0.045       // radians
+#define NL_NARESH_SUN_POWER 14.0
+#define NL_NARESH_MOON_SIZE 0.075      // big Naresh moon
+#define NL_NARESH_MOON_GLOW 1.0
+#define NL_NARESH_MOON_POWER 2.4
+
+/* Low-sun terrain warmth, no darkening */
+#define NL_NARESH_LOW_SUN
+#define NL_NARESH_LOW_SUN_MIX 0.25
+#define NL_NARESH_AMBIENT_MIX 0.25     // Naresh sky ambient on terrain/entities at dusk
+
+//#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
+#define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
+#define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
+#define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
+#define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3
+#define NL_YSS_RAIN_FOG   vec3(0.3,0.3,0.3)
+#define NL_YSS_FOG_EDGE_FADE 1.0      // 0.0 no sky edge fade
+
+/* YSS shooting star (comet) */
+#define NL_YSS_COMET                  // [toggle] YSS comet-like shooting star
+
+/* YSS cloud colours */
+#define NL_YSS_DAY_CLOUD_DIF    vec3(0.7059,0.8627,1.0)*0.7
+#define NL_YSS_DUSK_CLOUD_DIF   vec3(0.3922,0.549,0.7059)*0.7
+#define NL_YSS_NIGHT_CLOUD_DIF  vec3(0.3,0.6,0.9)*0.3
+#define NL_YSS_RAIN_CLOUD_DIF   vec3(0.5,0.5,0.5)*0.6
+#define NL_YSS_DAY_CLOUD_DIR    vec3(1.0,0.9725,0.9216)*0.95
+#define NL_YSS_DUSK_CLOUD_DIR   vec3(0.7647,0.6275,0.3922)
+#define NL_YSS_NIGHT_CLOUD_DIR  vec3(0.3,0.6,0.9)
+#define NL_YSS_RAIN_CLOUD_DIR   vec3(0.5,0.5,0.5)
+#define NL_YSS_CLOUDTHICK 1.5
+#define NL_YSS_BLV_STEPS 32
+
+/*
   NEWB SHADER SUBPACK CONFIG
   This part contains custom configuration options for each subpack.
 
@@ -525,6 +593,19 @@
 #ifdef EDITOR_CLOUDS
   #undef NL_CLOUD_TYPE
   #define NL_CLOUD_TYPE 2
+#endif
+
+/* Naresh Ultra clouds - heavy soft cloud layer + cirrus */
+#ifdef NARESH_CLOUDS
+  #define NL_NARESH_CLOUDS
+  #define NL_NARESH_CLOUD_OCTAVES 5.0
+  #define NL_NARESH_CLOUD_COVER 0.53
+  #define NL_NARESH_CLOUD_SCALE 0.95
+  #define NL_NARESH_CLOUD_SPEED vec2(0.02, 0.05)
+  #define NL_NARESH_CLOUD_SUN_POWER 3.4
+  #define NL_NARESH_CLOUD_MOON_POWER 0.34
+  #define NL_NARESH_CIRRUS 1
+  #define NL_NO_WATER_CLOUD_AURORA_REFL
 #endif
 
 #endif
