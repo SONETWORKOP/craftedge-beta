@@ -99,6 +99,8 @@
 /* Fog colour/fade constants (previously hardcoded) */
 #define NL_NARESH_FOG_SKY_CURVE_BASE 0.04 // Naresh fog colour floor
 #define NL_NARESH_FOG_SKY_CURVE_SCALE 0.96 // Naresh fog colour sky-curve strength
+#define NL_SUNRISE_FOG_MIX 0.70           // sunrise haze blend strength
+#define NL_SUNRISE_FOG_COL vec3(0.96,0.60,0.48) // sunrise pink-red haze
 #define NL_SUNSET_GLOW_SENSITIVITY 3.0    // sunset red-blue cue strength
 #define NL_RAIN_FOG_DIST_FADE 2.0         // rain ripple fog distance multiplier
 #define NL_RAIN_FOG_DIST_POWER 2.0        // rain ripple fog fade curve
@@ -442,6 +444,14 @@
 #define NL_SKY_NOON_EDGE      vec3(0.4902,0.6275,0.7216)*1.25
 #define NL_SKY_SUNSET_HORIZON vec3(1.0,0.55,0.2)
 #define NL_SKY_SUNSET_EDGE    vec3(1.0,0.5,0.2)
+#define NL_SKY_SUNRISE_MIX 0.90
+#define NL_SKY_SUNRISE_ZENITH  vec3(0.42,0.30,0.62) // sunrise zenith purple-pink tint
+#define NL_SKY_SUNRISE_HORIZON vec3(1.00,0.48,0.36) // sunrise pink-red
+#define NL_SKY_SUNRISE_EDGE    vec3(0.82,0.36,0.52)  // sunrise pink-red edge
+
+/* Sunrise/sunset darkness */
+#define NL_DUSK_DARKEN                 // [toggle] darken sky at sunrise/sunset
+#define NL_DUSK_DARKNESS 0.92          // 0.0 black ~ 1.0 unchanged
 
 /* Naresh sunrise/sunset test - sirf dawn/dusk sky + horizon fog badalta hai */
 #define NL_NARESH_SKY                 // [toggle] Naresh-style sunset/sunrise sky and fog
@@ -460,7 +470,8 @@
 #define NL_NARESH_LOW_SUN_MIX 0.25
 #define NL_NARESH_AMBIENT_MIX 0.25     // Naresh sky ambient on terrain/entities at dusk
 
-#define NL_YSS_FOG                    // [toggle] YSS fog colours
+//#define NL_YSS_FOG                  // [toggle] YSS fog colours (OFF: HSPE fog only)
+#define NL_YSS_SUNSET_MIX 0.85        // sunset-only YSS fog colour mix
 #define NL_YSS_DAY_FOG    vec3(0.4706,0.6667,0.8627)*1.1
 #define NL_YSS_DUSK_FOG   vec3(0.8,0.4,0.2)
 #define NL_YSS_NIGHT_FOG  vec3(0.0,0.3,0.6)*1.3
