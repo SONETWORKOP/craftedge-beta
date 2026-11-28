@@ -4,7 +4,6 @@
 #include "detection.h"
 #include "noise.h"
 #include "sky.h"
-#include "naresh_clouds.h"
 
 // suraj-based night factor (-1 raat .. 1 din). brightness se nahi,
 // seedha dayFactor se - raat ke boost se dhokha nahi khata (horror pattern).
@@ -17,6 +16,34 @@ float nlDuskF(float dayFactor) {
   float d = clamp(1.0 - abs(dayFactor)*2.4, 0.0, 1.0);
   return d*d*(1.0 - nightF);
 }
+
+float nlCloudDuskF(float dayFactor) {
+  return 1.0 - smoothstep(0.0, NL_CLOUD_DUSK_RANGE, abs(dayFactor));
+}
+
+vec3 nlCloudPalette(float dayFactor, float sunsetSide, float rainFactor, float shade) {
+  float day = smoothstep(NL_CLOUD_DAY_START, NL_CLOUD_DAY_END, dayFactor);
+  float dusk = nlCloudDuskF(dayFactor);
+
+  vec3 lit = mix(NL_CLOUD_NIGHT_LIT_COL, NL_CLOUD_DAY_LIT_COL, day);
+  vec3 dark = mix(NL_CLOUD_NIGHT_SHADOW_COL, NL_CLOUD_DAY_SHADOW_COL, day);
+  lit = mix(lit, mix(NL_CLOUD_SUNRISE_LIT_COL, NL_CLOUD_SUNSET_LIT_COL, sunsetSide), dusk);
+  dark = mix(dark, mix(NL_CLOUD_SUNRISE_SHADOW_COL, NL_CLOUD_SUNSET_SHADOW_COL, sunsetSide), dusk);
+
+  lit = mix(lit, NL_CLOUD_RAIN_LIT_COL, rainFactor*NL_CLOUD_RAIN_MIX);
+  dark = mix(dark, NL_CLOUD_RAIN_SHADOW_COL, rainFactor*NL_CLOUD_RAIN_MIX);
+
+  return mix(dark, lit, smoothstep(0.12, 0.88, clamp(shade, 0.0, 1.0)));
+}
+
+vec3 nlCloudPaint(vec3 cloudCol, float dayFactor, float sunsetSide, float rainFactor) {
+  float lum = clamp(luminance(cloudCol), 0.0, 1.0);
+  vec3 painted = nlCloudPalette(dayFactor, sunsetSide, rainFactor, smoothstep(0.10, 0.85, lum));
+  painted *= mix(0.82, 1.12, lum);
+  return painted;
+}
+
+#include "naresh_clouds.h"
 
 #ifdef REIMAGINED_CLOUDS
 vec3 nlCloudStageColor(float dayFactor, vec3 dayCol, vec3 dawnCol, vec3 nightCol) {
@@ -115,7 +142,7 @@ float nlBlockyCloudMask(vec2 uv, float timeVal) {
 
 // simple clouds 2D noise
 vec3 nlBsbeCloudColor(nl_skycolor skycol, nl_environment env) {
-  return nlSkyCloudTint(vec3_splat(1.0), skycol.horizon, env.dayFactor, env.rainFactor);
+  return nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, 0.85);
 }
 
 float cloudNoise2D(vec2 p, highp float t, float rain) {
@@ -272,10 +299,8 @@ float nlVibrantClouds(vec2 uv, float px, highp float time) {
 
 // sunTint comes from sunLightTint() (lighting.h is included after this header)
 // sky-following: din ujala, sunset kiss, raat dark, barish grey (tint func me)
-vec3 nlVibrantCloudColor(float dayFactor, vec3 sunTint, vec3 skyDye, float rainFactor) {
-  vec3 col = vec3_splat(1.1)*mix(0.35, 1.0, clamp(dayFactor+0.25, 0.0, 1.0));
-  col *= (0.7+0.5*sunTint);
-  return nlSkyCloudTint(col, skyDye, dayFactor, rainFactor);
+vec3 nlVibrantCloudColor(float dayFactor, float sunsetSide, float rainFactor) {
+  return nlCloudPalette(dayFactor, sunsetSide, rainFactor, 0.85);
 }
 
 // soft multi-octave value noise (fBm) - smooth amorphous cloud shapes.
@@ -326,9 +351,8 @@ vec4 renderCloudsSimple(nl_skycolor skycol, vec3 pos, highp float t, float rain,
   // crisp step so reflected clouds match the vanilla Box cloud look
   d = smoothstep(0.08, 0.5, d);
 
-  // vibrant cloud base - brighter, punchier white with a touch more contrast
   vec3 cloudWhite = vec3(1.0, 1.0, 1.02);
-  vec3 cloudShadow = mix(skycol.horizon * 0.5, vec3(0.42, 0.5, 0.68), 0.45);
+  vec3 cloudShadow = vec3(0.42, 0.5, 0.68);
   vec3 cloudBase = mix(cloudShadow, cloudWhite, smoothstep(0.0, 0.6, d));
 
   // box-style crisp puffy edges
@@ -773,7 +797,7 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
   if (cloudAmount > 0.0) {
     vec3 mainSunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
     vec4 clouds = renderCloudsSimple(skycol, cloudPos.xyy, t, env.rainFactor, viewDir, mainSunDir, vec3(1.0,0.95,0.85));
-    clouds.rgb = nlSkyCloudTint(clouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+    clouds.rgb = nlCloudPaint(clouds.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
     clouds.a *= fade*cloudAmount;
     refl = vec4(mix(refl.rgb, clouds.rgb, clouds.a), min(refl.a + clouds.a, 1.0));
   }

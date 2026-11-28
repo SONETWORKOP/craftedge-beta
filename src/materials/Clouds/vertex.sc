@@ -64,16 +64,9 @@ void main() {
       pos.y *= (NL_CLOUD0_THICKNESS + rain*(NL_CLOUD0_RAIN_THICKNESS - NL_CLOUD0_THICKNESS));
       worldPos = mul(model, vec4(pos, 1.0)).xyz;
 
-      // realistic white/grey cloud color with stronger volumetric contrast
-      // deeper, cooler shadowed base and a brighter sunlit top for more depth
-      float vGrad = a_position.y*a_position.y*(3.0 - 2.0*a_position.y); // smootherstep for punchy top/bottom
-      color.rgb = mix(vec3(0.42, 0.48, 0.62), vec3(1.0, 1.0, 1.03), vGrad);
-      // sunlit-top rim boost so cloud crowns pop
-      color.rgb += dot(color.rgb, vec3(0.22,0.18,0.14))*vGrad;
-      // saturation push so clouds keep sky-blue shadowing instead of flat grey
-      float cLum = dot(color.rgb, vec3(0.299,0.587,0.114));
-      color.rgb = mix(vec3_splat(cLum), color.rgb, 1.12);
-      color.rgb = nlSkyCloudTint(color.rgb, skycol.horizon, env.dayFactor, rain);
+      float vGrad = a_position.y*a_position.y*(3.0 - 2.0*a_position.y);
+      color.rgb = nlCloudPalette(env.dayFactor, env.sunsetSide, rain, vGrad);
+      color.rgb *= mix(0.88, 1.12, vGrad);
       color.rgb = colorCorrection(color.rgb);
       color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
 
@@ -117,7 +110,7 @@ void main() {
         #endif
 
         color.a *= fade;
-        color.rgb = nlSkyCloudTint(color.rgb, skycol.horizon, env.dayFactor, rain);
+        color.rgb = nlCloudPaint(color.rgb, env.dayFactor, env.sunsetSide, rain);
         color.rgb = colorCorrection(color.rgb);
       #else // NL_CLOUD_TYPE 2
         v_fogColor = FogColor.rgb;

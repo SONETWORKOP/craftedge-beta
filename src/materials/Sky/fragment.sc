@@ -259,8 +259,7 @@ void main() {
         }
         marchT += dt;
       }
-      // Minecraft sky-rang me dhalo: din/sunset/raat/barish
-      acc = nlSkyCloudTint(acc, skycol.horizon, env.dayFactor, env.rainFactor);
+      acc = nlCloudPaint(acc, env.dayFactor, env.sunsetSide, env.rainFactor);
       vec3 vol = acc + skyColor.rgb * T;
       float fade = smoothstep(EDITOR_H0, EDITOR_H1, rd.y);
       skyColor.rgb = mix(skyColor.rgb, vol, fade);
@@ -271,10 +270,10 @@ void main() {
     // painted bicubic clouds (texture noise), baaki dome-clouds nahi bante.
     #ifdef BICUBIC_CLOUDS
       if (!env.underwater && env.rainFactor < 0.99) {
-        // day = plain white; night/dusk/rain = sky-tinted clouds
-        vec3 bsbeCol = nlBsbeCloudColor(skycol, env);
+        vec3 bsbeLit = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, 1.0);
+        vec3 bsbeShadow = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, 0.0);
         vec3 withClouds = bsbeClouds(skyColor, viewDir, v_underwaterRainTimeDay.z,
-                                     bsbeCol/NL_SKY_CLOUDS_BRIGHTNESS, bsbeCol, gl_FragCoord.xy);
+                                     bsbeLit/NL_SKY_CLOUDS_BRIGHTNESS, bsbeShadow, gl_FragCoord.xy);
         skyColor = mix(withClouds, skyColor, env.rainFactor);
       }
     #else
@@ -284,7 +283,7 @@ void main() {
       if (!env.underwater && viewDir.y > 0.001) {
         vec3 rcSun = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
         vec4 rc = nlRealClouds(viewDir, rcSun, v_underwaterRainTimeDay.z);
-        rc.rgb = nlSkyCloudTint(rc.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+        rc.rgb = nlCloudPaint(rc.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
         float rcOp = smoothstep(0.03, 0.3, viewDir.y);
         skyColor.rgb = mix(skyColor.rgb, rc.rgb, clamp(rc.a*rcOp, 0.0, 1.0));
       }
@@ -301,7 +300,8 @@ void main() {
 
         // cloud color POORA sky-rang me: din safed, sunset narangi,
         // raat gehra neela, barish grey
-        vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, sunLightTint(env.dayFactor, env.rainFactor), skycol.horizon, env.rainFactor);
+        vec3 cloudCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor,
+                                       0.35 + 0.65*cloudA);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
       }
       // Medium second layer (my-style top echo, ESTN DCLOUDS jaisa):
@@ -312,17 +312,8 @@ void main() {
         float cloudA2 = nlVibrantClouds(viewDir.xz*scale2 + vec2(3.7,9.1), 0.004*scale2, v_underwaterRainTimeDay.z + 40.0);
         cloudA2 *= smoothstep(0.05, 0.35, viewDir.y);
         cloudA2 = clamp((cloudA2-0.55)*1.6, 0.0, 1.0)*0.7;
-        float dayLight2 = clamp(env.dayFactor*0.5 + 0.5, 0.0, 1.0);
-        vec3 topCol = mix(vec3(0.60,0.66,0.75), vec3(1.08,1.06,1.02), clamp(cloudA2, 0.0, 1.0));
-        topCol *= 0.12 + 0.88*dayLight2;
-        // POORA sky-rang: horizon dye + sunset kiss + raat dark + barish
-        topCol *= skycol.horizon*0.85 + vec3_splat(0.35);
-        #ifdef NL_ATMO_SUNSET
-          topCol = mix(topCol, topCol*(NL_ATMO_SUNSET*1.2 + vec3(0.35,0.12,0.10)), nlDuskF(env.dayFactor)*0.7);
-        #endif
-        topCol = mix(topCol, NL_NIGHT_CLOUD_COL*0.7, nlNightF(env.dayFactor));
-        topCol *= 1.0 - 0.45*(1.0 - smoothstep(-0.08, 0.12, env.dayFactor));
-        topCol *= 1.0 - 0.30*env.rainFactor;
+        vec3 topCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor,
+                                     0.55 + 0.45*cloudA2);
         skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
       #endif
@@ -337,8 +328,7 @@ void main() {
         cloudPlane *= NL_BLOCKY_CLOUD_SCALE;
         float cloudMask = nlBlockyCloudMask(cloudPlane, t*NL_BLOCKY_CLOUD_SPEED);
         float cloudShade = smoothstep(0.0, 0.85, cloudMask);
-        vec3 cloudCol = mix(NL_BLOCKY_CLOUD_SHADOW_COL, NL_BLOCKY_CLOUD_DAY_COL, cloudShade);
-        cloudCol = nlSkyCloudTint(cloudCol, skycol.horizon, env.dayFactor, env.rainFactor);
+        vec3 cloudCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, cloudShade);
         float horizonFade = smoothstep(0.02, 0.22, viewDir.y);
         float cloudOpacity = clamp(cloudMask*NL_BLOCKY_CLOUD_OPACITY*horizonFade, 0.0, 0.95);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudOpacity);
@@ -348,8 +338,7 @@ void main() {
         float t = v_underwaterRainTimeDay.z;
         float cloudMask = nlOptCloudMask(viewDir, t);
         float cloudShade = smoothstep(0.0, 0.85, cloudMask);
-        vec3 cloudCol = mix(NL_MEDIUM_CLOUD_SHADOW_COL, NL_MEDIUM_CLOUD_DAY_COL, cloudShade);
-        cloudCol = nlSkyCloudTint(cloudCol, skycol.horizon, env.dayFactor, env.rainFactor);
+        vec3 cloudCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, cloudShade);
         float horizonFade = smoothstep(0.02, 0.22, viewDir.y);
         float cloudOpacity = clamp(cloudMask*NL_MEDIUM_CLOUD_OPACITY*horizonFade, 0.0, 0.9);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudOpacity);
@@ -361,8 +350,7 @@ void main() {
       if (!env.underwater && viewDir.y > 0.001) {
         float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
-        // POORA sky-rang + dark: sunset narangi, raat gehra, barish grey
-        clouds.rgb = nlSkyCloudTint(clouds.rgb, skycol.horizon, env.dayFactor, env.rainFactor);
+        clouds.rgb = nlCloudPaint(clouds.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
         float opacity = smoothstep(0.1, 0.3, viewDir.y);
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);

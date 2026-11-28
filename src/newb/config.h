@@ -295,18 +295,33 @@
 #define NL_CLOUD2_LAYER2_DENSITY 25.0           // 1.0 blurry ~ 100.0 sharp
 #define NL_CLOUD2_LAYER2_VELOCITY 0.8           // 0.0 static ~ 4.0 very fast
 
+#define NL_CLOUD_DAY_LIT_COL      vec3(1.10, 1.07, 1.00)
+#define NL_CLOUD_DAY_SHADOW_COL   vec3(0.38, 0.43, 0.55)
+#define NL_CLOUD_SUNRISE_LIT_COL  vec3(1.55, 0.88, 0.52)
+#define NL_CLOUD_SUNRISE_SHADOW_COL vec3(0.34, 0.18, 0.30)
+#define NL_CLOUD_SUNSET_LIT_COL   vec3(1.60, 0.78, 0.34)
+#define NL_CLOUD_SUNSET_SHADOW_COL vec3(0.30, 0.14, 0.25)
+#define NL_CLOUD_NIGHT_LIT_COL    vec3(0.28, 0.38, 0.52)
+#define NL_CLOUD_NIGHT_SHADOW_COL vec3(0.05, 0.08, 0.15)
+#define NL_CLOUD_RAIN_LIT_COL     vec3(0.58, 0.62, 0.70)
+#define NL_CLOUD_RAIN_SHADOW_COL  vec3(0.22, 0.25, 0.32)
+#define NL_CLOUD_DUSK_RANGE 0.42
+#define NL_CLOUD_DAY_START 0.04
+#define NL_CLOUD_DAY_END 0.34
+#define NL_CLOUD_RAIN_MIX 0.72
+
 /* Reimagined volumetric clouds (Download/clouds port) */
 #define NL_CLOUDS_SHAPE_DENSITY 0.5       // starting cloud height/density
 #define NL_CLOUDS_SHADOW_INTENSITY 1.0    // 0.0 flat ~ 1.0 deep volumetric shading
 #define NL_CLOUDS_BRIGHTNESS 1.0          // sunlit cloud brightness
-#define NL_CLOUD2_DAY_AMBIENT_COL   vec3(0.78,0.86,1.0)
-#define NL_CLOUD2_DAWN_AMBIENT_COL  vec3(1.0,0.58,0.4)
-#define NL_CLOUD2_NIGHT_AMBIENT_COL vec3(0.08,0.14,0.28)
-#define NL_CLOUD2_DAY_LIGHT_COL     vec3(1.08,1.1,1.15)
-#define NL_CLOUD2_DAWN_LIGHT_COL    vec3(1.25,0.72,0.5)
-#define NL_CLOUD2_NIGHT_LIGHT_COL   vec3(0.3,0.42,0.62)
-#define NL_CLOUD2_RAIN_AMBIENT_COL  vec3(0.4,0.44,0.52)
-#define NL_CLOUD2_RAIN_LIGHT_COL    vec3(0.62,0.66,0.74)
+#define NL_CLOUD2_DAY_AMBIENT_COL   NL_CLOUD_DAY_SHADOW_COL
+#define NL_CLOUD2_DAWN_AMBIENT_COL  NL_CLOUD_SUNSET_SHADOW_COL
+#define NL_CLOUD2_NIGHT_AMBIENT_COL NL_CLOUD_NIGHT_SHADOW_COL
+#define NL_CLOUD2_DAY_LIGHT_COL     NL_CLOUD_DAY_LIT_COL
+#define NL_CLOUD2_DAWN_LIGHT_COL    NL_CLOUD_SUNSET_LIT_COL
+#define NL_CLOUD2_NIGHT_LIGHT_COL   NL_CLOUD_NIGHT_LIT_COL
+#define NL_CLOUD2_RAIN_AMBIENT_COL  NL_CLOUD_RAIN_SHADOW_COL
+#define NL_CLOUD2_RAIN_LIGHT_COL    NL_CLOUD_RAIN_LIT_COL
 
 /* Realistic cloud settings */
 #define NL_CLOUD3_SCALE vec2(0.03, 0.03) // 0.003 large ~ 1.0 tiny
