@@ -78,6 +78,7 @@ vec3 nlNrsCloudLayers(vec3 sky, vec3 d, nl_environment env, highp float time, fl
     cloud = mix(cloud, nlCloudPaint(cloud, env.dayFactor, env.sunsetSide, rain), 0.55);
 
     alpha = (1.0 - exp(-3.2*d1))*smoothstep(0.0, 0.14, dy)*0.95;
+    cloud = nlCloudCyanEdge(cloud, alpha, env.dayFactor);
     outc = mix(outc, cloud, alpha);
   }
 
@@ -89,6 +90,7 @@ vec3 nlNrsCloudLayers(vec3 sky, vec3 d, nl_environment env, highp float time, fl
       float ci = smoothstep(0.50, 0.78, n2)*0.38*smoothstep(0.02, 0.25, dy);
       vec3 cic = amb*0.9 + Lcol*(0.5*(0.6 + 0.8*cosl));
       cic = mix(cic, nlCloudPaint(cic, env.dayFactor, env.sunsetSide, rain), 0.45);
+      cic = nlCloudCyanEdge(cic, ci, env.dayFactor);
       outc = mix(outc, cic, ci*(1.0 - alpha*0.7));
     }
   #endif

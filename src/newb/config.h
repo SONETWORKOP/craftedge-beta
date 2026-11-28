@@ -295,20 +295,23 @@
 #define NL_CLOUD2_LAYER2_DENSITY 25.0           // 1.0 blurry ~ 100.0 sharp
 #define NL_CLOUD2_LAYER2_VELOCITY 0.8           // 0.0 static ~ 4.0 very fast
 
-#define NL_CLOUD_DAY_LIT_COL      vec3(1.10, 1.07, 1.00)
-#define NL_CLOUD_DAY_SHADOW_COL   vec3(0.38, 0.43, 0.55)
-#define NL_CLOUD_SUNRISE_LIT_COL  vec3(1.55, 0.88, 0.52)
-#define NL_CLOUD_SUNRISE_SHADOW_COL vec3(0.34, 0.18, 0.30)
-#define NL_CLOUD_SUNSET_LIT_COL   vec3(1.60, 0.78, 0.34)
-#define NL_CLOUD_SUNSET_SHADOW_COL vec3(0.30, 0.14, 0.25)
-#define NL_CLOUD_NIGHT_LIT_COL    vec3(0.28, 0.38, 0.52)
-#define NL_CLOUD_NIGHT_SHADOW_COL vec3(0.05, 0.08, 0.15)
-#define NL_CLOUD_RAIN_LIT_COL     vec3(0.58, 0.62, 0.70)
-#define NL_CLOUD_RAIN_SHADOW_COL  vec3(0.22, 0.25, 0.32)
-#define NL_CLOUD_DUSK_RANGE 0.42
+#define NL_CLOUD_DAY_LIT_COL      vec3(1.20, 1.14, 1.02)
+#define NL_CLOUD_DAY_SHADOW_COL   vec3(0.28, 0.36, 0.54)
+#define NL_CLOUD_SUNRISE_LIT_COL  vec3(1.85, 0.92, 0.55)
+#define NL_CLOUD_SUNRISE_SHADOW_COL vec3(0.38, 0.13, 0.36)
+#define NL_CLOUD_SUNSET_LIT_COL   vec3(1.90, 0.70, 0.25)
+#define NL_CLOUD_SUNSET_SHADOW_COL vec3(0.32, 0.10, 0.24)
+#define NL_CLOUD_NIGHT_LIT_COL    vec3(0.18, 0.32, 0.46)
+#define NL_CLOUD_NIGHT_SHADOW_COL vec3(0.02, 0.05, 0.11)
+#define NL_CLOUD_RAIN_LIT_COL     vec3(0.52, 0.58, 0.68)
+#define NL_CLOUD_RAIN_SHADOW_COL  vec3(0.18, 0.22, 0.30)
+#define NL_CLOUD_CYAN_COL         vec3(0.22, 0.82, 1.00)
+#define NL_CLOUD_CYAN_EDGE_NIGHT  0.46
+#define NL_CLOUD_CYAN_EDGE_DAY    0.07
+#define NL_CLOUD_DUSK_RANGE 0.50
 #define NL_CLOUD_DAY_START 0.04
-#define NL_CLOUD_DAY_END 0.34
-#define NL_CLOUD_RAIN_MIX 0.72
+#define NL_CLOUD_DAY_END 0.32
+#define NL_CLOUD_RAIN_MIX 0.80
 
 /* Reimagined volumetric clouds (Download/clouds port) */
 #define NL_CLOUDS_SHAPE_DENSITY 0.5       // starting cloud height/density
@@ -408,7 +411,7 @@
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.16 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 1.8 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   0.05 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   0.09 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 //#define NL_NO_GROUND_REFL            // [toggle] disable ground/rain reflections only

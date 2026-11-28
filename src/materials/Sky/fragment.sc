@@ -121,7 +121,7 @@
     return mix(vec3_splat(lum), c, sat);
   }
 
-  vec3 bsbeClouds(vec3 color, vec3 nPos, float fTime, vec3 horC, vec3 zenC, vec2 fragCoord) {
+  vec3 bsbeClouds(vec3 color, vec3 nPos, float fTime, vec3 horC, vec3 zenC, vec2 fragCoord, float dayFactor) {
     vec2 cloudP = (nPos.xz / nPos.y) * NL_SKY_CLOUDS_SCALE;
     cloudP -= cloudP * bsbeHash(fragCoord.x + fragCoord.y * 57.0) * 0.05;
 
@@ -135,7 +135,8 @@
       for (int i = 0; i < NL_SKY_CLOUDS_LAYERS; i++) {
         float cloudM = bsbeFbm(cloudP, sDens, fTime, nOct);
         cloDirC = mix(cloDirC, cloAmbC, NL_SKY_CLOUDS_AMBIENT_MIX);
-        color = mix(color, cloDirC, cloudM * smoothstep(0.0, NL_SKY_CLOUDS_HORIZON_FADE, nPos.y));
+        vec3 cloudCol = nlCloudCyanEdge(cloDirC, cloudM, dayFactor);
+        color = mix(color, cloudCol, cloudM * smoothstep(0.0, NL_SKY_CLOUDS_HORIZON_FADE, nPos.y));
         sDens += (i <= 6) ? -0.1 : 0.1;
         cloudP -= cloudP * NL_SKY_CLOUDS_LAYER_SQUEEZE;
       }
@@ -260,6 +261,7 @@ void main() {
         marchT += dt;
       }
       acc = nlCloudPaint(acc, env.dayFactor, env.sunsetSide, env.rainFactor);
+      acc = nlCloudCyanEdge(acc, 1.0 - T, env.dayFactor);
       vec3 vol = acc + skyColor.rgb * T;
       float fade = smoothstep(EDITOR_H0, EDITOR_H1, rd.y);
       skyColor.rgb = mix(skyColor.rgb, vol, fade);
@@ -273,7 +275,7 @@ void main() {
         vec3 bsbeLit = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, 1.0);
         vec3 bsbeShadow = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, 0.0);
         vec3 withClouds = bsbeClouds(skyColor, viewDir, v_underwaterRainTimeDay.z,
-                                     bsbeLit/NL_SKY_CLOUDS_BRIGHTNESS, bsbeShadow, gl_FragCoord.xy);
+                                     bsbeLit/NL_SKY_CLOUDS_BRIGHTNESS, bsbeShadow, gl_FragCoord.xy, env.dayFactor);
         skyColor = mix(withClouds, skyColor, env.rainFactor);
       }
     #else
@@ -284,6 +286,7 @@ void main() {
         vec3 rcSun = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
         vec4 rc = nlRealClouds(viewDir, rcSun, v_underwaterRainTimeDay.z);
         rc.rgb = nlCloudPaint(rc.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
+        rc.rgb = nlCloudCyanEdge(rc.rgb, rc.a, env.dayFactor);
         float rcOp = smoothstep(0.03, 0.3, viewDir.y);
         skyColor.rgb = mix(skyColor.rgb, rc.rgb, clamp(rc.a*rcOp, 0.0, 1.0));
       }
@@ -302,6 +305,7 @@ void main() {
         // raat gehra neela, barish grey
         vec3 cloudCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor,
                                        0.35 + 0.65*cloudA);
+        cloudCol = nlCloudCyanEdge(cloudCol, cloudA, env.dayFactor);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, clamp(cloudA, 0.0, 1.0));
       }
       // Medium second layer (my-style top echo, ESTN DCLOUDS jaisa):
@@ -314,6 +318,7 @@ void main() {
         cloudA2 = clamp((cloudA2-0.55)*1.6, 0.0, 1.0)*0.7;
         vec3 topCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor,
                                      0.55 + 0.45*cloudA2);
+        topCol = nlCloudCyanEdge(topCol, cloudA2, env.dayFactor);
         skyColor.rgb = mix(skyColor.rgb, topCol, clamp(cloudA2, 0.0, 1.0)*NL_SKY_CLOUD_OPACITY);
       }
       #endif
@@ -329,6 +334,7 @@ void main() {
         float cloudMask = nlBlockyCloudMask(cloudPlane, t*NL_BLOCKY_CLOUD_SPEED);
         float cloudShade = smoothstep(0.0, 0.85, cloudMask);
         vec3 cloudCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, cloudShade);
+        cloudCol = nlCloudCyanEdge(cloudCol, cloudMask, env.dayFactor);
         float horizonFade = smoothstep(0.02, 0.22, viewDir.y);
         float cloudOpacity = clamp(cloudMask*NL_BLOCKY_CLOUD_OPACITY*horizonFade, 0.0, 0.95);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudOpacity);
@@ -339,6 +345,7 @@ void main() {
         float cloudMask = nlOptCloudMask(viewDir, t);
         float cloudShade = smoothstep(0.0, 0.85, cloudMask);
         vec3 cloudCol = nlCloudPalette(env.dayFactor, env.sunsetSide, env.rainFactor, cloudShade);
+        cloudCol = nlCloudCyanEdge(cloudCol, cloudMask, env.dayFactor);
         float horizonFade = smoothstep(0.02, 0.22, viewDir.y);
         float cloudOpacity = clamp(cloudMask*NL_MEDIUM_CLOUD_OPACITY*horizonFade, 0.0, 0.9);
         skyColor.rgb = mix(skyColor.rgb, cloudCol, cloudOpacity);
@@ -351,6 +358,7 @@ void main() {
         float jitter = fract(sin(dot(viewDir.xy, vec2(12.9898, 78.233))) * 43758.5453);
         vec4 clouds = nlRoundedClouds(viewDir, v_underwaterRainTimeDay.z, jitter);
         clouds.rgb = nlCloudPaint(clouds.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
+        clouds.rgb = nlCloudCyanEdge(clouds.rgb, clouds.a, env.dayFactor);
         float opacity = smoothstep(0.1, 0.3, viewDir.y);
         float cloudMask = clouds.a * 0.5 * opacity;
         skyColor.rgb = mix(skyColor.rgb, clouds.rgb, cloudMask);

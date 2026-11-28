@@ -21,9 +21,13 @@ float nlCloudDuskF(float dayFactor) {
   return 1.0 - smoothstep(0.0, NL_CLOUD_DUSK_RANGE, abs(dayFactor));
 }
 
+float nlCloudNightF(float dayFactor) {
+  return 1.0 - smoothstep(-0.28, -0.04, dayFactor);
+}
+
 vec3 nlCloudPalette(float dayFactor, float sunsetSide, float rainFactor, float shade) {
   float day = smoothstep(NL_CLOUD_DAY_START, NL_CLOUD_DAY_END, dayFactor);
-  float dusk = nlCloudDuskF(dayFactor);
+  float dusk = nlCloudDuskF(dayFactor) * (1.0 - nlCloudNightF(dayFactor));
 
   vec3 lit = mix(NL_CLOUD_NIGHT_LIT_COL, NL_CLOUD_DAY_LIT_COL, day);
   vec3 dark = mix(NL_CLOUD_NIGHT_SHADOW_COL, NL_CLOUD_DAY_SHADOW_COL, day);
@@ -41,6 +45,13 @@ vec3 nlCloudPaint(vec3 cloudCol, float dayFactor, float sunsetSide, float rainFa
   vec3 painted = nlCloudPalette(dayFactor, sunsetSide, rainFactor, smoothstep(0.10, 0.85, lum));
   painted *= mix(0.82, 1.12, lum);
   return painted;
+}
+
+vec3 nlCloudCyanEdge(vec3 cloudCol, float coverage, float dayFactor) {
+  float c = clamp(coverage, 0.0, 1.0);
+  float edge = (1.0 - smoothstep(0.04, 0.62, c)) * smoothstep(0.0, 0.05, c);
+  float amount = edge * mix(NL_CLOUD_CYAN_EDGE_DAY, NL_CLOUD_CYAN_EDGE_NIGHT, nlCloudNightF(dayFactor));
+  return mix(cloudCol, NL_CLOUD_CYAN_COL, amount);
 }
 
 #include "naresh_clouds.h"
@@ -798,6 +809,7 @@ vec4 nlCloudAuroraReflection(nl_skycolor skycol, nl_environment env, vec3 viewDi
     vec3 mainSunDir = env.sunDir.y > 0.0 ? env.sunDir : env.moonDir;
     vec4 clouds = renderCloudsSimple(skycol, cloudPos.xyy, t, env.rainFactor, viewDir, mainSunDir, vec3(1.0,0.95,0.85));
     clouds.rgb = nlCloudPaint(clouds.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
+    clouds.rgb = nlCloudCyanEdge(clouds.rgb, clouds.a, env.dayFactor);
     clouds.a *= fade*cloudAmount;
     refl = vec4(mix(refl.rgb, clouds.rgb, clouds.a), min(refl.a + clouds.a, 1.0));
   }

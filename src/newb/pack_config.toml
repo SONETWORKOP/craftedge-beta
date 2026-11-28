@@ -76,7 +76,7 @@ The classic rounded clouds with clean, soft edges and balanced shading.
 define = "NARESH_CLOUDS"
 materials = ["Sky"]
 description = '''
-Naresh Painted Clouds
+Messy Clouds
 5-octave painted clouds with high wisps of cirrus and a hand-painted sky feel.
 '''
 

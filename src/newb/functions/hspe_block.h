@@ -133,6 +133,7 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
     #if defined(BICUBIC_CLOUDS)
       float bcAlpha = nlBsbeCloudAlpha(R, t) * (1.0 - env.rainFactor);
       vec3 bcCol = nlBsbeCloudColor(skycol, env);
+      bcCol = nlCloudCyanEdge(bcCol, bcAlpha, env.dayFactor);
       col = mix(col, bcCol, clamp(bcAlpha, 0.0, 1.0));
     #elif defined(REALISTIC_CLOUDS) || defined(EDITOR_CLOUDS)
       vec4 cr = nlCloudAuroraReflection(skycol, env, -R, vec3(0.0, 0.0, 0.0), CAMERA_POS, t, 1.0);
@@ -143,6 +144,7 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
       cloudA *= smoothstep(0.05, 0.35, R.y);
       cloudA *= NL_SKY_CLOUD_OPACITY;
       vec3 cloudCol = nlVibrantCloudColor(env.dayFactor, env.sunsetSide, env.rainFactor);
+      cloudCol = nlCloudCyanEdge(cloudCol, cloudA, env.dayFactor);
       col = mix(col, cloudCol, clamp(cloudA, 0.0, 1.0));
     #elif defined(MEDIUM)
       vec4 medClouds = renderCloudsRounded(
@@ -152,11 +154,13 @@ vec3 nlDomeReflection(nl_skycolor skycol, nl_environment env, vec3 R, vec3 CAMER
         NL_CLOUD2_VELOCITY, NL_CLOUD2_SCALE, NL_CLOUD2_DENSITY, NL_CLOUD2_SHAPE
       );
       medClouds.rgb = nlCloudPaint(medClouds.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
+      medClouds.rgb = nlCloudCyanEdge(medClouds.rgb, medClouds.a, env.dayFactor);
       col = mix(col, medClouds.rgb, clamp(medClouds.a*smoothstep(0.05, 0.3, R.y), 0.0, 1.0));
     #elif defined(NL_ROUNDED_CLOUDS) && !defined(NO_REFLECTIONS)
       float jitter = fract(sin(dot(R.xy, vec2(12.9898, 78.233))) * 43758.5453);
       vec4 clouds = nlRoundedClouds(R, t, jitter);
       clouds.rgb = nlCloudPaint(clouds.rgb, env.dayFactor, env.sunsetSide, env.rainFactor);
+      clouds.rgb = nlCloudCyanEdge(clouds.rgb, clouds.a, env.dayFactor);
       col = mix(col, clouds.rgb, clouds.a*0.5*smoothstep(0.1, 0.3, R.y));
     #endif
 

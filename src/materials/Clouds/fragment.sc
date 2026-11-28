@@ -100,6 +100,9 @@ void main() {
       nl_environment cloudEnv;
       cloudEnv = calculateSunParams(cloudEnv, TimeOfDay.x);
 
+      color.rgb = mix(color.rgb, nlCloudPaint(color.rgb, cloudEnv.dayFactor, cloudEnv.sunsetSide, cloudEnv.rainFactor), 0.55);
+      color.rgb = nlCloudCyanEdge(color.rgb, color.a, cloudEnv.dayFactor);
+
       float silver = pow(max(dot(vDir, cloudEnv.sunDir), 0.0), 8.0)*(1.0-color.a)*color.a*4.0;
       color.rgb += vec3(1.0,0.95,0.85)*silver*0.6*smoothstep(-0.1,0.2,cloudEnv.sunDir.y);
 
@@ -130,6 +133,7 @@ void main() {
       vec3 cloudCol = nlCloudPalette(v_dayFactor, cloudEnv.sunsetSide, rainFactor,
                                      smoothstep(0.15, 0.85, internalShadow));
       cloudCol *= mix(0.86, 1.10, internalShadow);
+      cloudCol = nlCloudCyanEdge(cloudCol, cloudAlpha, v_dayFactor);
 
       float tightFade = smoothstep(0.0, 0.4, fadeFactor);
       cloudCol = colorCorrection(cloudCol);

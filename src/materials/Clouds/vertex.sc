@@ -67,6 +67,7 @@ void main() {
       float vGrad = a_position.y*a_position.y*(3.0 - 2.0*a_position.y);
       color.rgb = nlCloudPalette(env.dayFactor, env.sunsetSide, rain, vGrad);
       color.rgb *= mix(0.88, 1.12, vGrad);
+      color.rgb = nlCloudCyanEdge(color.rgb, 1.0 - vGrad, env.dayFactor);
       color.rgb = colorCorrection(color.rgb);
       color.a = NL_CLOUD0_OPACITY * fog_fade(worldPos.xyz);
 
@@ -111,6 +112,7 @@ void main() {
 
         color.a *= fade;
         color.rgb = nlCloudPaint(color.rgb, env.dayFactor, env.sunsetSide, rain);
+        color.rgb = nlCloudCyanEdge(color.rgb, color.a, env.dayFactor);
         color.rgb = colorCorrection(color.rgb);
       #else // NL_CLOUD_TYPE 2
         v_fogColor = FogColor.rgb;
