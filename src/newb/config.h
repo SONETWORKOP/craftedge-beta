@@ -411,7 +411,7 @@
 /* Godrays - strong volumetric light shafts (beta) */
 #define NL_GODRAY 0.16 // [toggle] 0.1 subtle ~ 0.8 strong
 #define NL_GODRAY_MULTIPLICATOR 1.8 // final tez (1.0 normal)
-#define NL_GODRAY_SENSITIVITY   0.09 // halke rays threshold (kam = zyada rays)
+#define NL_GODRAY_SENSITIVITY   1.1 // halke rays threshold (kam = zyada rays)
 
 /* Ground reflection - reflective wet ground (beta) */
 //#define NL_NO_GROUND_REFL            // [toggle] disable ground/rain reflections only

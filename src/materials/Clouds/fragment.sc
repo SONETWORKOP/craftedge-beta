@@ -100,7 +100,6 @@ void main() {
       nl_environment cloudEnv;
       cloudEnv = calculateSunParams(cloudEnv, TimeOfDay.x);
 
-      color.rgb = mix(color.rgb, nlCloudPaint(color.rgb, cloudEnv.dayFactor, cloudEnv.sunsetSide, cloudEnv.rainFactor), 0.55);
       color.rgb = nlCloudCyanEdge(color.rgb, color.a, cloudEnv.dayFactor);
 
       float silver = pow(max(dot(vDir, cloudEnv.sunDir), 0.0), 8.0)*(1.0-color.a)*color.a*4.0;
